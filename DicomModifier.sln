@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DicomModifier", "DicomModifier.csproj", "{D7B30254-B81D-4374-8643-D079985E4AEA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementi di soluzione", "Elementi di soluzione", "{DEAEAB50-206E-4BDE-9ACD-C942FBF50230}"
+	ProjectSection(SolutionItems) = preProject
+		DicomOperations.cs = DicomOperations.cs
+		\\Mac\Dropbox\Dicom import\settings_icon.png = \\Mac\Dropbox\Dicom import\settings_icon.png
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7B30254-B81D-4374-8643-D079985E4AEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7B30254-B81D-4374-8643-D079985E4AEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7B30254-B81D-4374-8643-D079985E4AEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7B30254-B81D-4374-8643-D079985E4AEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0471C694-259B-4444-8967-61AFD7EBA44F}
+	EndGlobalSection
+EndGlobal
