@@ -1,5 +1,6 @@
-﻿using FellowOakDicom;
-using System.Globalization;
+﻿using System.Linq;
+using System.Windows.Forms;
+using FellowOakDicom;
 
 namespace DicomModifier
 {
@@ -12,32 +13,48 @@ namespace DicomModifier
             _dataGridView = dataGridView;
         }
 
-        public void AddDicomToGrid(DicomDataset dicomData)
+        public void AddDicomToGrid(DicomDataset dataset)
         {
-            var name = dicomData.GetString(DicomTag.PatientName);
-            var dob = FormatDate(dicomData.GetString(DicomTag.PatientBirthDate));
-            var id = dicomData.GetString(DicomTag.PatientID);
-            var studyDescription = dicomData.GetString(DicomTag.StudyDescription);
-            var studyDate = FormatDate(dicomData.GetString(DicomTag.StudyDate));
-            var modality = dicomData.GetString(DicomTag.Modality);
-            var seriesNumber = dicomData.GetString(DicomTag.SeriesNumber);
-            var imageNumber = dicomData.GetString(DicomTag.InstanceNumber);
+            string patientID = dataset.GetSingleValueOrDefault(DicomTag.PatientID, "Unknown");
+            string studyInstanceUID = dataset.GetSingleValueOrDefault(DicomTag.StudyInstanceUID, "Unknown");
+            string seriesInstanceUID = dataset.GetSingleValueOrDefault(DicomTag.SeriesInstanceUID, "Unknown");
+            string modality = dataset.GetSingleValueOrDefault(DicomTag.Modality, "Unknown");
 
-            _dataGridView.Rows.Add(name, dob, id, studyDescription, studyDate, modality, seriesNumber, imageNumber);
-        }
+            var existingRow = _dataGridView.Rows
+                .Cast<DataGridViewRow>()
+                .FirstOrDefault(row => row.Cells["PatientIDColumn"].Value?.ToString() == patientID &&
+                                       row.Cells["StudyInstanceUIDColumn"].Value?.ToString() == studyInstanceUID);
 
-        private string FormatDate(string dicomDate)
-        {
-            if (string.IsNullOrEmpty(dicomDate))
+            if (existingRow != null)
             {
-                return string.Empty;
-            }
+                existingRow.Cells[_dataGridView.Columns["SeriesCountColumn"].Index].Value =
+                    (int)existingRow.Cells[_dataGridView.Columns["SeriesCountColumn"].Index].Value + 1;
+                existingRow.Cells[_dataGridView.Columns["ImageCountColumn"].Index].Value =
+                    (int)existingRow.Cells[_dataGridView.Columns["ImageCountColumn"].Index].Value + 1;
 
-            if (DateTime.TryParseExact(dicomDate, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
-            {
-                return date.ToString("dd/MM/yyyy");
+                string existingModality = existingRow.Cells[_dataGridView.Columns["ModalityColumn"].Index].Value.ToString();
+                if (!existingModality.Contains(modality))
+                {
+                    existingRow.Cells[_dataGridView.Columns["ModalityColumn"].Index].Value = $"{existingModality}+{modality}";
+                }
             }
-            return dicomDate;
+            else
+            {
+                var newRow = new DataGridViewRow();
+                newRow.CreateCells(_dataGridView);
+
+                newRow.Cells[_dataGridView.Columns["PatientIDColumn"].Index].Value = patientID;
+                newRow.Cells[_dataGridView.Columns["StudyInstanceUIDColumn"].Index].Value = studyInstanceUID;
+                newRow.Cells[_dataGridView.Columns["PatientNameColumn"].Index].Value = dataset.GetSingleValueOrDefault(DicomTag.PatientName, "Unknown");
+                newRow.Cells[_dataGridView.Columns["PatientDOBColumn"].Index].Value = dataset.GetSingleValueOrDefault(DicomTag.PatientBirthDate, DateTime.MinValue).ToString("dd/MM/yyyy");
+                newRow.Cells[_dataGridView.Columns["StudyDescriptionColumn"].Index].Value = dataset.GetSingleValueOrDefault(DicomTag.StudyDescription, "Unknown");
+                newRow.Cells[_dataGridView.Columns["StudyDateColumn"].Index].Value = dataset.GetSingleValueOrDefault(DicomTag.StudyDate, DateTime.MinValue).ToString("dd/MM/yyyy");
+                newRow.Cells[_dataGridView.Columns["ModalityColumn"].Index].Value = modality;
+                newRow.Cells[_dataGridView.Columns["SeriesCountColumn"].Index].Value = 1;
+                newRow.Cells[_dataGridView.Columns["ImageCountColumn"].Index].Value = 1;
+
+                _dataGridView.Rows.Add(newRow);
+            }
         }
     }
 }

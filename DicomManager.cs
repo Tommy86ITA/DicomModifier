@@ -1,6 +1,9 @@
-﻿using FellowOakDicom;
-using FellowOakDicom.Media;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using FellowOakDicom;
+using FellowOakDicom.Media;
 
 namespace DicomModifier
 {

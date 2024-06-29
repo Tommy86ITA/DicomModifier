@@ -56,8 +56,9 @@ namespace DicomModifier
             StudyDescriptionColumn = new DataGridViewTextBoxColumn();
             StudyDateColumn = new DataGridViewTextBoxColumn();
             ModalityColumn = new DataGridViewTextBoxColumn();
-            SeriesNumberColumn = new DataGridViewTextBoxColumn();
-            ImageNumberColumn = new DataGridViewTextBoxColumn();
+            SeriesCountColumn = new DataGridViewTextBoxColumn();
+            ImageCountColumn = new DataGridViewTextBoxColumn();
+            StudyInstanceUIDColumn = new DataGridViewTextBoxColumn();
             groupSelectFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBoxPatientID.SuspendLayout();
@@ -114,7 +115,7 @@ namespace DicomModifier
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { NameColumn, DOBColumn, IDColumn, StudyDescriptionColumn, StudyDateColumn, ModalityColumn, SeriesNumberColumn, ImageNumberColumn });
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { NameColumn, DOBColumn, IDColumn, StudyDescriptionColumn, StudyDateColumn, ModalityColumn, SeriesCountColumn, ImageCountColumn, StudyInstanceUIDColumn });
             dataGridView1.Location = new Point(18, 108);
             dataGridView1.Margin = new Padding(2, 1, 2, 1);
             dataGridView1.Name = "dataGridView1";
@@ -228,7 +229,6 @@ namespace DicomModifier
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new Size(151, 22);
             aboutToolStripMenuItem.Text = "About...";
-            //aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
             // impostazioniToolStripMenuItem
             // 
@@ -240,22 +240,22 @@ namespace DicomModifier
             // 
             NameColumn.HeaderText = "Cognome e nome";
             NameColumn.MinimumWidth = 350;
-            NameColumn.Name = "NameColumn";
+            NameColumn.Name = "PatientNameColumn";
             NameColumn.ReadOnly = true;
-            NameColumn.Width = 400;
+            NameColumn.Width = 450;
             // 
             // DOBColumn
             // 
             DOBColumn.HeaderText = "Data nascita";
             DOBColumn.MinimumWidth = 100;
-            DOBColumn.Name = "DOBColumn";
+            DOBColumn.Name = "PatientDOBColumn";
             DOBColumn.ReadOnly = true;
             // 
             // IDColumn
             // 
             IDColumn.HeaderText = "ID Paziente";
             IDColumn.MinimumWidth = 100;
-            IDColumn.Name = "IDColumn";
+            IDColumn.Name = "PatientIDColumn";
             IDColumn.ReadOnly = true;
             // 
             // StudyDescriptionColumn
@@ -282,17 +282,26 @@ namespace DicomModifier
             // 
             // SeriesNumberColumn
             // 
-            SeriesNumberColumn.HeaderText = "Serie";
-            SeriesNumberColumn.MinimumWidth = 100;
-            SeriesNumberColumn.Name = "SeriesNumberColumn";
-            SeriesNumberColumn.ReadOnly = true;
+            SeriesCountColumn.HeaderText = "Serie";
+            SeriesCountColumn.MinimumWidth = 75;
+            SeriesCountColumn.Name = "SeriesCountColumn";
+            SeriesCountColumn.ReadOnly = true;
+            SeriesCountColumn.Width = 75;
             // 
             // ImageNumberColumn
             // 
-            ImageNumberColumn.HeaderText = "Immagini";
-            ImageNumberColumn.MinimumWidth = 100;
-            ImageNumberColumn.Name = "ImageNumberColumn";
-            ImageNumberColumn.ReadOnly = true;
+            ImageCountColumn.HeaderText = "Immagini";
+            ImageCountColumn.MinimumWidth = 75;
+            ImageCountColumn.Name = "ImageCountColumn";
+            ImageCountColumn.ReadOnly = true;
+            ImageCountColumn.Width = 75;
+            // 
+            // StudyInstanceUID
+            // 
+            StudyInstanceUIDColumn.HeaderText = "StudyInstanceUID ";
+            StudyInstanceUIDColumn.Name = "StudyInstanceUIDColumn";
+            StudyInstanceUIDColumn.ReadOnly = true;
+            StudyInstanceUIDColumn.Visible = false;
             // 
             // MainForm
             // 
@@ -347,7 +356,8 @@ namespace DicomModifier
         private DataGridViewTextBoxColumn StudyDescriptionColumn;
         private DataGridViewTextBoxColumn StudyDateColumn;
         private DataGridViewTextBoxColumn ModalityColumn;
-        private DataGridViewTextBoxColumn SeriesNumberColumn;
-        private DataGridViewTextBoxColumn ImageNumberColumn;
+        private DataGridViewTextBoxColumn SeriesCountColumn;
+        private DataGridViewTextBoxColumn ImageCountColumn;
+        private DataGridViewTextBoxColumn StudyInstanceUIDColumn;
     }
 }
