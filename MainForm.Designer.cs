@@ -327,7 +327,7 @@ namespace DicomModifier
         private Button buttonDicomFile;
         private Button buttonFolder;
         private Button buttonDicomDir;
-        private DataGridView dataGridView1;
+        public  DataGridView dataGridView1;
         private GroupBox groupBoxPatientID;
         private Button buttonSend;
         private GroupBox groupBox1;

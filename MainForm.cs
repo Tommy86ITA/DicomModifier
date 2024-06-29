@@ -1,10 +1,9 @@
-using System;
-using System.Windows.Forms;
-
 namespace DicomModifier
 {
     public partial class MainForm : Form
     {
+        public DataGridView DataGridView1 => dataGridView1;
+
         public event EventHandler OnSelectFile;
         public event EventHandler OnSelectFolder;
         public event EventHandler OnSelectDicomDir;
@@ -16,7 +15,7 @@ namespace DicomModifier
         {
             InitializeComponent();
             InitializeEvents();
-            TableManager = new TableManager(dataGridView1);
+            TableManager = new TableManager(DataGridView1);
         }
 
         private void InitializeEvents()
@@ -30,26 +29,31 @@ namespace DicomModifier
 
         private void ButtonDicomFile_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("ButtonDicomFile_Click called");
             OnSelectFile?.Invoke(this, EventArgs.Empty);
         }
 
         private void ButtonFolder_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("ButtonFolder_Click called");
             OnSelectFolder?.Invoke(this, EventArgs.Empty);
         }
 
         private void ButtonDicomDir_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("ButtonDicomDir_Click called");
             OnSelectDicomDir?.Invoke(this, EventArgs.Empty);
         }
 
         private void ButtonSend_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("ButtonSend_Click called");
             OnSend?.Invoke(this, EventArgs.Empty);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("aboutToolStripMenuItem_Click called");
             MessageBox.Show("DICOM Modifier\nDeveloped by Thomas Amaranto - 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 

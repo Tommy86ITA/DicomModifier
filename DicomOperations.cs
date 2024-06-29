@@ -1,5 +1,4 @@
-﻿using System;
-using DicomModifier;
+﻿using DicomModifier;
 using FellowOakDicom;
 
 public class DicomOperations

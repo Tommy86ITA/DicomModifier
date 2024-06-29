@@ -1,6 +1,3 @@
-using System;
-using System.Windows.Forms;
-
 namespace DicomModifier
 {
     static class Program
@@ -8,12 +5,13 @@ namespace DicomModifier
         [STAThread]
         static void Main()
         {
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             MainForm mainForm = new MainForm();
-            DicomManager dicomManager = new DicomManager(mainForm.TableManager);
+            TableManager tableManager = new TableManager(mainForm.DataGridView1);
+            DicomManager dicomManager = new DicomManager();
+
             MainController mainController = new MainController(mainForm, dicomManager);
 
             Application.Run(mainForm);
