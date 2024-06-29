@@ -8,11 +8,14 @@ namespace DicomModifier
         [STAThread]
         static void Main()
         {
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             MainForm mainForm = new MainForm();
-            MainController mainController = new MainController(mainForm);
+            DicomManager dicomManager = new DicomManager(mainForm.TableManager);
+            MainController mainController = new MainController(mainForm, dicomManager);
+
             Application.Run(mainForm);
         }
     }

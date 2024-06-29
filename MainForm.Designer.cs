@@ -228,7 +228,7 @@ namespace DicomModifier
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new Size(151, 22);
             aboutToolStripMenuItem.Text = "About...";
-            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
+            //aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
             // impostazioniToolStripMenuItem
             // 

@@ -1,4 +1,3 @@
-using FellowOakDicom;
 using System;
 using System.Windows.Forms;
 
@@ -11,10 +10,13 @@ namespace DicomModifier
         public event EventHandler OnSelectDicomDir;
         public event EventHandler OnSend;
 
+        public TableManager TableManager { get; private set; }
+
         public MainForm()
         {
             InitializeComponent();
             InitializeEvents();
+            TableManager = new TableManager(dataGridView1);
         }
 
         private void InitializeEvents()
@@ -69,11 +71,6 @@ namespace DicomModifier
         public void UpdateProgressBar(int value)
         {
             toolStripProgressBar.Value = value;
-        }
-
-        public void AddDicomToGrid(DicomFile dicomFile)
-        {
-            // Add logic to extract information from DicomFile and add to DataGridView
         }
     }
 }

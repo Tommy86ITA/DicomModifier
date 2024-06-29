@@ -1,95 +1,62 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.IO;
-using DicomModifier;
-using FellowOakDicom;
 
-public class MainController
+namespace DicomModifier
 {
-    private ConfigManager configManager;
-    private DicomManager dicomManager;
-    private DicomOperations dicomOperations;
-    private MainForm mainForm;
-    private int totalFiles;
-    private int sentFiles;
-
-    public MainController(MainForm form)
+    public class MainController
     {
-        mainForm = form;
-        configManager = new ConfigManager("config.json");
-        dicomManager = new DicomManager();
-        dicomOperations = new DicomOperations(configManager, dicomManager);
+        private MainForm _mainForm;
+        private DicomManager _dicomManager;
 
-        mainForm.OnSelectFile += MainForm_OnSelectFile;
-        mainForm.OnSelectFolder += MainForm_OnSelectFolder;
-        mainForm.OnSelectDicomDir += MainForm_OnSelectDicomDir;
-        mainForm.OnSend += MainForm_OnSend;
-    }
-
-    private void MainForm_OnSelectFile(object sender, EventArgs e)
-    {
-        OpenFileDialog openFileDialog = new OpenFileDialog();
-        openFileDialog.Filter = "DICOM Files|*.dcm";
-        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        public MainController(MainForm mainForm, DicomManager dicomManager)
         {
-            dicomManager.AddDicomFile(openFileDialog.FileName);
-            mainForm.AddDicomToGrid(DicomFile.Open(openFileDialog.FileName));
-            totalFiles++;
-            mainForm.UpdateFileCount(sentFiles, totalFiles);
+            _mainForm = mainForm;
+            _dicomManager = dicomManager;
+
+            _mainForm.OnSelectFile += MainForm_OnSelectFile;
+            _mainForm.OnSelectFolder += MainForm_OnSelectFolder;
+            _mainForm.OnSelectDicomDir += MainForm_OnSelectDicomDir;
+            _mainForm.OnSend += MainForm_OnSend;
         }
-    }
 
-    private void MainForm_OnSelectFolder(object sender, EventArgs e)
-    {
-        FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-        if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+        private void MainForm_OnSelectFile(object sender, EventArgs e)
         {
-            var files = Directory.GetFiles(folderBrowserDialog.SelectedPath, "*.dcm");
-            foreach (var file in files)
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                dicomManager.AddDicomFile(file);
-                mainForm.AddDicomToGrid(DicomFile.Open(file));
-                totalFiles++;
-            }
-            mainForm.UpdateFileCount(sentFiles, totalFiles);
-        }
-    }
-
-    private void MainForm_OnSelectDicomDir(object sender, EventArgs e)
-    {
-        OpenFileDialog openFileDialog = new OpenFileDialog();
-        openFileDialog.Filter = "DICOMDIR Files|DICOMDIR";
-        if (openFileDialog.ShowDialog() == DialogResult.OK)
-        {
-            // Add logic to handle DICOMDIR files
-        }
-    }
-
-    private void MainForm_OnSend(object sender, EventArgs e)
-    {
-        var dicomFile = dicomManager.GetNextDicomFile();
-        if (dicomFile != null)
-        {
-            string newPatientId = mainForm.GetNewPatientId();
-            if (string.IsNullOrEmpty(newPatientId))
-            {
-                if (MessageBox.Show("Vuoi inviare i file senza modifiche?", "Conferma invio", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                openFileDialog.Filter = "DICOM Files (*.dcm)|*.dcm";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    dicomOperations.SendDicomFile(dicomFile);
-                    sentFiles++;
+                    _dicomManager.AddDicomFile(openFileDialog.FileName);
                 }
             }
-            else
+        }
+
+        private void MainForm_OnSelectFolder(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
             {
-                if (MessageBox.Show($"Vuoi inviare i file con l'ID paziente modificato a {newPatientId}?", "Conferma invio", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
                 {
-                    dicomOperations.ModifyDicomFile(dicomFile, newPatientId);
-                    dicomOperations.SendDicomFile(dicomFile);
-                    sentFiles++;
+                    _dicomManager.AddDicomFolder(folderBrowserDialog.SelectedPath);
                 }
             }
-            mainForm.UpdateFileCount(sentFiles, totalFiles);
-            mainForm.UpdateProgressBar((sentFiles * 100) / totalFiles);
+        }
+
+        private void MainForm_OnSelectDicomDir(object sender, EventArgs e)
+        {
+            //using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            //{
+            //    openFileDialog.Filter = "DICOMDIR Files (DICOMDIR)|DICOMDIR";
+            //    if (openFileDialog.ShowDialog() == DialogResult.OK)
+            //    {
+            //        _dicomManager.AddDicomDir(openFileDialog.FileName);
+            //    }
+            //}
+        }
+
+        private void MainForm_OnSend(object sender, EventArgs e)
+        {
+            // Implement sending logic here
         }
     }
 }
