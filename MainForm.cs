@@ -11,8 +11,6 @@ namespace DicomModifier
         public event EventHandler OnResetQueue;
         public event EventHandler OnUpdatePatientID;
 
-
-
         public TableManager TableManager { get; private set; }
 
         public MainForm()
@@ -30,10 +28,11 @@ namespace DicomModifier
             buttonSend.Click += ButtonSend_Click;
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             buttonResetQueue.Click += ButtonResetQueue_Click;
+            buttonUpdateID.Click += ButtonUpdateID_Click;
+            impostazioniToolStripMenuItem.Click += ImpostazioniToolStripMenuItem_Click;
+        }
 
-    }
-
-        private void ButtonResetQueue_Click(object? sender, EventArgs e)
+        private void ButtonResetQueue_Click(object sender, EventArgs e)
         {
             OnResetQueue?.Invoke(this, EventArgs.Empty);
         }
@@ -62,14 +61,22 @@ namespace DicomModifier
             OnSend?.Invoke(this, EventArgs.Empty);
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ImpostazioniToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("DICOM Modifier\nDeveloped by Thomas Amaranto - 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            using (SettingsForm settingsForm = new SettingsForm())
+            {
+                settingsForm.ShowDialog();
+            }
+        }
+
+            private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("DICOM Modifier\nDeveloped by Thomas Amaranto - 2024", "Informazioni", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public string GetNewPatientID()
         {
-            return textBoxNewID.Text;
+            return string.IsNullOrWhiteSpace(textBoxNewID.Text) ? null : textBoxNewID.Text;
         }
 
         public void UpdateStatus(string status)
@@ -87,15 +94,9 @@ namespace DicomModifier
             toolStripProgressBar.Value = value;
         }
 
-        private void buttonResetQueue_Click(object sender, EventArgs e)
-        {
-            OnResetQueue?.Invoke(this, EventArgs.Empty);
-        }
-
         public void ClearTable()
         {
             dataGridView1.Rows.Clear();
-            ClearNewPatientIDTextBox();
         }
 
         public void ClearNewPatientIDTextBox()
@@ -113,9 +114,10 @@ namespace DicomModifier
             return selectedRows;
         }
 
-        private void buttonUpdateID_Click_(object sender, EventArgs e)
+        private void ButtonUpdateID_Click(object sender, EventArgs e)
         {
             OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
         }
+
     }
 }

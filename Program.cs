@@ -10,7 +10,7 @@ namespace DicomModifier
 
             MainForm mainForm = new MainForm();
             TableManager tableManager = new TableManager(mainForm.DataGridView1);
-            DicomManager dicomManager = new DicomManager();
+            DicomManager dicomManager = new DicomManager(tableManager, mainForm);
 
             MainController mainController = new MainController(mainForm, dicomManager);
 

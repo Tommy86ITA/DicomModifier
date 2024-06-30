@@ -217,7 +217,6 @@ namespace DicomModifier
             buttonUpdateID.TabIndex = 1;
             buttonUpdateID.Text = "Modifica ID Paziente";
             buttonUpdateID.UseVisualStyleBackColor = true;
-            buttonUpdateID.Click += buttonUpdateID_Click_;
             // 
             // textBoxNewID
             // 
@@ -330,7 +329,6 @@ namespace DicomModifier
             buttonResetQueue.TabIndex = 7;
             buttonResetQueue.Text = "Pulisci";
             buttonResetQueue.UseVisualStyleBackColor = true;
-            buttonResetQueue.Click += buttonResetQueue_Click;
             // 
             // MainForm
             // 

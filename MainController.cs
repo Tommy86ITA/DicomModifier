@@ -71,35 +71,34 @@
         {
             _dicomManager.ResetQueue();
             _mainForm.ClearTable();
+            _mainForm.ClearNewPatientIDTextBox();
         }
 
         private void MainForm_OnUpdatePatientID(object sender, EventArgs e)
         {
             string newPatientID = _mainForm.GetNewPatientID();
-            if (string.IsNullOrEmpty(newPatientID))
+            if (newPatientID == null)
             {
-                MessageBox.Show("Please enter a new Patient ID.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Per favore, inserisci un nuovo ID Paziente.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             var selectedRows = _mainForm.GetSelectedRows();
-            if (selectedRows == null || selectedRows.Count == 0)
+            if (selectedRows.Count == 0)
             {
-                MessageBox.Show("Please select at least one exam from the table.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             foreach (var row in selectedRows)
             {
-                if (row.Cells["StudyInstanceUIDColumn"].Value != null)
-                {
-                    string studyInstanceUID = row.Cells["StudyInstanceUIDColumn"].Value.ToString();
-                    _dicomManager.UpdatePatientIDInFiles(studyInstanceUID, newPatientID);
-                    row.Cells["PatientIDColumn"].Value = newPatientID; // Update the table to reflect the new Patient ID
-                }
+                string studyInstanceUID = row.Cells["StudyInstanceUIDColumn"].Value.ToString();
+                _dicomManager.UpdatePatientIDInFiles(studyInstanceUID, newPatientID);
+                row.Cells["PatientIDColumn"].Value = newPatientID; // Update the displayed ID in the DataGridView
             }
 
-            MessageBox.Show("Patient ID updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("ID Paziente aggiornato con successo.", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _mainForm.ClearNewPatientIDTextBox();
         }
 
         private void MainForm_OnSend(object sender, EventArgs e)
