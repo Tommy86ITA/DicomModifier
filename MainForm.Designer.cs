@@ -37,6 +37,15 @@ namespace DicomModifier
             buttonDicomDir = new Button();
             buttonDicomFile = new Button();
             dataGridView1 = new DataGridView();
+            NameColumn = new DataGridViewTextBoxColumn();
+            DOBColumn = new DataGridViewTextBoxColumn();
+            IDColumn = new DataGridViewTextBoxColumn();
+            StudyDescriptionColumn = new DataGridViewTextBoxColumn();
+            StudyDateColumn = new DataGridViewTextBoxColumn();
+            ModalityColumn = new DataGridViewTextBoxColumn();
+            SeriesCountColumn = new DataGridViewTextBoxColumn();
+            ImageCountColumn = new DataGridViewTextBoxColumn();
+            StudyInstanceUIDColumn = new DataGridViewTextBoxColumn();
             groupBoxPatientID = new GroupBox();
             textBoxNewID = new TextBox();
             buttonSend = new Button();
@@ -50,15 +59,7 @@ namespace DicomModifier
             esciToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             impostazioniToolStripMenuItem = new ToolStripMenuItem();
-            NameColumn = new DataGridViewTextBoxColumn();
-            DOBColumn = new DataGridViewTextBoxColumn();
-            IDColumn = new DataGridViewTextBoxColumn();
-            StudyDescriptionColumn = new DataGridViewTextBoxColumn();
-            StudyDateColumn = new DataGridViewTextBoxColumn();
-            ModalityColumn = new DataGridViewTextBoxColumn();
-            SeriesCountColumn = new DataGridViewTextBoxColumn();
-            ImageCountColumn = new DataGridViewTextBoxColumn();
-            StudyInstanceUIDColumn = new DataGridViewTextBoxColumn();
+            buttonResetQueue = new Button();
             groupSelectFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBoxPatientID.SuspendLayout();
@@ -124,6 +125,73 @@ namespace DicomModifier
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(1344, 146);
             dataGridView1.TabIndex = 2;
+            // 
+            // NameColumn
+            // 
+            NameColumn.HeaderText = "Cognome e nome";
+            NameColumn.MinimumWidth = 350;
+            NameColumn.Name = "PatientNameColumn";
+            NameColumn.ReadOnly = true;
+            NameColumn.Width = 450;
+            // 
+            // DOBColumn
+            // 
+            DOBColumn.HeaderText = "Data nascita";
+            DOBColumn.MinimumWidth = 100;
+            DOBColumn.Name = "PatientDOBColumn";
+            DOBColumn.ReadOnly = true;
+            // 
+            // IDColumn
+            // 
+            IDColumn.HeaderText = "ID Paziente";
+            IDColumn.MinimumWidth = 100;
+            IDColumn.Name = "PatientIDColumn";
+            IDColumn.ReadOnly = true;
+            // 
+            // StudyDescriptionColumn
+            // 
+            StudyDescriptionColumn.HeaderText = "Descrizione studio";
+            StudyDescriptionColumn.MinimumWidth = 150;
+            StudyDescriptionColumn.Name = "StudyDescriptionColumn";
+            StudyDescriptionColumn.ReadOnly = true;
+            StudyDescriptionColumn.Width = 300;
+            // 
+            // StudyDateColumn
+            // 
+            StudyDateColumn.HeaderText = "Data esame";
+            StudyDateColumn.MinimumWidth = 100;
+            StudyDateColumn.Name = "StudyDateColumn";
+            StudyDateColumn.ReadOnly = true;
+            // 
+            // ModalityColumn
+            // 
+            ModalityColumn.HeaderText = "Modalità";
+            ModalityColumn.MinimumWidth = 100;
+            ModalityColumn.Name = "ModalityColumn";
+            ModalityColumn.ReadOnly = true;
+            // 
+            // SeriesCountColumn
+            // 
+            SeriesCountColumn.HeaderText = "Serie";
+            SeriesCountColumn.MinimumWidth = 75;
+            SeriesCountColumn.Name = "SeriesCountColumn";
+            SeriesCountColumn.ReadOnly = true;
+            SeriesCountColumn.Width = 75;
+            // 
+            // ImageCountColumn
+            // 
+            ImageCountColumn.HeaderText = "Immagini";
+            ImageCountColumn.MinimumWidth = 75;
+            ImageCountColumn.Name = "ImageCountColumn";
+            ImageCountColumn.ReadOnly = true;
+            ImageCountColumn.Width = 75;
+            // 
+            // StudyInstanceUIDColumn
+            // 
+            StudyInstanceUIDColumn.HeaderText = "StudyInstanceUID ";
+            StudyInstanceUIDColumn.Name = "StudyInstanceUIDColumn";
+            StudyInstanceUIDColumn.ReadOnly = true;
+            StudyInstanceUIDColumn.Visible = false;
             // 
             // groupBoxPatientID
             // 
@@ -236,72 +304,16 @@ namespace DicomModifier
             impostazioniToolStripMenuItem.Size = new Size(151, 22);
             impostazioniToolStripMenuItem.Text = "Impostazioni...";
             // 
-            // NameColumn
+            // buttonResetQueue
             // 
-            NameColumn.HeaderText = "Cognome e nome";
-            NameColumn.MinimumWidth = 350;
-            NameColumn.Name = "PatientNameColumn";
-            NameColumn.ReadOnly = true;
-            NameColumn.Width = 450;
-            // 
-            // DOBColumn
-            // 
-            DOBColumn.HeaderText = "Data nascita";
-            DOBColumn.MinimumWidth = 100;
-            DOBColumn.Name = "PatientDOBColumn";
-            DOBColumn.ReadOnly = true;
-            // 
-            // IDColumn
-            // 
-            IDColumn.HeaderText = "ID Paziente";
-            IDColumn.MinimumWidth = 100;
-            IDColumn.Name = "PatientIDColumn";
-            IDColumn.ReadOnly = true;
-            // 
-            // StudyDescriptionColumn
-            // 
-            StudyDescriptionColumn.HeaderText = "Descrizione studio";
-            StudyDescriptionColumn.MinimumWidth = 150;
-            StudyDescriptionColumn.Name = "StudyDescriptionColumn";
-            StudyDescriptionColumn.ReadOnly = true;
-            StudyDescriptionColumn.Width = 300;
-            // 
-            // StudyDateColumn
-            // 
-            StudyDateColumn.HeaderText = "Data esame";
-            StudyDateColumn.MinimumWidth = 100;
-            StudyDateColumn.Name = "StudyDateColumn";
-            StudyDateColumn.ReadOnly = true;
-            // 
-            // ModalityColumn
-            // 
-            ModalityColumn.HeaderText = "Modalità";
-            ModalityColumn.MinimumWidth = 100;
-            ModalityColumn.Name = "ModalityColumn";
-            ModalityColumn.ReadOnly = true;
-            // 
-            // SeriesNumberColumn
-            // 
-            SeriesCountColumn.HeaderText = "Serie";
-            SeriesCountColumn.MinimumWidth = 75;
-            SeriesCountColumn.Name = "SeriesCountColumn";
-            SeriesCountColumn.ReadOnly = true;
-            SeriesCountColumn.Width = 75;
-            // 
-            // ImageNumberColumn
-            // 
-            ImageCountColumn.HeaderText = "Immagini";
-            ImageCountColumn.MinimumWidth = 75;
-            ImageCountColumn.Name = "ImageCountColumn";
-            ImageCountColumn.ReadOnly = true;
-            ImageCountColumn.Width = 75;
-            // 
-            // StudyInstanceUID
-            // 
-            StudyInstanceUIDColumn.HeaderText = "StudyInstanceUID ";
-            StudyInstanceUIDColumn.Name = "StudyInstanceUIDColumn";
-            StudyInstanceUIDColumn.ReadOnly = true;
-            StudyInstanceUIDColumn.Visible = false;
+            buttonResetQueue.Location = new Point(1233, 268);
+            buttonResetQueue.Margin = new Padding(2, 1, 2, 1);
+            buttonResetQueue.Name = "buttonResetQueue";
+            buttonResetQueue.Size = new Size(129, 31);
+            buttonResetQueue.TabIndex = 7;
+            buttonResetQueue.Text = "Pulisci";
+            buttonResetQueue.UseVisualStyleBackColor = true;
+            buttonResetQueue.Click += buttonResetQueue_Click;
             // 
             // MainForm
             // 
@@ -309,6 +321,7 @@ namespace DicomModifier
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             ClientSize = new Size(1380, 457);
+            Controls.Add(buttonResetQueue);
             Controls.Add(statusStrip);
             Controls.Add(groupBox1);
             Controls.Add(groupBoxPatientID);
@@ -359,5 +372,6 @@ namespace DicomModifier
         private DataGridViewTextBoxColumn SeriesCountColumn;
         private DataGridViewTextBoxColumn ImageCountColumn;
         private DataGridViewTextBoxColumn StudyInstanceUIDColumn;
+        private Button buttonResetQueue;
     }
 }

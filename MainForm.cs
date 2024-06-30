@@ -8,6 +8,7 @@ namespace DicomModifier
         public event EventHandler OnSelectFolder;
         public event EventHandler OnSelectDicomDir;
         public event EventHandler OnSend;
+        public event EventHandler OnResetQueue;
 
         public TableManager TableManager { get; private set; }
 
@@ -25,6 +26,12 @@ namespace DicomModifier
             buttonDicomDir.Click += ButtonDicomDir_Click;
             buttonSend.Click += ButtonSend_Click;
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
+            buttonResetQueue.Click += ButtonResetQueue_Click;
+        }
+
+        private void ButtonResetQueue_Click(object? sender, EventArgs e)
+        {
+            OnResetQueue?.Invoke(this, EventArgs.Empty);
         }
 
         private void ButtonDicomFile_Click(object sender, EventArgs e)
@@ -75,6 +82,11 @@ namespace DicomModifier
         public void UpdateProgressBar(int value)
         {
             toolStripProgressBar.Value = value;
+        }
+
+        private void buttonResetQueue_Click(object sender, EventArgs e)
+        {
+            OnResetQueue?.Invoke(this, EventArgs.Empty);
         }
     }
 }

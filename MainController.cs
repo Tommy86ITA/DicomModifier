@@ -20,6 +20,9 @@
         {
             using (var openFileDialog = new OpenFileDialog())
             {
+                openFileDialog.Filter = "DICOM files (*.dcm)|*.dcm|All files (*.*)|*.*";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     _dicomManager.AddDicomFile(openFileDialog.FileName);
@@ -32,6 +35,7 @@
         {
             using (var folderBrowserDialog = new FolderBrowserDialog())
             {
+
                 if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
                 {
                     _dicomManager.AddDicomFolder(folderBrowserDialog.SelectedPath);
@@ -47,6 +51,11 @@
         {
             using (var openFileDialog = new OpenFileDialog())
             {
+                openFileDialog.Filter = "DICOMDIR files (DICOMDIR)|DICOMDIR|All files (*.*)|*.*";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+
+
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     _dicomManager.AddDicomDir(openFileDialog.FileName);
