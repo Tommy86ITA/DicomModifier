@@ -37,9 +37,9 @@ namespace DicomModifier
             buttonDicomDir = new Button();
             buttonDicomFile = new Button();
             dataGridView1 = new DataGridView();
-            NameColumn = new DataGridViewTextBoxColumn();
-            DOBColumn = new DataGridViewTextBoxColumn();
-            IDColumn = new DataGridViewTextBoxColumn();
+            PatientNameColumn = new DataGridViewTextBoxColumn();
+            PatientDOBColumn = new DataGridViewTextBoxColumn();
+            PatientIDColumn = new DataGridViewTextBoxColumn();
             StudyDescriptionColumn = new DataGridViewTextBoxColumn();
             StudyDateColumn = new DataGridViewTextBoxColumn();
             ModalityColumn = new DataGridViewTextBoxColumn();
@@ -47,6 +47,7 @@ namespace DicomModifier
             ImageCountColumn = new DataGridViewTextBoxColumn();
             StudyInstanceUIDColumn = new DataGridViewTextBoxColumn();
             groupBoxPatientID = new GroupBox();
+            buttonUpdateID = new Button();
             textBoxNewID = new TextBox();
             buttonSend = new Button();
             groupBox1 = new GroupBox();
@@ -113,10 +114,11 @@ namespace DicomModifier
             // 
             // dataGridView1
             // 
+            dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { NameColumn, DOBColumn, IDColumn, StudyDescriptionColumn, StudyDateColumn, ModalityColumn, SeriesCountColumn, ImageCountColumn, StudyInstanceUIDColumn });
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { PatientNameColumn, PatientDOBColumn, PatientIDColumn, StudyDescriptionColumn, StudyDateColumn, ModalityColumn, SeriesCountColumn, ImageCountColumn, StudyInstanceUIDColumn });
             dataGridView1.Location = new Point(18, 108);
             dataGridView1.Margin = new Padding(2, 1, 2, 1);
             dataGridView1.Name = "dataGridView1";
@@ -126,27 +128,27 @@ namespace DicomModifier
             dataGridView1.Size = new Size(1344, 146);
             dataGridView1.TabIndex = 2;
             // 
-            // NameColumn
+            // PatientNameColumn
             // 
-            NameColumn.HeaderText = "Cognome e nome";
-            NameColumn.MinimumWidth = 350;
-            NameColumn.Name = "PatientNameColumn";
-            NameColumn.ReadOnly = true;
-            NameColumn.Width = 450;
+            PatientNameColumn.HeaderText = "Cognome e nome";
+            PatientNameColumn.MinimumWidth = 350;
+            PatientNameColumn.Name = "PatientNameColumn";
+            PatientNameColumn.ReadOnly = true;
+            PatientNameColumn.Width = 450;
             // 
-            // DOBColumn
+            // PatientDOBColumn
             // 
-            DOBColumn.HeaderText = "Data nascita";
-            DOBColumn.MinimumWidth = 100;
-            DOBColumn.Name = "PatientDOBColumn";
-            DOBColumn.ReadOnly = true;
+            PatientDOBColumn.HeaderText = "Data nascita";
+            PatientDOBColumn.MinimumWidth = 100;
+            PatientDOBColumn.Name = "PatientDOBColumn";
+            PatientDOBColumn.ReadOnly = true;
             // 
-            // IDColumn
+            // PatientIDColumn
             // 
-            IDColumn.HeaderText = "ID Paziente";
-            IDColumn.MinimumWidth = 100;
-            IDColumn.Name = "PatientIDColumn";
-            IDColumn.ReadOnly = true;
+            PatientIDColumn.HeaderText = "ID Paziente";
+            PatientIDColumn.MinimumWidth = 100;
+            PatientIDColumn.Name = "PatientIDColumn";
+            PatientIDColumn.ReadOnly = true;
             // 
             // StudyDescriptionColumn
             // 
@@ -195,6 +197,7 @@ namespace DicomModifier
             // 
             // groupBoxPatientID
             // 
+            groupBoxPatientID.Controls.Add(buttonUpdateID);
             groupBoxPatientID.Controls.Add(textBoxNewID);
             groupBoxPatientID.Location = new Point(300, 307);
             groupBoxPatientID.Margin = new Padding(2, 1, 2, 1);
@@ -205,13 +208,27 @@ namespace DicomModifier
             groupBoxPatientID.TabStop = false;
             groupBoxPatientID.Text = "Nuovo ID Paziente (opzionale)";
             // 
+            // buttonUpdateID
+            // 
+            buttonUpdateID.Location = new Point(172, 30);
+            buttonUpdateID.Margin = new Padding(2, 1, 2, 1);
+            buttonUpdateID.Name = "buttonUpdateID";
+            buttonUpdateID.Size = new Size(129, 31);
+            buttonUpdateID.TabIndex = 1;
+            buttonUpdateID.Text = "Modifica ID Paziente";
+            buttonUpdateID.UseVisualStyleBackColor = true;
+            buttonUpdateID.Click += buttonUpdateID_Click_;
+            // 
             // textBoxNewID
             // 
-            textBoxNewID.Location = new Point(53, 35);
+            textBoxNewID.Location = new Point(10, 35);
             textBoxNewID.Margin = new Padding(2, 1, 2, 1);
             textBoxNewID.Name = "textBoxNewID";
-            textBoxNewID.Size = new Size(205, 23);
+            textBoxNewID.PlaceholderText = "Inserire qui il nuovo ID";
+            textBoxNewID.ShortcutsEnabled = false;
+            textBoxNewID.Size = new Size(135, 23);
             textBoxNewID.TabIndex = 0;
+            textBoxNewID.WordWrap = false;
             // 
             // buttonSend
             // 
@@ -363,15 +380,16 @@ namespace DicomModifier
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStripMenuItem impostazioniToolStripMenuItem;
         private ToolStripStatusLabel toolStripStatusLabelDev;
-        private DataGridViewTextBoxColumn NameColumn;
-        private DataGridViewTextBoxColumn DOBColumn;
-        private DataGridViewTextBoxColumn IDColumn;
+        private Button buttonResetQueue;
+        private Button buttonUpdateID;
+        private DataGridViewTextBoxColumn PatientNameColumn;
+        private DataGridViewTextBoxColumn PatientDOBColumn;
+        private DataGridViewTextBoxColumn PatientIDColumn;
         private DataGridViewTextBoxColumn StudyDescriptionColumn;
         private DataGridViewTextBoxColumn StudyDateColumn;
         private DataGridViewTextBoxColumn ModalityColumn;
         private DataGridViewTextBoxColumn SeriesCountColumn;
         private DataGridViewTextBoxColumn ImageCountColumn;
         private DataGridViewTextBoxColumn StudyInstanceUIDColumn;
-        private Button buttonResetQueue;
     }
 }

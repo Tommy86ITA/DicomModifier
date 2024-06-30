@@ -9,6 +9,9 @@ namespace DicomModifier
         public event EventHandler OnSelectDicomDir;
         public event EventHandler OnSend;
         public event EventHandler OnResetQueue;
+        public event EventHandler OnUpdatePatientID;
+
+
 
         public TableManager TableManager { get; private set; }
 
@@ -27,7 +30,8 @@ namespace DicomModifier
             buttonSend.Click += ButtonSend_Click;
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             buttonResetQueue.Click += ButtonResetQueue_Click;
-        }
+
+    }
 
         private void ButtonResetQueue_Click(object? sender, EventArgs e)
         {
@@ -60,11 +64,10 @@ namespace DicomModifier
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("aboutToolStripMenuItem_Click called");
             MessageBox.Show("DICOM Modifier\nDeveloped by Thomas Amaranto - 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        public string GetNewPatientId()
+        public string GetNewPatientID()
         {
             return textBoxNewID.Text;
         }
@@ -87,6 +90,32 @@ namespace DicomModifier
         private void buttonResetQueue_Click(object sender, EventArgs e)
         {
             OnResetQueue?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void ClearTable()
+        {
+            dataGridView1.Rows.Clear();
+            ClearNewPatientIDTextBox();
+        }
+
+        public void ClearNewPatientIDTextBox()
+        {
+            textBoxNewID.Clear();
+        }
+
+        public List<DataGridViewRow> GetSelectedRows()
+        {
+            List<DataGridViewRow> selectedRows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            {
+                selectedRows.Add(row);
+            }
+            return selectedRows;
+        }
+
+        private void buttonUpdateID_Click_(object sender, EventArgs e)
+        {
+            OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
         }
     }
 }

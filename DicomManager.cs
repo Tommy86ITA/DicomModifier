@@ -1,60 +1,34 @@
-﻿using FellowOakDicom;
-using FellowOakDicom.Media;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using FellowOakDicom;
+using FellowOakDicom.Media;
 
 namespace DicomModifier
 {
     public class DicomManager
     {
         private Queue<string> dicomQueue;
-        private HashSet<string> loadedFiles;
         private string dicomDirBasePath;
-        private string currentPatientID;
 
         public DicomManager()
         {
             dicomQueue = new Queue<string>();
-            loadedFiles = new HashSet<string>();
         }
-
-        public event EventHandler<string> OnError;
 
         public void AddDicomFile(string filePath)
         {
-            if (loadedFiles.Contains(filePath))
-            {
-                OnError?.Invoke(this, "File already loaded: " + filePath);
-                return;
-            }
-
-            var dicomFile = DicomFile.Open(filePath);
-            var patientID = dicomFile.Dataset.GetString(DicomTag.PatientID);
-            if (currentPatientID != null && currentPatientID != patientID)
-            {
-                OnError?.Invoke(this, "Cannot load files from different patients.");
-                return;
-            }
-
-            if (currentPatientID == null)
-            {
-                currentPatientID = patientID;
-            }
-
             dicomQueue.Enqueue(filePath);
-            loadedFiles.Add(filePath);
         }
 
         public void AddDicomFiles(IEnumerable<string> filePaths)
         {
             foreach (var filePath in filePaths)
             {
-                AddDicomFile(filePath);
+                dicomQueue.Enqueue(filePath);
             }
         }
-
 
         public void AddDicomDir(string dicomDirPath)
         {
@@ -140,11 +114,22 @@ namespace DicomModifier
             return DicomFile.Open(filePath).Dataset;
         }
 
-        public void ClearQueue()
+        public void ResetQueue()
         {
             dicomQueue.Clear();
-            loadedFiles.Clear();
-            currentPatientID = null;
+        }
+
+        public void UpdatePatientIDInFiles(string studyInstanceUID, string newPatientID)
+        {
+            foreach (var filePath in dicomQueue)
+            {
+                var dicomFile = DicomFile.Open(filePath);
+                if (dicomFile.Dataset.GetSingleValue<string>(DicomTag.StudyInstanceUID) == studyInstanceUID)
+                {
+                    dicomFile.Dataset.AddOrUpdate(DicomTag.PatientID, newPatientID);
+                    dicomFile.Save(filePath); // Save the updated file
+                }
+            }
         }
     }
 }
