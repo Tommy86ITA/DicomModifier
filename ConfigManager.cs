@@ -2,7 +2,7 @@
 
 public class ConfigManager
 {
-    private string configFilePath;
+    private readonly string configFilePath;
     private dynamic configData;
 
     public ConfigManager(string filePath)

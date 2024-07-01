@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json;
 
 namespace DicomModifier
 {
@@ -13,7 +10,7 @@ namespace DicomModifier
         public string Timeout { get; set; }
         public string LocalAETitle { get; set; }
 
-        private static string configFilePath = "config.json";
+        private static readonly string configFilePath = "config.json";
 
         public static PACSSettings LoadSettings()
         {

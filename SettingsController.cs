@@ -1,14 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Text.Json;
-using System.Windows.Forms;
+﻿using System.Text.Json;
 
 namespace DicomModifier
 {
     public class SettingsController
     {
         private const string ConfigFilePath = "Config.json";
-        private MainForm _mainForm;
+        private readonly MainForm _mainForm;
 
         public SettingsController(MainForm mainForm)
         {

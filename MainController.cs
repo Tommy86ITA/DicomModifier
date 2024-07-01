@@ -2,9 +2,9 @@
 {
     public class MainController
     {
-        private MainForm _mainForm;
-        private DicomManager _dicomManager;
-        private PACSSettings _settings;
+        private readonly MainForm _mainForm;
+        private readonly DicomManager _dicomManager;
+        private readonly PACSSettings _settings;
 
         public MainController(MainForm mainForm, DicomManager dicomManager)
         {

@@ -1,8 +1,4 @@
 ﻿using FellowOakDicom.Network;
-using FellowOakDicom;
-using System;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using FellowOakDicom.Network.Client;
 
 namespace DicomModifier

@@ -1,12 +1,10 @@
-﻿using System.Linq;
-using System.Windows.Forms;
-using FellowOakDicom;
+﻿using FellowOakDicom;
 
 namespace DicomModifier
 {
     public class TableManager
     {
-        private DataGridView _dataGridView;
+        private readonly DataGridView _dataGridView;
 
         public TableManager(DataGridView dataGridView)
         {

@@ -15,7 +15,7 @@ namespace DicomModifier
         public event EventHandler OnUpdatePatientID;
 
         public TableManager TableManager { get; private set; }
-        private SettingsController _settingsController;
+        private readonly SettingsController _settingsController;
         private PACSSettings _settings;
 
         public MainForm()
@@ -27,6 +27,9 @@ namespace DicomModifier
             // Inizializza le impostazioni
             _settingsController = new SettingsController(this);
             _settings = _settingsController.LoadSettings();
+
+            // Aggiorna lo stato dei pulsanti all'avvio
+            UpdateButtonStates();
         }
 
         private void InitializeEvents()
@@ -39,29 +42,48 @@ namespace DicomModifier
             settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             buttonResetQueue.Click += ButtonResetQueue_Click;
             buttonUpdateID.Click += ButtonUpdateID_Click;
+
+            // Eventi per aggiornare lo stato dei pulsanti
+            dataGridView1.RowsAdded += (s, e) => UpdateButtonStates();
+            dataGridView1.RowsRemoved += (s, e) => UpdateButtonStates();
+            textBoxNewID.TextChanged += (s, e) => UpdateButtonStates();
+        }
+
+        private void UpdateButtonStates()
+        {
+            bool hasRows = dataGridView1.Rows.Count > 0;
+            bool hasNewID = !string.IsNullOrEmpty(textBoxNewID.Text);
+
+            buttonSend.Enabled = hasRows;
+            buttonUpdateID.Enabled = hasRows && hasNewID;
+            buttonResetQueue.Enabled = hasRows;
         }
 
         private void ButtonResetQueue_Click(object sender, EventArgs e)
         {
             OnResetQueue?.Invoke(this, EventArgs.Empty);
+            UpdateButtonStates();
         }
 
         private void ButtonDicomFile_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ButtonDicomFile_Click called");
             OnSelectFile?.Invoke(this, EventArgs.Empty);
+            UpdateButtonStates();
         }
 
         private void ButtonFolder_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ButtonFolder_Click called");
             OnSelectFolder?.Invoke(this, EventArgs.Empty);
+            UpdateButtonStates();
         }
 
         private void ButtonDicomDir_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ButtonDicomDir_Click called");
             OnSelectDicomDir?.Invoke(this, EventArgs.Empty);
+            UpdateButtonStates();
         }
 
         private void ButtonSend_Click(object sender, EventArgs e)
@@ -110,11 +132,13 @@ namespace DicomModifier
         public void ClearTable()
         {
             dataGridView1.Rows.Clear();
+            UpdateButtonStates();
         }
 
         public void ClearNewPatientIDTextBox()
         {
             textBoxNewID.Clear();
+            UpdateButtonStates();
         }
 
         public List<DataGridViewRow> GetSelectedRows()

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Net;
-using System.Windows.Forms;
+﻿using System.Net;
 
 namespace DicomModifier
 {
     public partial class SettingsForm : Form
     {
-        private PACSSettings _settings;
-        private SettingsController _settingsController;
+        private readonly PACSSettings _settings;
+        private readonly SettingsController _settingsController;
 
         public SettingsForm(PACSSettings settings, SettingsController settingsController)
         {

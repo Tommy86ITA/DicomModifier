@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using FellowOakDicom;
+﻿using FellowOakDicom;
 using FellowOakDicom.Media;
-using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace DicomModifier
 {
     public class DicomManager
     {
-        private Queue<string> dicomQueue;
+        private readonly Queue<string> dicomQueue;
         private string dicomDirBasePath;
-        private TableManager _tableManager;
-        private MainForm _mainForm;
+        private readonly TableManager _tableManager;
+        private readonly MainForm _mainForm;
 
         public DicomManager(TableManager tableManager, MainForm mainForm)
         {

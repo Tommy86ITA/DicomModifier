@@ -3,8 +3,8 @@ using FellowOakDicom;
 
 public class DicomOperations
 {
-    private ConfigManager configManager;
-    private DicomManager dicomManager;
+    private readonly ConfigManager configManager;
+    private readonly DicomManager dicomManager;
 
     public DicomOperations(ConfigManager config, DicomManager manager)
     {
