@@ -197,6 +197,12 @@
             groupBoxLocalAE.ResumeLayout(false);
             groupBoxLocalAE.PerformLayout();
             ResumeLayout(false);
+
+            this.textBoxServerPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxServerPort_KeyPress);
+            this.textBoxTimeout.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxTimeout_KeyPress);
+            this.textBoxServerIP.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxServerIP_KeyPress);
+            this.textBoxServerPort.TextChanged += new System.EventHandler(this.TextBoxServerPort_TextChanged);
+
         }
 
         #endregion
@@ -215,5 +221,6 @@
         private TextBox textBoxAETitle;
         private Label labelServerAE;
         private TextBox textBoxLocalAETitle;
+
     }
 }

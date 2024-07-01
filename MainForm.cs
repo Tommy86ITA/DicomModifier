@@ -16,6 +16,7 @@ namespace DicomModifier
 
         public TableManager TableManager { get; private set; }
         private SettingsController _settingsController;
+        private PACSSettings _settings;
 
         public MainForm()
         {
@@ -23,9 +24,9 @@ namespace DicomModifier
             InitializeEvents();
             TableManager = new TableManager(DataGridView1);
 
-            // Carica le impostazioni all'avvio
+            // Inizializza le impostazioni
             _settingsController = new SettingsController(this);
-            _settingsController.LoadSettings();
+            _settings = _settingsController.LoadSettings();
         }
 
         private void InitializeEvents()
@@ -76,13 +77,12 @@ namespace DicomModifier
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var settingsForm = new SettingsForm())
+            using (var settingsForm = new SettingsForm(_settings, _settingsController))
             {
-                settingsForm.LoadSettings(_settingsController.LoadSettings());
                 if (settingsForm.ShowDialog() == DialogResult.OK)
                 {
-                    _settingsController.SaveSettings(settingsForm.GetSettings());
-                    MessageBox.Show("Impostazioni salvate correttamente", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    _settings = settingsForm.GetSettings();
+                    _settingsController.SaveSettings(_settings);
                 }
             }
         }

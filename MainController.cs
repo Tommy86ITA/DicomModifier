@@ -4,11 +4,13 @@
     {
         private MainForm _mainForm;
         private DicomManager _dicomManager;
+        private PACSSettings _settings;
 
         public MainController(MainForm mainForm, DicomManager dicomManager)
         {
             _mainForm = mainForm;
             _dicomManager = dicomManager;
+
 
             _mainForm.OnSelectFile += MainForm_OnSelectFile;
             _mainForm.OnSelectFolder += MainForm_OnSelectFolder;

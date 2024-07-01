@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Windows.Forms;
 
 namespace DicomModifier
 {
@@ -18,20 +19,20 @@ namespace DicomModifier
         {
             if (!File.Exists(ConfigFilePath))
             {
-                _mainForm.UpdateStatus("Config.json non trovato. Impostazioni non caricate.");
+                MessageBox.Show("Il file di configurazione non esiste. Verranno utilizzate le impostazioni predefinite.", "Avviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return new PACSSettings();
             }
 
             try
             {
                 var json = File.ReadAllText(ConfigFilePath);
-                var settings = JsonConvert.DeserializeObject<PACSSettings>(json);
+                var settings = JsonSerializer.Deserialize<PACSSettings>(json);
                 _mainForm.UpdateStatus("Impostazioni caricate correttamente.");
                 return settings;
             }
             catch (Exception ex)
             {
-                _mainForm.UpdateStatus($"Errore durante il caricamento delle impostazioni: {ex.Message}");
+                MessageBox.Show($"Errore durante il caricamento delle impostazioni: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return new PACSSettings();
             }
         }
@@ -40,13 +41,13 @@ namespace DicomModifier
         {
             try
             {
-                var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
+                var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(ConfigFilePath, json);
                 _mainForm.UpdateStatus("Impostazioni salvate correttamente.");
             }
             catch (Exception ex)
             {
-                _mainForm.UpdateStatus($"Errore durante il salvataggio delle impostazioni: {ex.Message}");
+                MessageBox.Show($"Errore durante il salvataggio delle impostazioni: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
