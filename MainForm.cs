@@ -1,3 +1,6 @@
+using System;
+using System.Windows.Forms;
+
 namespace DicomModifier
 {
     public partial class MainForm : Form
@@ -12,12 +15,17 @@ namespace DicomModifier
         public event EventHandler OnUpdatePatientID;
 
         public TableManager TableManager { get; private set; }
+        private SettingsController _settingsController;
 
         public MainForm()
         {
             InitializeComponent();
             InitializeEvents();
             TableManager = new TableManager(DataGridView1);
+
+            // Carica le impostazioni all'avvio
+            _settingsController = new SettingsController(this);
+            _settingsController.LoadSettings();
         }
 
         private void InitializeEvents()
@@ -27,9 +35,9 @@ namespace DicomModifier
             buttonDicomDir.Click += ButtonDicomDir_Click;
             buttonSend.Click += ButtonSend_Click;
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
+            settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             buttonResetQueue.Click += ButtonResetQueue_Click;
             buttonUpdateID.Click += ButtonUpdateID_Click;
-            impostazioniToolStripMenuItem.Click += ImpostazioniToolStripMenuItem_Click;
         }
 
         private void ButtonResetQueue_Click(object sender, EventArgs e)
@@ -61,22 +69,27 @@ namespace DicomModifier
             OnSend?.Invoke(this, EventArgs.Empty);
         }
 
-        private void ImpostazioniToolStripMenuItem_Click(object sender, EventArgs e)
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (SettingsForm settingsForm = new SettingsForm())
-            {
-                settingsForm.ShowDialog();
-            }
+            MessageBox.Show("DICOM Modifier\nDeveloped by Thomas Amaranto - 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-            private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("DICOM Modifier\nDeveloped by Thomas Amaranto - 2024", "Informazioni", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            using (var settingsForm = new SettingsForm())
+            {
+                settingsForm.LoadSettings(_settingsController.LoadSettings());
+                if (settingsForm.ShowDialog() == DialogResult.OK)
+                {
+                    _settingsController.SaveSettings(settingsForm.GetSettings());
+                    MessageBox.Show("Impostazioni salvate correttamente", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
 
         public string GetNewPatientID()
         {
-            return string.IsNullOrWhiteSpace(textBoxNewID.Text) ? null : textBoxNewID.Text;
+            return textBoxNewID.Text;
         }
 
         public void UpdateStatus(string status)
@@ -118,6 +131,5 @@ namespace DicomModifier
         {
             OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
         }
-
     }
 }

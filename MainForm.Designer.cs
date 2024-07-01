@@ -59,7 +59,7 @@ namespace DicomModifier
             toolStripDropDownButton = new ToolStripDropDownButton();
             esciToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
-            impostazioniToolStripMenuItem = new ToolStripMenuItem();
+            settingsToolStripMenuItem = new ToolStripMenuItem();
             buttonResetQueue = new Button();
             groupSelectFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -295,7 +295,7 @@ namespace DicomModifier
             // 
             toolStripDropDownButton.AutoSize = false;
             toolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, aboutToolStripMenuItem, impostazioniToolStripMenuItem });
+            toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, aboutToolStripMenuItem, settingsToolStripMenuItem });
             toolStripDropDownButton.Image = Properties.Resources.settings_icon;
             toolStripDropDownButton.ImageTransparentColor = Color.Magenta;
             toolStripDropDownButton.Name = "toolStripDropDownButton";
@@ -305,20 +305,20 @@ namespace DicomModifier
             // esciToolStripMenuItem
             // 
             esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-            esciToolStripMenuItem.Size = new Size(151, 22);
+            esciToolStripMenuItem.Size = new Size(180, 22);
             esciToolStripMenuItem.Text = "Esci";
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(151, 22);
+            aboutToolStripMenuItem.Size = new Size(180, 22);
             aboutToolStripMenuItem.Text = "About...";
             // 
-            // impostazioniToolStripMenuItem
+            // settingsToolStripMenuItem
             // 
-            impostazioniToolStripMenuItem.Name = "impostazioniToolStripMenuItem";
-            impostazioniToolStripMenuItem.Size = new Size(151, 22);
-            impostazioniToolStripMenuItem.Text = "Impostazioni...";
+            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            settingsToolStripMenuItem.Size = new Size(180, 22);
+            settingsToolStripMenuItem.Text = "Impostazioni...";
             // 
             // buttonResetQueue
             // 
@@ -376,7 +376,7 @@ namespace DicomModifier
         private ToolStripDropDownButton toolStripDropDownButton;
         private ToolStripMenuItem esciToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
-        private ToolStripMenuItem impostazioniToolStripMenuItem;
+        private ToolStripMenuItem settingsToolStripMenuItem;
         private ToolStripStatusLabel toolStripStatusLabelDev;
         private Button buttonResetQueue;
         private Button buttonUpdateID;

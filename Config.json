@@ -1,0 +1,7 @@
+{
+  "AETitle": "MB_THOMAS",
+  "LocalAETitle": "DICOM_MOD",
+  "ServerIP": "192.168.0.131",
+  "ServerPort": "104",
+  "Timeout": "30"
+}
