@@ -74,6 +74,8 @@
 
         private async void buttonCEcho_Click(object sender, EventArgs e)
         {
+            buttonEchoTest.Text = "Test in corso...";
+            this.Enabled = false;
             var communicator = new PACSCommunicator(_settings, _progressManager);
             bool success = await communicator.SendCEcho();
             if (success)
@@ -84,6 +86,8 @@
             {
                 MessageBox.Show("C-ECHO fallito.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            buttonEchoTest.Text = "Esegui C-ECHO";
+            this.Enabled = true;
         }
 
         private void TextBoxServerPort_KeyPress(object sender, KeyPressEventArgs e)
