@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DicomModifier
@@ -17,7 +18,7 @@ namespace DicomModifier
         {
             _mainForm = mainForm;
             _dicomManager = dicomManager;
-            _communicator = new PACSCommunicator(settings);
+            _communicator = new PACSCommunicator(settings, _mainForm.GetProgressManager());
             _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
 
             _mainForm.OnSelectFile += MainForm_OnSelectFile;
@@ -88,6 +89,7 @@ namespace DicomModifier
             _dicomManager.ResetQueue();
             _mainForm.ClearTable();
             _mainForm.ClearNewPatientIDTextBox();
+            ResetUIState();
         }
 
         private void MainForm_OnUpdatePatientID(object sender, EventArgs e)
@@ -119,10 +121,12 @@ namespace DicomModifier
 
         private async void MainForm_OnSend(object sender, EventArgs e)
         {
+            _mainForm.DisableControls();
             var selectedRows = _mainForm.GetSelectedRows();
             if (selectedRows.Count == 0)
             {
                 MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _mainForm.EnableControls();
                 return;
             }
 
@@ -130,6 +134,7 @@ namespace DicomModifier
             if (!Directory.Exists(_tempDirectory))
             {
                 MessageBox.Show("La cartella temporanea non esiste.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _mainForm.EnableControls();
                 return;
             }
 
@@ -137,6 +142,7 @@ namespace DicomModifier
             if (filePaths.Count == 0)
             {
                 MessageBox.Show("Nessun file trovato nella cartella temporanea per l'invio.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _mainForm.EnableControls();
                 return;
             }
 
@@ -144,11 +150,34 @@ namespace DicomModifier
             if (success)
             {
                 MessageBox.Show("Invio dei file riuscito!", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                _dicomManager.ResetQueue();
+                _mainForm.ClearTable();
+                _mainForm.ClearNewPatientIDTextBox();
+                ClearTemporaryFolder();
             }
             else
             {
                 MessageBox.Show("Invio dei file fallito.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            _mainForm.EnableControls();
+        }
+
+        private void ClearTemporaryFolder()
+        {
+            if (Directory.Exists(_tempDirectory))
+            {
+                Directory.Delete(_tempDirectory, true);
+                Directory.CreateDirectory(_tempDirectory);
+            }
+        }
+
+        private void ResetUIState()
+        {
+            _mainForm.EnableControls();
+            _mainForm.UpdateFileCount(0, 0);
+            _mainForm.UpdateProgressBar(0);
+            _mainForm.UpdateStatus("Pronto.");
         }
     }
 }

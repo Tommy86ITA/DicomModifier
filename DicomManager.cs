@@ -10,25 +10,24 @@ namespace DicomModifier
         private string dicomDirBasePath;
         private readonly TableManager _tableManager;
         private readonly MainForm _mainForm;
-        private readonly string _tempDirectory;
+        private readonly string _tempFolder;
 
         public DicomManager(TableManager tableManager, MainForm mainForm)
         {
             dicomQueue = new Queue<string>();
             _tableManager = tableManager;
             _mainForm = mainForm;
-            _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
+            _tempFolder = Path.Combine(Path.GetTempPath(), "DicomModifier");
 
-            // Ensure the temporary directory exists
-            if (!Directory.Exists(_tempDirectory))
+            if (!Directory.Exists(_tempFolder))
             {
-                Directory.CreateDirectory(_tempDirectory);
+                Directory.CreateDirectory(_tempFolder);
             }
         }
 
         public void AddDicomFile(string filePath)
         {
-            string tempFilePath = CopyFileToTempDirectory(filePath);
+            string tempFilePath = CopyToTempFolder(filePath);
             dicomQueue.Enqueue(tempFilePath);
         }
 
@@ -36,7 +35,8 @@ namespace DicomModifier
         {
             foreach (var filePath in filePaths)
             {
-                AddDicomFile(filePath);
+                string tempFilePath = CopyToTempFolder(filePath);
+                dicomQueue.Enqueue(tempFilePath);
             }
         }
 
@@ -124,31 +124,11 @@ namespace DicomModifier
             return DicomFile.Open(filePath).Dataset;
         }
 
-        public void CopyFilesToTempFolder(string tempFolder)
+        private string CopyToTempFolder(string filePath)
         {
-            if (!Directory.Exists(tempFolder))
-            {
-                Directory.CreateDirectory(tempFolder);
-            }
-
-            int totalFiles = dicomQueue.Count;
-            int copiedFiles = 0;
-
-            while (dicomQueue.Count > 0)
-            {
-                string filePath = dicomQueue.Dequeue();
-                string destPath = Path.Combine(tempFolder, Path.GetFileName(filePath));
-                File.Copy(filePath, destPath, true);
-
-                copiedFiles++;
-                int progress = (int)((double)copiedFiles / totalFiles * 100);
-
-                _mainForm.UpdateFileCount(copiedFiles, totalFiles);
-                _mainForm.UpdateProgressBar(progress);
-                _mainForm.UpdateStatus($"Copia in corso... ({copiedFiles}/{totalFiles} file copiati)");
-            }
-
-            _mainForm.UpdateStatus("Copia completata.");
+            string tempFilePath = Path.Combine(_tempFolder, Path.GetFileName(filePath));
+            File.Copy(filePath, tempFilePath, true);
+            return tempFilePath;
         }
 
         public void UpdatePatientIDInFiles(string studyInstanceUID, string newPatientID)
@@ -164,27 +144,9 @@ namespace DicomModifier
             }
         }
 
-        private string CopyFileToTempDirectory(string filePath)
-        {
-            string fileName = Path.GetFileName(filePath);
-            string tempFilePath = Path.Combine(_tempDirectory, fileName);
-            File.Copy(filePath, tempFilePath, true);
-            return tempFilePath;
-        }
-
-        private void ClearTempDirectory()
-        {
-            var tempFiles = Directory.GetFiles(_tempDirectory);
-            foreach (var tempFile in tempFiles)
-            {
-                File.Delete(tempFile);
-            }
-        }
-
         public void ResetQueue()
         {
             dicomQueue.Clear();
-            ClearTempDirectory();
         }
     }
 }

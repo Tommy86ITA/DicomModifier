@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace DicomModifier
@@ -6,6 +7,7 @@ namespace DicomModifier
     public partial class MainForm : Form
     {
         public DataGridView DataGridView1 => dataGridView1;
+        private readonly ProgressManager _progressManager;
 
         public event EventHandler OnSelectFile;
         public event EventHandler OnSelectFolder;
@@ -24,12 +26,11 @@ namespace DicomModifier
             InitializeEvents();
             TableManager = new TableManager(DataGridView1);
 
+            _progressManager = new ProgressManager(this);
+
             // Inizializza le impostazioni
             _settingsController = new SettingsController(this);
             _settings = _settingsController.LoadSettings();
-
-            // Aggiorna lo stato dei pulsanti all'avvio
-            UpdateButtonStates();
         }
 
         private void InitializeEvents()
@@ -42,48 +43,29 @@ namespace DicomModifier
             settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             buttonResetQueue.Click += ButtonResetQueue_Click;
             buttonUpdateID.Click += ButtonUpdateID_Click;
-
-            // Eventi per aggiornare lo stato dei pulsanti
-            dataGridView1.RowsAdded += (s, e) => UpdateButtonStates();
-            dataGridView1.RowsRemoved += (s, e) => UpdateButtonStates();
-            textBoxNewID.TextChanged += (s, e) => UpdateButtonStates();
-        }
-
-        private void UpdateButtonStates()
-        {
-            bool hasRows = dataGridView1.Rows.Count > 0;
-            bool hasNewID = !string.IsNullOrEmpty(textBoxNewID.Text);
-
-            buttonSend.Enabled = hasRows;
-            buttonUpdateID.Enabled = hasRows && hasNewID;
-            buttonResetQueue.Enabled = hasRows;
         }
 
         private void ButtonResetQueue_Click(object sender, EventArgs e)
         {
             OnResetQueue?.Invoke(this, EventArgs.Empty);
-            UpdateButtonStates();
         }
 
         private void ButtonDicomFile_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ButtonDicomFile_Click called");
             OnSelectFile?.Invoke(this, EventArgs.Empty);
-            UpdateButtonStates();
         }
 
         private void ButtonFolder_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ButtonFolder_Click called");
             OnSelectFolder?.Invoke(this, EventArgs.Empty);
-            UpdateButtonStates();
         }
 
         private void ButtonDicomDir_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ButtonDicomDir_Click called");
             OnSelectDicomDir?.Invoke(this, EventArgs.Empty);
-            UpdateButtonStates();
         }
 
         private void ButtonSend_Click(object sender, EventArgs e)
@@ -132,13 +114,11 @@ namespace DicomModifier
         public void ClearTable()
         {
             dataGridView1.Rows.Clear();
-            UpdateButtonStates();
         }
 
         public void ClearNewPatientIDTextBox()
         {
             textBoxNewID.Clear();
-            UpdateButtonStates();
         }
 
         public List<DataGridViewRow> GetSelectedRows()
@@ -154,6 +134,35 @@ namespace DicomModifier
         private void ButtonUpdateID_Click(object sender, EventArgs e)
         {
             OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
+        }
+
+        public ProgressManager GetProgressManager()
+        {
+            return _progressManager;
+        }
+
+        public void DisableControls()
+        {
+            buttonDicomFile.Enabled = false;
+            buttonFolder.Enabled = false;
+            buttonDicomDir.Enabled = false;
+            buttonSend.Enabled = false;
+            buttonResetQueue.Enabled = false;
+            buttonUpdateID.Enabled = false;
+            dataGridView1.Enabled = false;
+            textBoxNewID.Enabled = false;
+        }
+
+        public void EnableControls()
+        {
+            buttonDicomFile.Enabled = true;
+            buttonFolder.Enabled = true;
+            buttonDicomDir.Enabled = true;
+            buttonSend.Enabled = true;
+            buttonResetQueue.Enabled = true;
+            buttonUpdateID.Enabled = true;
+            dataGridView1.Enabled = true;
+            textBoxNewID.Enabled = true;
         }
     }
 }

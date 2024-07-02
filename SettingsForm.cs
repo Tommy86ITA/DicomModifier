@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Windows.Forms;
 
 namespace DicomModifier
 {
@@ -6,25 +8,25 @@ namespace DicomModifier
     {
         private readonly PACSSettings _settings;
         private readonly SettingsController _settingsController;
+        private readonly ProgressManager _progressManager;
 
         public SettingsForm(PACSSettings settings, SettingsController settingsController)
         {
             InitializeComponent();
-            InitializeEvents();
             _settings = settings;
             _settingsController = settingsController;
-            LoadSettings(settings);
-        }
+            _progressManager = new ProgressManager(_settingsController.GetMainForm());
+            LoadSettings(_settings);
 
-        private void InitializeEvents()
-        {
-            buttonSave.Click += buttonSave_Click;
-            buttonCancel.Click += buttonCancel_Click;
-            buttonEchoTest.Click += buttonCEcho_Click;
+            // Inizializza gli eventi
+
             textBoxServerPort.KeyPress += TextBoxServerPort_KeyPress;
             textBoxTimeout.KeyPress += TextBoxTimeout_KeyPress;
             textBoxServerIP.KeyPress += TextBoxServerIP_KeyPress;
             textBoxServerPort.TextChanged += TextBoxServerPort_TextChanged;
+            buttonSave.Click += buttonSave_Click;
+            buttonCancel.Click += buttonCancel_Click;
+            buttonEchoTest.Click += buttonCEcho_Click;
         }
 
         public void LoadSettings(PACSSettings settings)
@@ -50,13 +52,6 @@ namespace DicomModifier
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            // Effettua i controlli sui dati inseriti
-            if (!IsValidIP(textBoxServerIP.Text))
-            {
-                MessageBox.Show("Inserisci un indirizzo IP valido.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
             if (!int.TryParse(textBoxServerPort.Text, out int port) || port < 1 || port > 65535)
             {
                 MessageBox.Show("Inserisci una porta valida (1-65535).", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -79,7 +74,7 @@ namespace DicomModifier
 
         private async void buttonCEcho_Click(object sender, EventArgs e)
         {
-            var communicator = new PACSCommunicator(_settings);
+            var communicator = new PACSCommunicator(_settings, _progressManager);
             bool success = await communicator.SendCEcho();
             if (success)
             {
@@ -91,15 +86,10 @@ namespace DicomModifier
             }
         }
 
-        private bool IsValidIP(string ipString)
-        {
-            return IPAddress.TryParse(ipString, out _);
-        }
-
         private void TextBoxServerPort_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Consenti solo numeri e il tasto backspace
-            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            // Consente solo l'inserimento di cifre
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
             }
@@ -107,8 +97,8 @@ namespace DicomModifier
 
         private void TextBoxTimeout_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Consenti solo numeri e il tasto backspace
-            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            // Consente solo l'inserimento di cifre
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
             }
@@ -116,8 +106,8 @@ namespace DicomModifier
 
         private void TextBoxServerIP_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Consenti solo numeri, punti e il tasto backspace
-            if (!char.IsDigit(e.KeyChar) && e.KeyChar != '.' && !char.IsControl(e.KeyChar))
+            // Consente solo l'inserimento di cifre e punti
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
             {
                 e.Handled = true;
             }
@@ -125,22 +115,14 @@ namespace DicomModifier
 
         private void TextBoxServerPort_TextChanged(object sender, EventArgs e)
         {
+            // Controlla se il numero è nel range corretto
             if (int.TryParse(textBoxServerPort.Text, out int port))
             {
                 if (port < 1 || port > 65535)
                 {
-                    // Mostra un messaggio di errore se la porta non è nel range corretto
                     MessageBox.Show("La porta deve essere compresa tra 1 e 65535.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    textBoxServerPort.BackColor = Color.LightCoral;
+                    textBoxServerPort.Text = "";
                 }
-                else
-                {
-                    textBoxServerPort.BackColor = SystemColors.Window;
-                }
-            }
-            else
-            {
-                textBoxServerPort.BackColor = SystemColors.Window;
             }
         }
     }
