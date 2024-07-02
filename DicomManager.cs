@@ -10,24 +10,33 @@ namespace DicomModifier
         private string dicomDirBasePath;
         private readonly TableManager _tableManager;
         private readonly MainForm _mainForm;
+        private readonly string _tempDirectory;
 
         public DicomManager(TableManager tableManager, MainForm mainForm)
         {
             dicomQueue = new Queue<string>();
             _tableManager = tableManager;
             _mainForm = mainForm;
+            _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
+
+            // Ensure the temporary directory exists
+            if (!Directory.Exists(_tempDirectory))
+            {
+                Directory.CreateDirectory(_tempDirectory);
+            }
         }
 
         public void AddDicomFile(string filePath)
         {
-            dicomQueue.Enqueue(filePath);
+            string tempFilePath = CopyFileToTempDirectory(filePath);
+            dicomQueue.Enqueue(tempFilePath);
         }
 
         public void AddDicomFiles(IEnumerable<string> filePaths)
         {
             foreach (var filePath in filePaths)
             {
-                dicomQueue.Enqueue(filePath);
+                AddDicomFile(filePath);
             }
         }
 
@@ -155,9 +164,27 @@ namespace DicomModifier
             }
         }
 
+        private string CopyFileToTempDirectory(string filePath)
+        {
+            string fileName = Path.GetFileName(filePath);
+            string tempFilePath = Path.Combine(_tempDirectory, fileName);
+            File.Copy(filePath, tempFilePath, true);
+            return tempFilePath;
+        }
+
+        private void ClearTempDirectory()
+        {
+            var tempFiles = Directory.GetFiles(_tempDirectory);
+            foreach (var tempFile in tempFiles)
+            {
+                File.Delete(tempFile);
+            }
+        }
+
         public void ResetQueue()
         {
             dicomQueue.Clear();
+            ClearTempDirectory();
         }
     }
 }

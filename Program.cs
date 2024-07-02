@@ -1,9 +1,12 @@
+using System;
+using System.Windows.Forms;
+
 namespace DicomModifier
 {
-    internal static class Program
+    static class Program
     {
         [STAThread]
-        private static void Main()
+        static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -12,7 +15,11 @@ namespace DicomModifier
             TableManager tableManager = new TableManager(mainForm.DataGridView1);
             DicomManager dicomManager = new DicomManager(tableManager, mainForm);
 
-            MainController mainController = new MainController(mainForm, dicomManager);
+            // Carica le impostazioni
+            SettingsController settingsController = new SettingsController(mainForm);
+            PACSSettings settings = settingsController.LoadSettings();
+
+            MainController mainController = new MainController(mainForm, dicomManager, settings);
 
             Application.Run(mainForm);
         }

@@ -61,6 +61,7 @@ namespace DicomModifier
             aboutToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             buttonResetQueue = new Button();
+            FilePathColumn = new DataGridViewTextBoxColumn();
             groupSelectFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBoxPatientID.SuspendLayout();
@@ -118,7 +119,7 @@ namespace DicomModifier
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { PatientNameColumn, PatientDOBColumn, PatientIDColumn, StudyDescriptionColumn, StudyDateColumn, ModalityColumn, SeriesCountColumn, ImageCountColumn, StudyInstanceUIDColumn });
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { PatientNameColumn, PatientDOBColumn, PatientIDColumn, StudyDescriptionColumn, StudyDateColumn, ModalityColumn, SeriesCountColumn, ImageCountColumn, StudyInstanceUIDColumn, FilePathColumn });
             dataGridView1.Location = new Point(18, 108);
             dataGridView1.Margin = new Padding(2, 1, 2, 1);
             dataGridView1.Name = "dataGridView1";
@@ -305,19 +306,19 @@ namespace DicomModifier
             // esciToolStripMenuItem
             // 
             esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-            esciToolStripMenuItem.Size = new Size(180, 22);
+            esciToolStripMenuItem.Size = new Size(151, 22);
             esciToolStripMenuItem.Text = "Esci";
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(180, 22);
+            aboutToolStripMenuItem.Size = new Size(151, 22);
             aboutToolStripMenuItem.Text = "About...";
             // 
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(180, 22);
+            settingsToolStripMenuItem.Size = new Size(151, 22);
             settingsToolStripMenuItem.Text = "Impostazioni...";
             // 
             // buttonResetQueue
@@ -329,6 +330,13 @@ namespace DicomModifier
             buttonResetQueue.TabIndex = 7;
             buttonResetQueue.Text = "Pulisci";
             buttonResetQueue.UseVisualStyleBackColor = true;
+            // 
+            // FilePathColumn
+            // 
+            FilePathColumn.HeaderText = "FilePath";
+            FilePathColumn.Name = "FilePathColumn";
+            FilePathColumn.ReadOnly = true;
+            FilePathColumn.Visible = false;
             // 
             // MainForm
             // 
@@ -389,5 +397,6 @@ namespace DicomModifier
         private DataGridViewTextBoxColumn SeriesCountColumn;
         private DataGridViewTextBoxColumn ImageCountColumn;
         private DataGridViewTextBoxColumn StudyInstanceUIDColumn;
+        private DataGridViewTextBoxColumn FilePathColumn;
     }
 }

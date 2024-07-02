@@ -1,16 +1,24 @@
-﻿namespace DicomModifier
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace DicomModifier
 {
     public class MainController
     {
         private readonly MainForm _mainForm;
         private readonly DicomManager _dicomManager;
-        private readonly PACSSettings _settings;
+        private readonly PACSCommunicator _communicator;
+        private readonly string _tempDirectory;
 
-        public MainController(MainForm mainForm, DicomManager dicomManager)
+        public MainController(MainForm mainForm, DicomManager dicomManager, PACSSettings settings)
         {
             _mainForm = mainForm;
             _dicomManager = dicomManager;
-
+            _communicator = new PACSCommunicator(settings);
+            _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
 
             _mainForm.OnSelectFile += MainForm_OnSelectFile;
             _mainForm.OnSelectFolder += MainForm_OnSelectFolder;
@@ -18,6 +26,12 @@
             _mainForm.OnSend += MainForm_OnSend;
             _mainForm.OnResetQueue += MainForm_OnResetQueue;
             _mainForm.OnUpdatePatientID += MainForm_OnUpdatePatientID;
+
+            // Ensure the temporary directory exists
+            if (!Directory.Exists(_tempDirectory))
+            {
+                Directory.CreateDirectory(_tempDirectory);
+            }
         }
 
         private void MainForm_OnSelectFile(object sender, EventArgs e)
@@ -79,7 +93,7 @@
         private void MainForm_OnUpdatePatientID(object sender, EventArgs e)
         {
             string newPatientID = _mainForm.GetNewPatientID();
-            if (newPatientID == null)
+            if (string.IsNullOrEmpty(newPatientID))
             {
                 MessageBox.Show("Per favore, inserisci un nuovo ID Paziente.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -103,9 +117,38 @@
             _mainForm.ClearNewPatientIDTextBox();
         }
 
-        private void MainForm_OnSend(object sender, EventArgs e)
+        private async void MainForm_OnSend(object sender, EventArgs e)
         {
-            // Implement the logic for sending DICOM files
+            var selectedRows = _mainForm.GetSelectedRows();
+            if (selectedRows.Count == 0)
+            {
+                MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Ensure the temporary directory exists before accessing it
+            if (!Directory.Exists(_tempDirectory))
+            {
+                MessageBox.Show("La cartella temporanea non esiste.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var filePaths = Directory.GetFiles(_tempDirectory, "*.dcm").ToList();
+            if (filePaths.Count == 0)
+            {
+                MessageBox.Show("Nessun file trovato nella cartella temporanea per l'invio.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            bool success = await _communicator.SendFiles(filePaths);
+            if (success)
+            {
+                MessageBox.Show("Invio dei file riuscito!", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Invio dei file fallito.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
