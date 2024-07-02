@@ -53,6 +53,17 @@ namespace DicomModifier
 
                 _dataGridView.Rows.Add(newRow);
             }
+
+            // Update control states after adding a row
+            ((MainForm)_dataGridView.FindForm()).UpdateControlStates();
+        }
+
+        public void ClearTable()
+        {
+            _dataGridView.Rows.Clear();
+
+            // Update control states after clearing the table
+            ((MainForm)_dataGridView.FindForm()).UpdateControlStates();
         }
     }
 }

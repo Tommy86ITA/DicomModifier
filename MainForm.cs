@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-
 namespace DicomModifier
 {
     public partial class MainForm : Form
     {
         public DataGridView DataGridView1 => dataGridView1;
-        private readonly ProgressManager _progressManager;
 
         public event EventHandler OnSelectFile;
         public event EventHandler OnSelectFolder;
@@ -19,18 +14,22 @@ namespace DicomModifier
         public TableManager TableManager { get; private set; }
         private readonly SettingsController _settingsController;
         private PACSSettings _settings;
+        public bool isSending = false; // Flag per controllare se ci sono trasferimenti in corso
 
         public MainForm()
         {
             InitializeComponent();
             InitializeEvents();
+            UpdateControlStates();
             TableManager = new TableManager(DataGridView1);
-
-            _progressManager = new ProgressManager(this);
 
             // Inizializza le impostazioni
             _settingsController = new SettingsController(this);
             _settings = _settingsController.LoadSettings();
+
+            // Gestione della chiusura del form
+            this.FormClosing += MainForm_FormClosing;
+            ClearTempFolder();
         }
 
         private void InitializeEvents()
@@ -43,6 +42,78 @@ namespace DicomModifier
             settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             buttonResetQueue.Click += ButtonResetQueue_Click;
             buttonUpdateID.Click += ButtonUpdateID_Click;
+            esciToolStripMenuItem.Click += EsciToolStripMenuItem_Click;
+        }
+
+        public void DisableControls()
+        {
+            buttonDicomFile.Enabled = false;
+            buttonFolder.Enabled = false;
+            buttonDicomDir.Enabled = false;
+            buttonSend.Enabled = false;
+            buttonResetQueue.Enabled = false;
+            buttonUpdateID.Enabled = false;
+            settingsToolStripMenuItem.Enabled = false;
+            dataGridView1.Enabled = false;
+            textBoxNewID.Enabled = false;
+        }
+
+        public void EnableControls()
+        {
+            buttonDicomFile.Enabled = true;
+            buttonFolder.Enabled = true;
+            buttonDicomDir.Enabled = true;
+            buttonResetQueue.Enabled = true;
+            buttonUpdateID.Enabled = true;
+            settingsToolStripMenuItem.Enabled = true;
+            dataGridView1.Enabled = true;
+            textBoxNewID.Enabled = true;
+            // buttonSend remains disabled until files are loaded
+        }
+
+        public void UpdateControlStates()
+        {
+            bool hasExams = dataGridView1.Rows.Count > 0;
+            buttonSend.Enabled = hasExams;
+            buttonResetQueue.Enabled = hasExams;
+            buttonUpdateID.Enabled = hasExams;
+            textBoxNewID.Enabled = hasExams;
+        }
+
+        private void EsciToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MainForm_FormClosing(sender, new FormClosingEventArgs(CloseReason.UserClosing, false));
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (isSending)
+            {
+                var result = MessageBox.Show("Ci sono trasferimenti in corso. Vuoi davvero chiudere il programma?", "Trasferimenti in corso", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                {
+                    var mainController = (MainController)this.Tag;
+                    mainController.CancelSending();
+                    isSending = false; // Interrompi il trasferimento
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                ClearTempFolder();
+            }
+        }
+
+        public void ClearTempFolder()
+        {
+            string tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
+            if (Directory.Exists(tempDirectory))
+            {
+                Directory.Delete(tempDirectory, true);
+            }
         }
 
         private void ButtonResetQueue_Click(object sender, EventArgs e)
@@ -114,6 +185,7 @@ namespace DicomModifier
         public void ClearTable()
         {
             dataGridView1.Rows.Clear();
+            UpdateControlStates();
         }
 
         public void ClearNewPatientIDTextBox()
@@ -136,33 +208,5 @@ namespace DicomModifier
             OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
         }
 
-        public ProgressManager GetProgressManager()
-        {
-            return _progressManager;
-        }
-
-        public void DisableControls()
-        {
-            buttonDicomFile.Enabled = false;
-            buttonFolder.Enabled = false;
-            buttonDicomDir.Enabled = false;
-            buttonSend.Enabled = false;
-            buttonResetQueue.Enabled = false;
-            buttonUpdateID.Enabled = false;
-            dataGridView1.Enabled = false;
-            textBoxNewID.Enabled = false;
-        }
-
-        public void EnableControls()
-        {
-            buttonDicomFile.Enabled = true;
-            buttonFolder.Enabled = true;
-            buttonDicomDir.Enabled = true;
-            buttonSend.Enabled = true;
-            buttonResetQueue.Enabled = true;
-            buttonUpdateID.Enabled = true;
-            dataGridView1.Enabled = true;
-            textBoxNewID.Enabled = true;
-        }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Net;
-using System.Windows.Forms;
-
-namespace DicomModifier
+﻿namespace DicomModifier
 {
     public partial class SettingsForm : Form
     {
@@ -13,11 +9,15 @@ namespace DicomModifier
         public SettingsForm(PACSSettings settings, SettingsController settingsController)
         {
             InitializeComponent();
+            InitializeEvents();
             _settings = settings;
             _settingsController = settingsController;
             _progressManager = new ProgressManager(_settingsController.GetMainForm());
             LoadSettings(_settings);
+        }
 
+        private void InitializeEvents()
+        {
             // Inizializza gli eventi
 
             textBoxServerPort.KeyPress += TextBoxServerPort_KeyPress;

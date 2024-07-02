@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace DicomModifier
+﻿namespace DicomModifier
 {
     public class MainController
     {
@@ -13,12 +6,13 @@ namespace DicomModifier
         private readonly DicomManager _dicomManager;
         private readonly PACSCommunicator _communicator;
         private readonly string _tempDirectory;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public MainController(MainForm mainForm, DicomManager dicomManager, PACSSettings settings)
         {
             _mainForm = mainForm;
             _dicomManager = dicomManager;
-            _communicator = new PACSCommunicator(settings, _mainForm.GetProgressManager());
+            _communicator = new PACSCommunicator(settings, new ProgressManager(mainForm));
             _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
 
             _mainForm.OnSelectFile += MainForm_OnSelectFile;
@@ -46,6 +40,7 @@ namespace DicomModifier
                 {
                     _dicomManager.AddDicomFile(openFileDialog.FileName);
                     _mainForm.TableManager.AddDicomToGrid(_dicomManager.GetNextDicomFile().Dataset);
+                    _mainForm.UpdateControlStates();
                 }
             }
         }
@@ -61,6 +56,7 @@ namespace DicomModifier
                     {
                         _mainForm.TableManager.AddDicomToGrid(_dicomManager.GetNextDicomFile().Dataset);
                     }
+                    _mainForm.UpdateControlStates();
                 }
             }
         }
@@ -80,6 +76,7 @@ namespace DicomModifier
                     {
                         _mainForm.TableManager.AddDicomToGrid(_dicomManager.GetNextDicomFile().Dataset);
                     }
+                    _mainForm.UpdateControlStates();
                 }
             }
         }
@@ -89,7 +86,7 @@ namespace DicomModifier
             _dicomManager.ResetQueue();
             _mainForm.ClearTable();
             _mainForm.ClearNewPatientIDTextBox();
-            ResetUIState();
+            _mainForm.UpdateControlStates();
         }
 
         private void MainForm_OnUpdatePatientID(object sender, EventArgs e)
@@ -122,11 +119,14 @@ namespace DicomModifier
         private async void MainForm_OnSend(object sender, EventArgs e)
         {
             _mainForm.DisableControls();
+            _mainForm.isSending = true;
+
             var selectedRows = _mainForm.GetSelectedRows();
             if (selectedRows.Count == 0)
             {
                 MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 _mainForm.EnableControls();
+                _mainForm.isSending = false;
                 return;
             }
 
@@ -135,25 +135,31 @@ namespace DicomModifier
             {
                 MessageBox.Show("La cartella temporanea non esiste.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 _mainForm.EnableControls();
+                _mainForm.isSending = false;
                 return;
             }
 
+            _cancellationTokenSource = new CancellationTokenSource();
             var filePaths = Directory.GetFiles(_tempDirectory, "*.dcm").ToList();
             if (filePaths.Count == 0)
             {
                 MessageBox.Show("Nessun file trovato nella cartella temporanea per l'invio.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 _mainForm.EnableControls();
+                _mainForm.isSending = false;
                 return;
             }
 
-            bool success = await _communicator.SendFiles(filePaths);
+            bool success = await _communicator.SendFiles(filePaths, _cancellationTokenSource.Token);
             if (success)
             {
                 MessageBox.Show("Invio dei file riuscito!", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 _dicomManager.ResetQueue();
                 _mainForm.ClearTable();
                 _mainForm.ClearNewPatientIDTextBox();
-                ClearTemporaryFolder();
+                _mainForm.UpdateFileCount(0, 0);
+                _mainForm.UpdateProgressBar(0);
+                _mainForm.UpdateStatus("Pronto");
+                _mainForm.ClearTempFolder();
             }
             else
             {
@@ -161,23 +167,12 @@ namespace DicomModifier
             }
 
             _mainForm.EnableControls();
+            _mainForm.isSending = false;
         }
 
-        private void ClearTemporaryFolder()
+        public void CancelSending()
         {
-            if (Directory.Exists(_tempDirectory))
-            {
-                Directory.Delete(_tempDirectory, true);
-                Directory.CreateDirectory(_tempDirectory);
-            }
-        }
-
-        private void ResetUIState()
-        {
-            _mainForm.EnableControls();
-            _mainForm.UpdateFileCount(0, 0);
-            _mainForm.UpdateProgressBar(0);
-            _mainForm.UpdateStatus("Pronto.");
+            _cancellationTokenSource?.Cancel();
         }
     }
 }

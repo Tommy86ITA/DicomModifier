@@ -1,10 +1,6 @@
 ﻿using FellowOakDicom;
 using FellowOakDicom.Network;
 using FellowOakDicom.Network.Client;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace DicomModifier
 {
@@ -51,44 +47,37 @@ namespace DicomModifier
             }
         }
 
-        public async Task<bool> SendFiles(List<string> filePaths)
+        public async Task<bool> SendFiles(List<string> filePaths, CancellationToken cancellationToken)
         {
             try
             {
                 var client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
-                var tcs = new TaskCompletionSource<bool>();
-
-                int totalFiles = filePaths.Count;
-                int sentFiles = 0;
 
                 foreach (var filePath in filePaths)
                 {
-                    var dicomFile = await DicomFile.OpenAsync(filePath);
+                    var dicomFile = await DicomFile.OpenAsync(filePath).ConfigureAwait(false);
                     var cStoreRequest = new DicomCStoreRequest(dicomFile);
 
                     cStoreRequest.OnResponseReceived += (req, resp) =>
                     {
-                        if (resp.Status == DicomStatus.Success)
-                        {
-                            sentFiles++;
-                            _progressManager.UpdateProgress(sentFiles, totalFiles);
-                        }
-                        else
-                        {
-                            tcs.SetException(new Exception($"Failed to send DICOM message C-STORE request [2] for file: {filePath}"));
-                        }
+                        _progressManager.UpdateProgress(filePaths.IndexOf(filePath) + 1, filePaths.Count);
                     };
 
-                    await client.AddRequestAsync(cStoreRequest);
+                    await client.AddRequestAsync(cStoreRequest).ConfigureAwait(false);
+
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        _progressManager.UpdateStatus("Invio annullato dall'utente.");
+                        return false;
+                    }
                 }
 
-                await client.SendAsync();
-                tcs.SetResult(sentFiles == totalFiles);
-                return await tcs.Task;
+                await client.SendAsync(cancellationToken).ConfigureAwait(false);
+                return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Errore durante l'invio dei file: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _progressManager.UpdateStatus($"Errore durante l'invio dei file: {ex.Message}");
                 return false;
             }
         }

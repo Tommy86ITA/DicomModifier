@@ -37,15 +37,6 @@ namespace DicomModifier
             buttonDicomDir = new Button();
             buttonDicomFile = new Button();
             dataGridView1 = new DataGridView();
-            PatientNameColumn = new DataGridViewTextBoxColumn();
-            PatientDOBColumn = new DataGridViewTextBoxColumn();
-            PatientIDColumn = new DataGridViewTextBoxColumn();
-            StudyDescriptionColumn = new DataGridViewTextBoxColumn();
-            StudyDateColumn = new DataGridViewTextBoxColumn();
-            ModalityColumn = new DataGridViewTextBoxColumn();
-            SeriesCountColumn = new DataGridViewTextBoxColumn();
-            ImageCountColumn = new DataGridViewTextBoxColumn();
-            StudyInstanceUIDColumn = new DataGridViewTextBoxColumn();
             groupBoxPatientID = new GroupBox();
             buttonUpdateID = new Button();
             textBoxNewID = new TextBox();
@@ -61,6 +52,15 @@ namespace DicomModifier
             aboutToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             buttonResetQueue = new Button();
+            PatientNameColumn = new DataGridViewTextBoxColumn();
+            PatientDOBColumn = new DataGridViewTextBoxColumn();
+            PatientIDColumn = new DataGridViewTextBoxColumn();
+            StudyDescriptionColumn = new DataGridViewTextBoxColumn();
+            StudyDateColumn = new DataGridViewTextBoxColumn();
+            ModalityColumn = new DataGridViewTextBoxColumn();
+            SeriesCountColumn = new DataGridViewTextBoxColumn();
+            ImageCountColumn = new DataGridViewTextBoxColumn();
+            StudyInstanceUIDColumn = new DataGridViewTextBoxColumn();
             FilePathColumn = new DataGridViewTextBoxColumn();
             groupSelectFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -129,73 +129,6 @@ namespace DicomModifier
             dataGridView1.Size = new Size(1344, 146);
             dataGridView1.TabIndex = 2;
             // 
-            // PatientNameColumn
-            // 
-            PatientNameColumn.HeaderText = "Cognome e nome";
-            PatientNameColumn.MinimumWidth = 350;
-            PatientNameColumn.Name = "PatientNameColumn";
-            PatientNameColumn.ReadOnly = true;
-            PatientNameColumn.Width = 450;
-            // 
-            // PatientDOBColumn
-            // 
-            PatientDOBColumn.HeaderText = "Data nascita";
-            PatientDOBColumn.MinimumWidth = 100;
-            PatientDOBColumn.Name = "PatientDOBColumn";
-            PatientDOBColumn.ReadOnly = true;
-            // 
-            // PatientIDColumn
-            // 
-            PatientIDColumn.HeaderText = "ID Paziente";
-            PatientIDColumn.MinimumWidth = 100;
-            PatientIDColumn.Name = "PatientIDColumn";
-            PatientIDColumn.ReadOnly = true;
-            // 
-            // StudyDescriptionColumn
-            // 
-            StudyDescriptionColumn.HeaderText = "Descrizione studio";
-            StudyDescriptionColumn.MinimumWidth = 150;
-            StudyDescriptionColumn.Name = "StudyDescriptionColumn";
-            StudyDescriptionColumn.ReadOnly = true;
-            StudyDescriptionColumn.Width = 300;
-            // 
-            // StudyDateColumn
-            // 
-            StudyDateColumn.HeaderText = "Data esame";
-            StudyDateColumn.MinimumWidth = 100;
-            StudyDateColumn.Name = "StudyDateColumn";
-            StudyDateColumn.ReadOnly = true;
-            // 
-            // ModalityColumn
-            // 
-            ModalityColumn.HeaderText = "Modalità";
-            ModalityColumn.MinimumWidth = 100;
-            ModalityColumn.Name = "ModalityColumn";
-            ModalityColumn.ReadOnly = true;
-            // 
-            // SeriesCountColumn
-            // 
-            SeriesCountColumn.HeaderText = "Serie";
-            SeriesCountColumn.MinimumWidth = 75;
-            SeriesCountColumn.Name = "SeriesCountColumn";
-            SeriesCountColumn.ReadOnly = true;
-            SeriesCountColumn.Width = 75;
-            // 
-            // ImageCountColumn
-            // 
-            ImageCountColumn.HeaderText = "Immagini";
-            ImageCountColumn.MinimumWidth = 75;
-            ImageCountColumn.Name = "ImageCountColumn";
-            ImageCountColumn.ReadOnly = true;
-            ImageCountColumn.Width = 75;
-            // 
-            // StudyInstanceUIDColumn
-            // 
-            StudyInstanceUIDColumn.HeaderText = "StudyInstanceUID ";
-            StudyInstanceUIDColumn.Name = "StudyInstanceUIDColumn";
-            StudyInstanceUIDColumn.ReadOnly = true;
-            StudyInstanceUIDColumn.Visible = false;
-            // 
             // groupBoxPatientID
             // 
             groupBoxPatientID.Controls.Add(buttonUpdateID);
@@ -256,10 +189,10 @@ namespace DicomModifier
             // 
             statusStrip.ImageScalingSize = new Size(32, 32);
             statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel, toolStripStatusLabelFileCount, toolStripProgressBar, toolStripStatusLabelDev, toolStripDropDownButton });
-            statusStrip.Location = new Point(0, 415);
+            statusStrip.Location = new Point(0, 392);
             statusStrip.Name = "statusStrip";
             statusStrip.Padding = new Padding(1, 0, 8, 0);
-            statusStrip.Size = new Size(1380, 42);
+            statusStrip.Size = new Size(1380, 65);
             statusStrip.SizingGrip = false;
             statusStrip.TabIndex = 6;
             statusStrip.Text = "statusStrip1";
@@ -268,7 +201,7 @@ namespace DicomModifier
             // 
             toolStripStatusLabel.AutoSize = false;
             toolStripStatusLabel.Name = "toolStripStatusLabel";
-            toolStripStatusLabel.Size = new Size(300, 37);
+            toolStripStatusLabel.Size = new Size(300, 60);
             toolStripStatusLabel.Text = "Stato:";
             toolStripStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -276,20 +209,20 @@ namespace DicomModifier
             // 
             toolStripStatusLabelFileCount.AutoSize = false;
             toolStripStatusLabelFileCount.Name = "toolStripStatusLabelFileCount";
-            toolStripStatusLabelFileCount.Size = new Size(150, 37);
+            toolStripStatusLabelFileCount.Size = new Size(150, 60);
             toolStripStatusLabelFileCount.Text = "File inviati:";
             toolStripStatusLabelFileCount.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // toolStripProgressBar
             // 
             toolStripProgressBar.Name = "toolStripProgressBar";
-            toolStripProgressBar.Size = new Size(500, 36);
+            toolStripProgressBar.Size = new Size(500, 59);
             // 
             // toolStripStatusLabelDev
             // 
             toolStripStatusLabelDev.AutoSize = false;
             toolStripStatusLabelDev.Name = "toolStripStatusLabelDev";
-            toolStripStatusLabelDev.Size = new Size(350, 37);
+            toolStripStatusLabelDev.Size = new Size(350, 60);
             toolStripStatusLabelDev.Text = "     Developed by Thomas Amaranto - 2024 || SW vers. 1.0    ";
             // 
             // toolStripDropDownButton
@@ -300,7 +233,7 @@ namespace DicomModifier
             toolStripDropDownButton.Image = Properties.Resources.settings_icon;
             toolStripDropDownButton.ImageTransparentColor = Color.Magenta;
             toolStripDropDownButton.Name = "toolStripDropDownButton";
-            toolStripDropDownButton.Size = new Size(54, 40);
+            toolStripDropDownButton.Size = new Size(54, 63);
             toolStripDropDownButton.Text = "toolStripDropDownButton1";
             // 
             // esciToolStripMenuItem
@@ -331,12 +264,85 @@ namespace DicomModifier
             buttonResetQueue.Text = "Pulisci";
             buttonResetQueue.UseVisualStyleBackColor = true;
             // 
+            // PatientNameColumn
+            // 
+            PatientNameColumn.HeaderText = "Cognome e nome";
+            PatientNameColumn.MinimumWidth = 350;
+            PatientNameColumn.Name = "PatientNameColumn";
+            PatientNameColumn.ReadOnly = true;
+            PatientNameColumn.Width = 425;
+            // 
+            // PatientDOBColumn
+            // 
+            PatientDOBColumn.HeaderText = "Data nascita";
+            PatientDOBColumn.MinimumWidth = 100;
+            PatientDOBColumn.Name = "PatientDOBColumn";
+            PatientDOBColumn.ReadOnly = true;
+            // 
+            // PatientIDColumn
+            // 
+            PatientIDColumn.HeaderText = "ID Paziente";
+            PatientIDColumn.MinimumWidth = 100;
+            PatientIDColumn.Name = "PatientIDColumn";
+            PatientIDColumn.ReadOnly = true;
+            PatientIDColumn.Width = 150;
+            // 
+            // StudyDescriptionColumn
+            // 
+            StudyDescriptionColumn.HeaderText = "Descrizione studio";
+            StudyDescriptionColumn.MinimumWidth = 150;
+            StudyDescriptionColumn.Name = "StudyDescriptionColumn";
+            StudyDescriptionColumn.ReadOnly = true;
+            StudyDescriptionColumn.Width = 300;
+            // 
+            // StudyDateColumn
+            // 
+            StudyDateColumn.HeaderText = "Data esame";
+            StudyDateColumn.MinimumWidth = 100;
+            StudyDateColumn.Name = "StudyDateColumn";
+            StudyDateColumn.ReadOnly = true;
+            // 
+            // ModalityColumn
+            // 
+            ModalityColumn.HeaderText = "Modalità";
+            ModalityColumn.MinimumWidth = 75;
+            ModalityColumn.Name = "ModalityColumn";
+            ModalityColumn.ReadOnly = true;
+            ModalityColumn.Width = 75;
+            // 
+            // SeriesCountColumn
+            // 
+            SeriesCountColumn.HeaderText = "Serie";
+            SeriesCountColumn.MinimumWidth = 75;
+            SeriesCountColumn.Name = "SeriesCountColumn";
+            SeriesCountColumn.ReadOnly = true;
+            SeriesCountColumn.Width = 75;
+            // 
+            // ImageCountColumn
+            // 
+            ImageCountColumn.HeaderText = "Immagini";
+            ImageCountColumn.MinimumWidth = 75;
+            ImageCountColumn.Name = "ImageCountColumn";
+            ImageCountColumn.ReadOnly = true;
+            ImageCountColumn.Width = 75;
+            // 
+            // StudyInstanceUIDColumn
+            // 
+            StudyInstanceUIDColumn.HeaderText = "StudyInstanceUID ";
+            StudyInstanceUIDColumn.MinimumWidth = 2;
+            StudyInstanceUIDColumn.Name = "StudyInstanceUIDColumn";
+            StudyInstanceUIDColumn.ReadOnly = true;
+            StudyInstanceUIDColumn.Visible = false;
+            StudyInstanceUIDColumn.Width = 2;
+            // 
             // FilePathColumn
             // 
             FilePathColumn.HeaderText = "FilePath";
+            FilePathColumn.MinimumWidth = 2;
             FilePathColumn.Name = "FilePathColumn";
             FilePathColumn.ReadOnly = true;
             FilePathColumn.Visible = false;
+            FilePathColumn.Width = 2;
             // 
             // MainForm
             // 
