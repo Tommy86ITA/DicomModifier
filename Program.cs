@@ -1,3 +1,6 @@
+using DicomModifier.Controllers;
+using DicomModifier.Models;
+
 namespace DicomModifier
 {
     internal static class Program
@@ -10,7 +13,7 @@ namespace DicomModifier
 
             MainForm mainForm = new MainForm();
             TableManager tableManager = new TableManager(mainForm.DataGridView1);
-            DicomManager dicomManager = new DicomManager(tableManager, mainForm);
+            DicomFileHandler dicomManager = new DicomFileHandler(tableManager, mainForm);
 
             // Carica le impostazioni
             SettingsController settingsController = new SettingsController(mainForm);

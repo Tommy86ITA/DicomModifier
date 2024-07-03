@@ -1,24 +1,28 @@
-﻿using FellowOakDicom;
+﻿using DicomModifier.Models;
+using FellowOakDicom;
 using FellowOakDicom.Network;
 using FellowOakDicom.Network.Client;
 
-namespace DicomModifier
+namespace DicomModifier.Controllers
 {
     public class PACSCommunicator
     {
         private readonly PACSSettings _settings;
         private readonly ProgressManager _progressManager;
 
+        // Costruttore: inizializza le impostazioni PACS e il gestore del progresso
         public PACSCommunicator(PACSSettings settings, ProgressManager progressManager)
         {
             _settings = settings;
             _progressManager = progressManager;
         }
 
+        // Metodo per inviare un C-ECHO per verificare la connessione al server PACS
         public async Task<bool> SendCEcho()
         {
             try
             {
+                // Crea un client DICOM per il C-ECHO
                 var client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
                 var cEcho = new DicomCEchoRequest();
 
@@ -36,6 +40,7 @@ namespace DicomModifier
                     }
                 };
 
+                // Aggiungi e invia la richiesta C-ECHO
                 await client.AddRequestAsync(cEcho);
                 await client.SendAsync();
                 return await tcs.Task;
@@ -47,14 +52,17 @@ namespace DicomModifier
             }
         }
 
+        // Metodo per inviare una lista di file DICOM al server PACS
         public async Task<bool> SendFiles(List<string> filePaths, CancellationToken cancellationToken)
         {
             try
             {
+                // Crea un client DICOM per l'invio dei file
                 var client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
 
                 foreach (var filePath in filePaths)
                 {
+                    // Apre il file DICOM e crea una richiesta C-STORE per ciascun file
                     var dicomFile = await DicomFile.OpenAsync(filePath).ConfigureAwait(false);
                     var cStoreRequest = new DicomCStoreRequest(dicomFile);
 
@@ -63,8 +71,10 @@ namespace DicomModifier
                         _progressManager.UpdateProgress(filePaths.IndexOf(filePath) + 1, filePaths.Count);
                     };
 
+                    // Aggiungi la richiesta al client
                     await client.AddRequestAsync(cStoreRequest).ConfigureAwait(false);
 
+                    // Controlla se la cancellazione è stata richiesta
                     if (cancellationToken.IsCancellationRequested)
                     {
                         _progressManager.UpdateStatus("Invio annullato dall'utente.");
@@ -72,6 +82,7 @@ namespace DicomModifier
                     }
                 }
 
+                // Invia tutte le richieste al server PACS
                 await client.SendAsync(cancellationToken).ConfigureAwait(false);
                 return true;
             }
@@ -83,3 +94,4 @@ namespace DicomModifier
         }
     }
 }
+

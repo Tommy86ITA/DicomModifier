@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace DicomModifier
+namespace DicomModifier.Models
 {
     public class PACSSettings
     {

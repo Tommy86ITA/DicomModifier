@@ -1,20 +1,24 @@
-﻿namespace DicomModifier
+﻿using DicomModifier.Models;
+
+namespace DicomModifier.Controllers
 {
     public class MainController
     {
         private readonly MainForm _mainForm;
-        private readonly DicomManager _dicomManager;
+        private readonly DicomFileHandler _dicomManager;
         private readonly PACSCommunicator _communicator;
         private readonly string _tempDirectory;
         private CancellationTokenSource _cancellationTokenSource;
 
-        public MainController(MainForm mainForm, DicomManager dicomManager, PACSSettings settings)
+        // Costruttore: inizializza i componenti principali del controller
+        public MainController(MainForm mainForm, DicomFileHandler dicomManager, PACSSettings settings)
         {
             _mainForm = mainForm;
             _dicomManager = dicomManager;
             _communicator = new PACSCommunicator(settings, new ProgressManager(mainForm));
             _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
 
+            // Associa gli eventi del MainForm ai metodi di gestione
             _mainForm.OnSelectFile += MainForm_OnSelectFile;
             _mainForm.OnSelectFolder += MainForm_OnSelectFolder;
             _mainForm.OnSelectDicomDir += MainForm_OnSelectDicomDir;
@@ -22,13 +26,14 @@
             _mainForm.OnResetQueue += MainForm_OnResetQueue;
             _mainForm.OnUpdatePatientID += MainForm_OnUpdatePatientID;
 
-            // Ensure the temporary directory exists
+            // Assicura che la directory temporanea esista
             if (!Directory.Exists(_tempDirectory))
             {
                 Directory.CreateDirectory(_tempDirectory);
             }
         }
 
+        // Gestisce la selezione di un file DICOM
         private void MainForm_OnSelectFile(object sender, EventArgs e)
         {
             using (var openFileDialog = new OpenFileDialog())
@@ -45,6 +50,7 @@
             }
         }
 
+        // Gestisce la selezione di una cartella contenente file DICOM
         private void MainForm_OnSelectFolder(object sender, EventArgs e)
         {
             using (var folderBrowserDialog = new FolderBrowserDialog())
@@ -61,6 +67,7 @@
             }
         }
 
+        // Gestisce la selezione di un file DICOMDIR
         private void MainForm_OnSelectDicomDir(object sender, EventArgs e)
         {
             using (var openFileDialog = new OpenFileDialog())
@@ -81,6 +88,7 @@
             }
         }
 
+        // Gestisce il reset della coda di file DICOM
         private void MainForm_OnResetQueue(object sender, EventArgs e)
         {
             _dicomManager.ResetQueue();
@@ -89,6 +97,7 @@
             _mainForm.UpdateControlStates();
         }
 
+        // Gestisce l'aggiornamento dell'ID del paziente nei file DICOM selezionati
         private void MainForm_OnUpdatePatientID(object sender, EventArgs e)
         {
             string newPatientID = _mainForm.GetNewPatientID();
@@ -109,13 +118,14 @@
             {
                 string studyInstanceUID = row.Cells["StudyInstanceUIDColumn"].Value.ToString();
                 _dicomManager.UpdatePatientIDInFiles(studyInstanceUID, newPatientID);
-                row.Cells["PatientIDColumn"].Value = newPatientID; // Update the displayed ID in the DataGridView
+                row.Cells["PatientIDColumn"].Value = newPatientID; // Aggiorna l'ID visualizzato nella DataGridView
             }
 
             MessageBox.Show("ID Paziente aggiornato con successo.", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             _mainForm.ClearNewPatientIDTextBox();
         }
 
+        // Gestisce l'invio dei file DICOM
         private async void MainForm_OnSend(object sender, EventArgs e)
         {
             _mainForm.DisableControls();
@@ -130,7 +140,7 @@
                 return;
             }
 
-            // Ensure the temporary directory exists before accessing it
+            // Assicura che la directory temporanea esista prima di accedervi
             if (!Directory.Exists(_tempDirectory))
             {
                 MessageBox.Show("La cartella temporanea non esiste.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -170,6 +180,7 @@
             _mainForm.isSending = false;
         }
 
+        // Metodo per cancellare l'invio dei file
         public void CancelSending()
         {
             _cancellationTokenSource?.Cancel();

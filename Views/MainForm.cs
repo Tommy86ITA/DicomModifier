@@ -1,3 +1,6 @@
+using DicomModifier.Controllers;
+using DicomModifier.Models;
+
 namespace DicomModifier
 {
     public partial class MainForm : Form

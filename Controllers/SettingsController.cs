@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
+using DicomModifier.Models;
 
-namespace DicomModifier
+namespace DicomModifier.Controllers
 {
     public class SettingsController
     {

@@ -1,4 +1,4 @@
-﻿namespace DicomModifier
+﻿namespace DicomModifier.Controllers
 {
     public class ProgressManager
     {

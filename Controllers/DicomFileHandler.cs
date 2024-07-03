@@ -1,20 +1,21 @@
-﻿using FellowOakDicom;
+﻿using DicomModifier.Models;
+using FellowOakDicom;
 using FellowOakDicom.Media;
 using System.Diagnostics;
 
-namespace DicomModifier
+namespace DicomModifier.Controllers
 {
-    public class DicomManager
+    public class DicomFileHandler
     {
-        private readonly Queue<string> dicomQueue;
+        private readonly Queue<DicomFileModel> dicomQueue;
         private string dicomDirBasePath;
         private readonly TableManager _tableManager;
         private readonly MainForm _mainForm;
         private readonly string _tempFolder;
 
-        public DicomManager(TableManager tableManager, MainForm mainForm)
+        public DicomFileHandler(TableManager tableManager, MainForm mainForm)
         {
-            dicomQueue = new Queue<string>();
+            dicomQueue = new Queue<DicomFileModel>();
             _tableManager = tableManager;
             _mainForm = mainForm;
             _tempFolder = Path.Combine(Path.GetTempPath(), "DicomModifier");
@@ -28,7 +29,12 @@ namespace DicomModifier
         public void AddDicomFile(string filePath)
         {
             string tempFilePath = CopyToTempFolder(filePath);
-            dicomQueue.Enqueue(tempFilePath);
+            var dicomFileModel = new DicomFileModel
+            {
+                FilePath = tempFilePath,
+                PatientID = DicomFile.Open(tempFilePath).Dataset.GetString(DicomTag.PatientID)
+            };
+            dicomQueue.Enqueue(dicomFileModel);
         }
 
         public void AddDicomFiles(IEnumerable<string> filePaths)
@@ -36,7 +42,12 @@ namespace DicomModifier
             foreach (var filePath in filePaths)
             {
                 string tempFilePath = CopyToTempFolder(filePath);
-                dicomQueue.Enqueue(tempFilePath);
+                var dicomFileModel = new DicomFileModel
+                {
+                    FilePath = tempFilePath,
+                    PatientID = DicomFile.Open(tempFilePath).Dataset.GetString(DicomTag.PatientID)
+                };
+                dicomQueue.Enqueue(dicomFileModel);
             }
         }
 
@@ -115,8 +126,8 @@ namespace DicomModifier
         public DicomFile GetNextDicomFile()
         {
             if (dicomQueue.Count == 0) return null;
-            string filePath = dicomQueue.Dequeue();
-            return DicomFile.Open(filePath);
+            var dicomFileModel = dicomQueue.Dequeue();
+            return DicomFile.Open(dicomFileModel.FilePath);
         }
 
         public DicomDataset GetDicomData(string filePath)
@@ -133,13 +144,13 @@ namespace DicomModifier
 
         public void UpdatePatientIDInFiles(string studyInstanceUID, string newPatientID)
         {
-            foreach (var filePath in dicomQueue)
+            foreach (var dicomFileModel in dicomQueue)
             {
-                var dicomFile = DicomFile.Open(filePath);
+                var dicomFile = DicomFile.Open(dicomFileModel.FilePath);
                 if (dicomFile.Dataset.GetString(DicomTag.StudyInstanceUID) == studyInstanceUID)
                 {
                     dicomFile.Dataset.AddOrUpdate(DicomTag.PatientID, newPatientID);
-                    dicomFile.Save(filePath);
+                    dicomFile.Save(dicomFileModel.FilePath);
                 }
             }
         }

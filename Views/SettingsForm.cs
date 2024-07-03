@@ -1,4 +1,7 @@
-﻿namespace DicomModifier
+﻿using DicomModifier.Controllers;
+using DicomModifier.Models;
+
+namespace DicomModifier
 {
     public partial class SettingsForm : Form
     {

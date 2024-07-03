@@ -1,6 +1,6 @@
 ﻿using FellowOakDicom;
 
-namespace DicomModifier
+namespace DicomModifier.Models
 {
     public class TableManager
     {
