@@ -1,17 +1,18 @@
-﻿using DicomModifier.Models;
+﻿using DicomModifier.Interfaces;
+using DicomModifier.Models;
 using FellowOakDicom;
 using FellowOakDicom.Network;
 using FellowOakDicom.Network.Client;
 
 namespace DicomModifier.Controllers
 {
-    public class PACSCommunicator
+    public class PACSCommunicator : IPACSCommunicator
     {
         private readonly PACSSettings _settings;
-        private readonly ProgressManager _progressManager;
+        private readonly IProgressManager _progressManager;
 
         // Costruttore: inizializza le impostazioni PACS e il gestore del progresso
-        public PACSCommunicator(PACSSettings settings, ProgressManager progressManager)
+        public PACSCommunicator(PACSSettings settings, IProgressManager progressManager)
         {
             _settings = settings;
             _progressManager = progressManager;
@@ -94,4 +95,3 @@ namespace DicomModifier.Controllers
         }
     }
 }
-

@@ -18,6 +18,7 @@ namespace DicomModifier
         private readonly SettingsController _settingsController;
         private PACSSettings _settings;
         public bool isSending = false; // Flag per controllare se ci sono trasferimenti in corso
+        private bool confirmClose = false;
 
         public MainForm()
         {
@@ -88,26 +89,33 @@ namespace DicomModifier
             MainForm_FormClosing(sender, new FormClosingEventArgs(CloseReason.UserClosing, false));
         }
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (isSending)
+            if (isSending && !confirmClose)
             {
                 var result = MessageBox.Show("Ci sono trasferimenti in corso. Vuoi davvero chiudere il programma?", "Trasferimenti in corso", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
                 {
+                    confirmClose = true;
                     var mainController = (MainController)this.Tag;
+                    DisableControls();
+                    dataGridView1.Enabled = false;
                     mainController.CancelSending();
-                    isSending = false; // Interrompi il trasferimento
+
+                    await Task.Delay(1000); // Attendere per assicurarsi che i file vengano rilasciati
+                    Application.Exit(); // Richiama la chiusura dell'applicazione
                 }
                 else
                 {
                     e.Cancel = true;
                 }
             }
-            else
+            else if (!isSending)
             {
                 ClearTempFolder();
+                Application.Exit();
             }
+
         }
 
         public void ClearTempFolder()
@@ -118,6 +126,7 @@ namespace DicomModifier
                 Directory.Delete(tempDirectory, true);
             }
         }
+
 
         private void ButtonResetQueue_Click(object sender, EventArgs e)
         {

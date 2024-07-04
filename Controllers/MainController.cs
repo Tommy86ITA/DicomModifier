@@ -136,6 +136,7 @@ namespace DicomModifier.Controllers
             {
                 MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 _mainForm.EnableControls();
+                _mainForm.UpdateControlStates();
                 _mainForm.isSending = false;
                 return;
             }
@@ -145,6 +146,7 @@ namespace DicomModifier.Controllers
             {
                 MessageBox.Show("La cartella temporanea non esiste.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 _mainForm.EnableControls();
+                _mainForm.UpdateControlStates();
                 _mainForm.isSending = false;
                 return;
             }
@@ -170,6 +172,7 @@ namespace DicomModifier.Controllers
                 _mainForm.UpdateProgressBar(0);
                 _mainForm.UpdateStatus("Pronto");
                 _mainForm.ClearTempFolder();
+                _mainForm.UpdateControlStates();
             }
             else
             {
@@ -177,6 +180,7 @@ namespace DicomModifier.Controllers
             }
 
             _mainForm.EnableControls();
+            _mainForm.UpdateControlStates();
             _mainForm.isSending = false;
         }
 

@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using DicomModifier.Models;
+﻿using DicomModifier.Models;
+using System.Text.Json;
 
 namespace DicomModifier.Controllers
 {
