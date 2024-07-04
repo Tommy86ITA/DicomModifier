@@ -1,5 +1,6 @@
 using DicomModifier.Controllers;
 using DicomModifier.Models;
+using System.Diagnostics;
 
 namespace DicomModifier
 {
@@ -123,9 +124,47 @@ namespace DicomModifier
             string tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
             if (Directory.Exists(tempDirectory))
             {
-                Directory.Delete(tempDirectory, true);
+                try
+                {
+                    Debug.WriteLine($"Attempting to clear temp folder: {tempDirectory}");
+                    Directory.Delete(tempDirectory, true);
+                    Debug.WriteLine($"Successfully cleared temp folder: {tempDirectory}");
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Debug.WriteLine($"Access to the path '{tempDirectory}' is denied: {ex.Message}");
+                    MessageBox.Show($"Non è possibile accedere al percorso: {tempDirectory}. Errore: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (IOException ex)
+                {
+                    Debug.WriteLine($"IO Exception while accessing the path '{tempDirectory}': {ex.Message}");
+                    Debug.WriteLine("Retrying to delete the temp folder after a delay...");
+
+                    // Ritenta di eliminare la cartella dopo un breve ritardo
+                    Task.Delay(1000).Wait();
+                    try
+                    {
+                        Directory.Delete(tempDirectory, true);
+                        Debug.WriteLine($"Successfully cleared temp folder on retry: {tempDirectory}");
+                    }
+                    catch (Exception retryEx)
+                    {
+                        Debug.WriteLine($"Failed to clear temp folder on retry: {retryEx.Message}");
+                        MessageBox.Show($"Errore durante il tentativo di eliminare la cartella temporanea: {retryEx.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"General Exception while accessing the path '{tempDirectory}': {ex.Message}");
+                    MessageBox.Show($"Errore durante l'accesso al percorso: {tempDirectory}. Errore: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"Temp folder does not exist: {tempDirectory}");
             }
         }
+
 
 
         private void ButtonResetQueue_Click(object sender, EventArgs e)

@@ -1,4 +1,5 @@
 ﻿using DicomModifier.Models;
+using System.Diagnostics;
 
 namespace DicomModifier.Controllers
 {
@@ -50,22 +51,31 @@ namespace DicomModifier.Controllers
             }
         }
 
-        // Gestisce la selezione di una cartella contenente file DICOM
         private void MainForm_OnSelectFolder(object sender, EventArgs e)
         {
             using (var folderBrowserDialog = new FolderBrowserDialog())
             {
                 if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
                 {
+                    Debug.WriteLine($"Selected folder: {folderBrowserDialog.SelectedPath}");
                     _dicomManager.AddDicomFolder(folderBrowserDialog.SelectedPath);
                     while (_dicomManager.DicomQueueCount > 0)
                     {
-                        _mainForm.TableManager.AddDicomToGrid(_dicomManager.GetNextDicomFile().Dataset);
+                        var dicomFile = _dicomManager.GetNextDicomFile();
+                        if (dicomFile != null)
+                        {
+                            _mainForm.TableManager.AddDicomToGrid(dicomFile.Dataset);
+                        }
+                        else
+                        {
+                            Debug.WriteLine("No more DICOM files in queue.");
+                        }
                     }
                     _mainForm.UpdateControlStates();
                 }
             }
         }
+
 
         // Gestisce la selezione di un file DICOMDIR
         private void MainForm_OnSelectDicomDir(object sender, EventArgs e)
