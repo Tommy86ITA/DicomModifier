@@ -17,6 +17,7 @@ namespace DicomModifier
 
         public TableManager TableManager { get; private set; }
         private readonly SettingsController _settingsController;
+
         private PACSSettings _settings;
         public bool isSending = false; // Flag per controllare se ci sono trasferimenti in corso
         private bool confirmClose = false;
@@ -85,6 +86,7 @@ namespace DicomModifier
             textBoxNewID.Enabled = hasExams;
         }
 
+
         private void EsciToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MainForm_FormClosing(sender, new FormClosingEventArgs(CloseReason.UserClosing, false));
@@ -124,46 +126,18 @@ namespace DicomModifier
             string tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
             if (Directory.Exists(tempDirectory))
             {
-                try
+                DirectoryInfo di = new DirectoryInfo(tempDirectory);
+                foreach (FileInfo file in di.GetFiles())
                 {
-                    Debug.WriteLine($"Attempting to clear temp folder: {tempDirectory}");
-                    Directory.Delete(tempDirectory, true);
-                    Debug.WriteLine($"Successfully cleared temp folder: {tempDirectory}");
+                    file.Delete();
                 }
-                catch (UnauthorizedAccessException ex)
+                foreach (DirectoryInfo dir in di.GetDirectories())
                 {
-                    Debug.WriteLine($"Access to the path '{tempDirectory}' is denied: {ex.Message}");
-                    MessageBox.Show($"Non è possibile accedere al percorso: {tempDirectory}. Errore: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    dir.Delete(true);
                 }
-                catch (IOException ex)
-                {
-                    Debug.WriteLine($"IO Exception while accessing the path '{tempDirectory}': {ex.Message}");
-                    Debug.WriteLine("Retrying to delete the temp folder after a delay...");
-
-                    // Ritenta di eliminare la cartella dopo un breve ritardo
-                    Task.Delay(1000).Wait();
-                    try
-                    {
-                        Directory.Delete(tempDirectory, true);
-                        Debug.WriteLine($"Successfully cleared temp folder on retry: {tempDirectory}");
-                    }
-                    catch (Exception retryEx)
-                    {
-                        Debug.WriteLine($"Failed to clear temp folder on retry: {retryEx.Message}");
-                        MessageBox.Show($"Errore durante il tentativo di eliminare la cartella temporanea: {retryEx.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"General Exception while accessing the path '{tempDirectory}': {ex.Message}");
-                    MessageBox.Show($"Errore durante l'accesso al percorso: {tempDirectory}. Errore: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
-            {
-                Debug.WriteLine($"Temp folder does not exist: {tempDirectory}");
             }
         }
+
 
 
 

@@ -1,4 +1,5 @@
 ﻿using DicomModifier.Models;
+using FellowOakDicom;
 using System.Diagnostics;
 
 namespace DicomModifier.Controllers
@@ -102,12 +103,12 @@ namespace DicomModifier.Controllers
         private void MainForm_OnResetQueue(object sender, EventArgs e)
         {
             _dicomManager.ResetQueue();
+            _mainForm.ClearTempFolder();
             _mainForm.ClearTable();
             _mainForm.ClearNewPatientIDTextBox();
             _mainForm.UpdateControlStates();
         }
 
-        // Gestisce l'aggiornamento dell'ID del paziente nei file DICOM selezionati
         private void MainForm_OnUpdatePatientID(object sender, EventArgs e)
         {
             string newPatientID = _mainForm.GetNewPatientID();
@@ -124,75 +125,116 @@ namespace DicomModifier.Controllers
                 return;
             }
 
+            var confirmResult = MessageBox.Show($"Sei sicuro di voler modificare l'ID Paziente in '{newPatientID}'?", "Conferma Modifica ID Paziente", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirmResult == DialogResult.No)
+            {
+                return;
+            }
+
             foreach (var row in selectedRows)
             {
                 string studyInstanceUID = row.Cells["StudyInstanceUIDColumn"].Value.ToString();
-                _dicomManager.UpdatePatientIDInFiles(studyInstanceUID, newPatientID);
+                _dicomManager.UpdatePatientIDInTempFolder(studyInstanceUID, newPatientID);
                 row.Cells["PatientIDColumn"].Value = newPatientID; // Aggiorna l'ID visualizzato nella DataGridView
             }
 
             MessageBox.Show("ID Paziente aggiornato con successo.", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             _mainForm.ClearNewPatientIDTextBox();
+            _mainForm.UpdateControlStates();
         }
+
+
 
         // Gestisce l'invio dei file DICOM
         private async void MainForm_OnSend(object sender, EventArgs e)
         {
-            _mainForm.DisableControls();
-            _mainForm.isSending = true;
-
-            var selectedRows = _mainForm.GetSelectedRows();
-            if (selectedRows.Count == 0)
+            try
             {
-                MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _mainForm.DisableControls();
+                _mainForm.isSending = true;
+
+                var selectedRows = _mainForm.GetSelectedRows();
+                if (selectedRows.Count == 0)
+                {
+                    MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _mainForm.EnableControls();
+                    _mainForm.isSending = false;
+                    return;
+                }
+
+                // Assicura che la directory temporanea esista prima di accedervi
+                if (!Directory.Exists(_tempDirectory))
+                {
+                    MessageBox.Show("La cartella temporanea non esiste.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _mainForm.EnableControls();
+                    _mainForm.isSending = false;
+                    return;
+                }
+
+                _cancellationTokenSource = new CancellationTokenSource();
+
+                // Cerca tutti i file nella cartella temporanea, indipendentemente dall'estensione
+                var filePaths = Directory.GetFiles(_tempDirectory).ToList();
+                var dicomFiles = new List<string>();
+
+                foreach (var filePath in filePaths)
+                {
+                    try
+                    {
+                        // Prova ad aprire il file come DICOM per assicurarti che sia un file DICOM valido
+                        var dicomFile = DicomFile.Open(filePath);
+                        dicomFiles.Add(filePath);
+                    }
+                    catch
+                    {
+                        // Ignora il file se non può essere aperto come DICOM
+                    }
+                }
+
+                if (dicomFiles.Count == 0)
+                {
+                    MessageBox.Show("Nessun file DICOM trovato nella cartella temporanea per l'invio.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _mainForm.EnableControls();
+                    _mainForm.isSending = false;
+                    return;
+                }
+
+                bool success = await _communicator.SendFiles(_cancellationTokenSource.Token);
+                if (success)
+                {
+                    MessageBox.Show("Invio dei file riuscito!", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    _dicomManager.ResetQueue();
+                    _mainForm.ClearTable();
+                    _mainForm.ClearNewPatientIDTextBox();
+                    _mainForm.UpdateFileCount(0, 0);
+                    _mainForm.UpdateProgressBar(0);
+                    _mainForm.UpdateStatus("Pronto");
+                    _mainForm.ClearTempFolder();
+                    _mainForm.UpdateControlStates();
+                }
+                else
+                {
+                    MessageBox.Show("Invio dei file fallito.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
                 _mainForm.EnableControls();
                 _mainForm.UpdateControlStates();
                 _mainForm.isSending = false;
-                return;
             }
-
-            // Assicura che la directory temporanea esista prima di accedervi
-            if (!Directory.Exists(_tempDirectory))
+            catch (AggregateException ex)
             {
-                MessageBox.Show("La cartella temporanea non esiste.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _mainForm.EnableControls();
-                _mainForm.UpdateControlStates();
-                _mainForm.isSending = false;
-                return;
+                foreach (var innerException in ex.InnerExceptions)
+                {
+                    MessageBox.Show($"Errore durante l'invio dei file: {innerException.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-
-            _cancellationTokenSource = new CancellationTokenSource();
-            var filePaths = Directory.GetFiles(_tempDirectory, "*.dcm").ToList();
-            if (filePaths.Count == 0)
+            catch (Exception ex)
             {
-                MessageBox.Show("Nessun file trovato nella cartella temporanea per l'invio.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _mainForm.EnableControls();
-                _mainForm.isSending = false;
-                return;
+                MessageBox.Show($"Errore inaspettato: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            bool success = await _communicator.SendFiles(filePaths, _cancellationTokenSource.Token);
-            if (success)
-            {
-                MessageBox.Show("Invio dei file riuscito!", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                _dicomManager.ResetQueue();
-                _mainForm.ClearTable();
-                _mainForm.ClearNewPatientIDTextBox();
-                _mainForm.UpdateFileCount(0, 0);
-                _mainForm.UpdateProgressBar(0);
-                _mainForm.UpdateStatus("Pronto");
-                _mainForm.ClearTempFolder();
-                _mainForm.UpdateControlStates();
-            }
-            else
-            {
-                MessageBox.Show("Invio dei file fallito.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            _mainForm.EnableControls();
-            _mainForm.UpdateControlStates();
-            _mainForm.isSending = false;
         }
+
+
 
         // Metodo per cancellare l'invio dei file
         public void CancelSending()

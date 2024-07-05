@@ -3,6 +3,12 @@ using DicomModifier.Models;
 using FellowOakDicom;
 using FellowOakDicom.Network;
 using FellowOakDicom.Network.Client;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DicomModifier.Controllers
 {
@@ -10,12 +16,14 @@ namespace DicomModifier.Controllers
     {
         private readonly PACSSettings _settings;
         private readonly IProgressManager _progressManager;
+        private readonly Queue<string> dicomQueue;
 
         // Costruttore: inizializza le impostazioni PACS e il gestore del progresso
         public PACSCommunicator(PACSSettings settings, IProgressManager progressManager)
         {
             _settings = settings;
             _progressManager = progressManager;
+            dicomQueue = new Queue<string>();
         }
 
         // Metodo per inviare un C-ECHO per verificare la connessione al server PACS
@@ -53,6 +61,18 @@ namespace DicomModifier.Controllers
             }
         }
 
+        // Metodo per aggiungere un file alla coda
+        public void EnqueueFile(string filePath)
+        {
+            dicomQueue.Enqueue(filePath);
+        }
+
+        // Metodo per svuotare la coda
+        public void ClearQueue()
+        {
+            dicomQueue.Clear();
+        }
+
         // Metodo per inviare una lista di file DICOM al server PACS
         public async Task<bool> SendFiles(List<string> filePaths, CancellationToken cancellationToken)
         {
@@ -60,6 +80,8 @@ namespace DicomModifier.Controllers
             {
                 // Crea un client DICOM per l'invio dei file
                 var client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
+
+                _progressManager.UpdateProgress(0, filePaths.Count);
 
                 foreach (var filePath in filePaths)
                 {
@@ -92,6 +114,12 @@ namespace DicomModifier.Controllers
                 _progressManager.UpdateStatus($"Errore durante l'invio dei file: {ex.Message}");
                 return false;
             }
+        }
+
+        // Metodo per inviare i file nella coda al server PACS
+        public async Task<bool> SendFiles(CancellationToken cancellationToken)
+        {
+            return await SendFiles(new List<string>(dicomQueue), cancellationToken);
         }
     }
 }

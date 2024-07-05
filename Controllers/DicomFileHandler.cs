@@ -1,8 +1,8 @@
 ﻿using DicomModifier.Models;
-using DicomModifier;
 using FellowOakDicom.Media;
 using FellowOakDicom;
 using System.Diagnostics;
+using DicomModifier;
 
 public class DicomFileHandler
 {
@@ -11,6 +11,7 @@ public class DicomFileHandler
     private readonly TableManager _tableManager;
     private readonly MainForm _mainForm;
     private readonly string _tempFolder;
+    private readonly string _modifiedFolder;
 
     public DicomFileHandler(TableManager tableManager, MainForm mainForm)
     {
@@ -18,6 +19,8 @@ public class DicomFileHandler
         _tableManager = tableManager;
         _mainForm = mainForm;
         _tempFolder = Path.Combine(Path.GetTempPath(), "DicomModifier");
+        _modifiedFolder = Path.Combine(_tempFolder, "modified");
+
 
         if (!Directory.Exists(_tempFolder))
         {
@@ -69,28 +72,18 @@ public class DicomFileHandler
                 var fileIDs = record.GetValues<string>(DicomTag.ReferencedFileID);
                 Debug.WriteLine($"ReferencedFileID values: {string.Join(", ", fileIDs)}");  // Log per verificare i valori estratti
 
-                foreach (var fileID in fileIDs)
-                {
-                    string filePath = Path.Combine(dicomDirBasePath, fileID.Replace('/', Path.DirectorySeparatorChar));
-                    filePath = Path.GetFullPath(filePath);
-                    Debug.WriteLine($"Generated file path: {filePath}");
+                string combinedPath = Path.Combine(dicomDirBasePath, Path.Combine(fileIDs));
+                combinedPath = Path.GetFullPath(combinedPath);
+                Debug.WriteLine($"Generated combined file path: {combinedPath}");
 
-                    if (File.Exists(filePath))
-                    {
-                        Debug.WriteLine($"Adding file to queue: {filePath}");
-                        dicomFiles.Add(filePath);
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"File does not exist or is not accessible: {filePath}");
-                        // Prova a trovare il file in tutte le sottodirectory
-                        var subDirFiles = Directory.GetFiles(dicomDirBasePath, Path.GetFileName(filePath), SearchOption.AllDirectories);
-                        foreach (var subDirFile in subDirFiles)
-                        {
-                            Debug.WriteLine($"Found file in subdirectory: {subDirFile}");
-                            dicomFiles.Add(subDirFile);
-                        }
-                    }
+                if (File.Exists(combinedPath))
+                {
+                    Debug.WriteLine($"Adding file to queue: {combinedPath}");
+                    dicomFiles.Add(combinedPath);
+                }
+                else
+                {
+                    Debug.WriteLine($"File does not exist or is not accessible: {combinedPath}");
                 }
             }
 
@@ -120,18 +113,57 @@ public class DicomFileHandler
         return tempFilePath;
     }
 
-    public void UpdatePatientIDInFiles(string studyInstanceUID, string newPatientID)
+    public void UpdatePatientIDInTempFolder(string studyInstanceUID, string newPatientID)
     {
-        foreach (var filePath in dicomQueue)
+        var updatedFilePaths = new List<string>();
+
+        // Assicuriamoci che la cartella _modifiedFolder esista
+        if (!Directory.Exists(_modifiedFolder))
         {
-            var dicomFile = DicomFile.Open(filePath);
-            if (dicomFile.Dataset.GetString(DicomTag.StudyInstanceUID) == studyInstanceUID)
+            Directory.CreateDirectory(_modifiedFolder);
+        }
+
+        foreach (var filePath in Directory.GetFiles(_tempFolder))
+        {
+            try
             {
-                dicomFile.Dataset.AddOrUpdate(DicomTag.PatientID, newPatientID);
-                dicomFile.Save(filePath);
+                // Apriamo il file DICOM
+                var dicomFile = DicomFile.Open(filePath, FileReadOption.ReadAll);
+
+                // Modifichiamo l'ID paziente se lo StudyInstanceUID corrisponde
+                if (dicomFile.Dataset.GetString(DicomTag.StudyInstanceUID) == studyInstanceUID)
+                {
+                    dicomFile.Dataset.AddOrUpdate(DicomTag.PatientID, newPatientID);
+
+                    // Creiamo il nuovo percorso del file
+                    string newFilePath = Path.Combine(_modifiedFolder, Path.GetFileName(filePath));
+
+                    // Salviamo il file modificato
+                    dicomFile.Save(newFilePath);
+
+                    updatedFilePaths.Add(newFilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error updating patient ID in file {filePath}: {ex.Message}");
             }
         }
+
+        // Aggiorniamo la coda con i nuovi percorsi dei file
+        dicomQueue.Clear();
+        foreach (var filePath in updatedFilePaths)
+        {
+            dicomQueue.Enqueue(filePath);
+        }
+
+        Debug.WriteLine("Updated queue with modified file paths:");
+        foreach (var filePath in dicomQueue)
+        {
+            Debug.WriteLine(filePath);
+        }
     }
+
 
     public void ResetQueue()
     {
