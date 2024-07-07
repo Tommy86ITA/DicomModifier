@@ -37,6 +37,16 @@ namespace DicomModifier
             buttonDicomDir = new Button();
             buttonDicomFile = new Button();
             dataGridView1 = new DataGridView();
+            PatientNameColumn = new DataGridViewTextBoxColumn();
+            PatientDOBColumn = new DataGridViewTextBoxColumn();
+            PatientIDColumn = new DataGridViewTextBoxColumn();
+            StudyDescriptionColumn = new DataGridViewTextBoxColumn();
+            StudyDateColumn = new DataGridViewTextBoxColumn();
+            ModalityColumn = new DataGridViewTextBoxColumn();
+            SeriesCountColumn = new DataGridViewTextBoxColumn();
+            ImageCountColumn = new DataGridViewTextBoxColumn();
+            StudyInstanceUIDColumn = new DataGridViewTextBoxColumn();
+            FilePathColumn = new DataGridViewTextBoxColumn();
             groupBoxPatientID = new GroupBox();
             buttonUpdateID = new Button();
             textBoxNewID = new TextBox();
@@ -52,16 +62,6 @@ namespace DicomModifier
             aboutToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             buttonResetQueue = new Button();
-            PatientNameColumn = new DataGridViewTextBoxColumn();
-            PatientDOBColumn = new DataGridViewTextBoxColumn();
-            PatientIDColumn = new DataGridViewTextBoxColumn();
-            StudyDescriptionColumn = new DataGridViewTextBoxColumn();
-            StudyDateColumn = new DataGridViewTextBoxColumn();
-            ModalityColumn = new DataGridViewTextBoxColumn();
-            SeriesCountColumn = new DataGridViewTextBoxColumn();
-            ImageCountColumn = new DataGridViewTextBoxColumn();
-            StudyInstanceUIDColumn = new DataGridViewTextBoxColumn();
-            FilePathColumn = new DataGridViewTextBoxColumn();
             groupSelectFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBoxPatientID.SuspendLayout();
@@ -128,141 +128,6 @@ namespace DicomModifier
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(1344, 146);
             dataGridView1.TabIndex = 2;
-            // 
-            // groupBoxPatientID
-            // 
-            groupBoxPatientID.Controls.Add(buttonUpdateID);
-            groupBoxPatientID.Controls.Add(textBoxNewID);
-            groupBoxPatientID.Location = new Point(300, 307);
-            groupBoxPatientID.Margin = new Padding(2, 1, 2, 1);
-            groupBoxPatientID.Name = "groupBoxPatientID";
-            groupBoxPatientID.Padding = new Padding(2, 1, 2, 1);
-            groupBoxPatientID.Size = new Size(310, 71);
-            groupBoxPatientID.TabIndex = 4;
-            groupBoxPatientID.TabStop = false;
-            groupBoxPatientID.Text = "Nuovo ID Paziente (opzionale)";
-            // 
-            // buttonUpdateID
-            // 
-            buttonUpdateID.Location = new Point(172, 30);
-            buttonUpdateID.Margin = new Padding(2, 1, 2, 1);
-            buttonUpdateID.Name = "buttonUpdateID";
-            buttonUpdateID.Size = new Size(129, 31);
-            buttonUpdateID.TabIndex = 1;
-            buttonUpdateID.Text = "Modifica ID Paziente";
-            buttonUpdateID.UseVisualStyleBackColor = true;
-            // 
-            // textBoxNewID
-            // 
-            textBoxNewID.Location = new Point(10, 35);
-            textBoxNewID.Margin = new Padding(2, 1, 2, 1);
-            textBoxNewID.Name = "textBoxNewID";
-            textBoxNewID.PlaceholderText = "Inserire qui il nuovo ID";
-            textBoxNewID.ShortcutsEnabled = false;
-            textBoxNewID.Size = new Size(135, 23);
-            textBoxNewID.TabIndex = 0;
-            textBoxNewID.WordWrap = false;
-            // 
-            // buttonSend
-            // 
-            buttonSend.Location = new Point(90, 29);
-            buttonSend.Margin = new Padding(2, 1, 2, 1);
-            buttonSend.Name = "buttonSend";
-            buttonSend.Size = new Size(129, 31);
-            buttonSend.TabIndex = 0;
-            buttonSend.Text = "Invia al PACS";
-            buttonSend.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(buttonSend);
-            groupBox1.Location = new Point(771, 307);
-            groupBox1.Margin = new Padding(2, 1, 2, 1);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Padding = new Padding(2, 1, 2, 1);
-            groupBox1.Size = new Size(310, 71);
-            groupBox1.TabIndex = 5;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Invio";
-            // 
-            // statusStrip
-            // 
-            statusStrip.ImageScalingSize = new Size(32, 32);
-            statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel, toolStripStatusLabelFileCount, toolStripProgressBar, toolStripStatusLabelDev, toolStripDropDownButton });
-            statusStrip.Location = new Point(0, 392);
-            statusStrip.Name = "statusStrip";
-            statusStrip.Padding = new Padding(1, 0, 8, 0);
-            statusStrip.Size = new Size(1380, 65);
-            statusStrip.SizingGrip = false;
-            statusStrip.TabIndex = 6;
-            statusStrip.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel
-            // 
-            toolStripStatusLabel.AutoSize = false;
-            toolStripStatusLabel.Name = "toolStripStatusLabel";
-            toolStripStatusLabel.Size = new Size(300, 60);
-            toolStripStatusLabel.Text = "Stato:";
-            toolStripStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // toolStripStatusLabelFileCount
-            // 
-            toolStripStatusLabelFileCount.AutoSize = false;
-            toolStripStatusLabelFileCount.Name = "toolStripStatusLabelFileCount";
-            toolStripStatusLabelFileCount.Size = new Size(150, 60);
-            toolStripStatusLabelFileCount.Text = "File inviati:";
-            toolStripStatusLabelFileCount.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // toolStripProgressBar
-            // 
-            toolStripProgressBar.Name = "toolStripProgressBar";
-            toolStripProgressBar.Size = new Size(500, 59);
-            // 
-            // toolStripStatusLabelDev
-            // 
-            toolStripStatusLabelDev.AutoSize = false;
-            toolStripStatusLabelDev.Name = "toolStripStatusLabelDev";
-            toolStripStatusLabelDev.Size = new Size(350, 60);
-            toolStripStatusLabelDev.Text = "     Developed by Thomas Amaranto - 2024 || SW vers. 1.0    ";
-            // 
-            // toolStripDropDownButton
-            // 
-            toolStripDropDownButton.AutoSize = false;
-            toolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, aboutToolStripMenuItem, settingsToolStripMenuItem });
-            toolStripDropDownButton.Image = Properties.Resources.settings_icon;
-            toolStripDropDownButton.ImageTransparentColor = Color.Magenta;
-            toolStripDropDownButton.Name = "toolStripDropDownButton";
-            toolStripDropDownButton.Size = new Size(54, 63);
-            toolStripDropDownButton.Text = "toolStripDropDownButton1";
-            // 
-            // esciToolStripMenuItem
-            // 
-            esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-            esciToolStripMenuItem.Size = new Size(151, 22);
-            esciToolStripMenuItem.Text = "Esci";
-            // 
-            // aboutToolStripMenuItem
-            // 
-            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(151, 22);
-            aboutToolStripMenuItem.Text = "About...";
-            // 
-            // settingsToolStripMenuItem
-            // 
-            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(151, 22);
-            settingsToolStripMenuItem.Text = "Impostazioni...";
-            // 
-            // buttonResetQueue
-            // 
-            buttonResetQueue.Location = new Point(1233, 268);
-            buttonResetQueue.Margin = new Padding(2, 1, 2, 1);
-            buttonResetQueue.Name = "buttonResetQueue";
-            buttonResetQueue.Size = new Size(129, 31);
-            buttonResetQueue.TabIndex = 7;
-            buttonResetQueue.Text = "Pulisci";
-            buttonResetQueue.UseVisualStyleBackColor = true;
             // 
             // PatientNameColumn
             // 
@@ -343,6 +208,142 @@ namespace DicomModifier
             FilePathColumn.ReadOnly = true;
             FilePathColumn.Visible = false;
             FilePathColumn.Width = 2;
+            // 
+            // groupBoxPatientID
+            // 
+            groupBoxPatientID.Controls.Add(buttonUpdateID);
+            groupBoxPatientID.Controls.Add(textBoxNewID);
+            groupBoxPatientID.Location = new Point(300, 307);
+            groupBoxPatientID.Margin = new Padding(2, 1, 2, 1);
+            groupBoxPatientID.Name = "groupBoxPatientID";
+            groupBoxPatientID.Padding = new Padding(2, 1, 2, 1);
+            groupBoxPatientID.Size = new Size(310, 71);
+            groupBoxPatientID.TabIndex = 4;
+            groupBoxPatientID.TabStop = false;
+            groupBoxPatientID.Text = "Nuovo ID Paziente (opzionale)";
+            // 
+            // buttonUpdateID
+            // 
+            buttonUpdateID.Location = new Point(172, 30);
+            buttonUpdateID.Margin = new Padding(2, 1, 2, 1);
+            buttonUpdateID.Name = "buttonUpdateID";
+            buttonUpdateID.Size = new Size(129, 31);
+            buttonUpdateID.TabIndex = 1;
+            buttonUpdateID.Text = "Modifica ID Paziente";
+            buttonUpdateID.UseVisualStyleBackColor = true;
+            // 
+            // textBoxNewID
+            // 
+            textBoxNewID.Location = new Point(10, 35);
+            textBoxNewID.Margin = new Padding(2, 1, 2, 1);
+            textBoxNewID.Name = "textBoxNewID";
+            textBoxNewID.PlaceholderText = "Inserire qui il nuovo ID";
+            textBoxNewID.ShortcutsEnabled = false;
+            textBoxNewID.Size = new Size(135, 23);
+            textBoxNewID.TabIndex = 0;
+            textBoxNewID.WordWrap = false;
+            // 
+            // buttonSend
+            // 
+            buttonSend.Location = new Point(90, 29);
+            buttonSend.Margin = new Padding(2, 1, 2, 1);
+            buttonSend.Name = "buttonSend";
+            buttonSend.Size = new Size(129, 31);
+            buttonSend.TabIndex = 0;
+            buttonSend.Text = "Invia al PACS";
+            buttonSend.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(buttonSend);
+            groupBox1.Location = new Point(771, 307);
+            groupBox1.Margin = new Padding(2, 1, 2, 1);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new Padding(2, 1, 2, 1);
+            groupBox1.Size = new Size(310, 71);
+            groupBox1.TabIndex = 5;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Invio";
+            // 
+            // statusStrip
+            // 
+            statusStrip.ImageScalingSize = new Size(32, 32);
+            statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel, toolStripStatusLabelFileCount, toolStripProgressBar, toolStripStatusLabelDev, toolStripDropDownButton });
+            statusStrip.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            statusStrip.Location = new Point(0, 392);
+            statusStrip.Name = "statusStrip";
+            statusStrip.Padding = new Padding(1, 0, 8, 0);
+            statusStrip.Size = new Size(1380, 65);
+            statusStrip.SizingGrip = false;
+            statusStrip.TabIndex = 6;
+            statusStrip.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel
+            // 
+            toolStripStatusLabel.AutoSize = false;
+            toolStripStatusLabel.Name = "toolStripStatusLabel";
+            toolStripStatusLabel.Size = new Size(300, 60);
+            toolStripStatusLabel.Text = "Stato:";
+            toolStripStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // toolStripStatusLabelFileCount
+            // 
+            toolStripStatusLabelFileCount.AutoSize = false;
+            toolStripStatusLabelFileCount.Name = "toolStripStatusLabelFileCount";
+            toolStripStatusLabelFileCount.Size = new Size(150, 60);
+            toolStripStatusLabelFileCount.Text = "Attesa file";
+            toolStripStatusLabelFileCount.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // toolStripProgressBar
+            // 
+            toolStripProgressBar.Name = "toolStripProgressBar";
+            toolStripProgressBar.Size = new Size(500, 59);
+            // 
+            // toolStripStatusLabelDev
+            // 
+            toolStripStatusLabelDev.AutoSize = false;
+            toolStripStatusLabelDev.Name = "toolStripStatusLabelDev";
+            toolStripStatusLabelDev.Size = new Size(350, 60);
+            toolStripStatusLabelDev.Text = "     Developed by Thomas Amaranto - 2024 || SW vers. 1.0    ";
+            // 
+            // toolStripDropDownButton
+            // 
+            toolStripDropDownButton.AutoSize = false;
+            toolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, aboutToolStripMenuItem, settingsToolStripMenuItem });
+            toolStripDropDownButton.Image = Properties.Resources.settings_icon;
+            toolStripDropDownButton.ImageTransparentColor = Color.Magenta;
+            toolStripDropDownButton.Name = "toolStripDropDownButton";
+            toolStripDropDownButton.Size = new Size(54, 63);
+            toolStripDropDownButton.Text = "toolStripDropDownButton1";
+            // 
+            // esciToolStripMenuItem
+            // 
+            esciToolStripMenuItem.Name = "esciToolStripMenuItem";
+            esciToolStripMenuItem.Size = new Size(180, 22);
+            esciToolStripMenuItem.Text = "Esci";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            aboutToolStripMenuItem.Size = new Size(180, 22);
+            aboutToolStripMenuItem.Text = "About...";
+            // 
+            // settingsToolStripMenuItem
+            // 
+            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            settingsToolStripMenuItem.Size = new Size(180, 22);
+            settingsToolStripMenuItem.Text = "Impostazioni...";
+            // 
+            // buttonResetQueue
+            // 
+            buttonResetQueue.Location = new Point(1233, 268);
+            buttonResetQueue.Margin = new Padding(2, 1, 2, 1);
+            buttonResetQueue.Name = "buttonResetQueue";
+            buttonResetQueue.Size = new Size(129, 31);
+            buttonResetQueue.TabIndex = 7;
+            buttonResetQueue.Text = "Pulisci";
+            buttonResetQueue.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 

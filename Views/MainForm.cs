@@ -86,7 +86,6 @@ namespace DicomModifier
             textBoxNewID.Enabled = hasExams;
         }
 
-
         private void EsciToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MainForm_FormClosing(sender, new FormClosingEventArgs(CloseReason.UserClosing, false));
@@ -118,7 +117,6 @@ namespace DicomModifier
                 ClearTempFolder();
                 Application.Exit();
             }
-
         }
 
         public void ClearTempFolder()
@@ -137,9 +135,6 @@ namespace DicomModifier
                 }
             }
         }
-
-
-
 
         private void ButtonResetQueue_Click(object sender, EventArgs e)
         {
@@ -199,12 +194,20 @@ namespace DicomModifier
 
         public void UpdateFileCount(int sent, int total)
         {
-            toolStripStatusLabelFileCount.Text = $"File inviati: {sent}/{total}";
+            toolStripStatusLabelFileCount.Text = $"File elaborati: {sent}/{total}";
         }
 
-        public void UpdateProgressBar(int value)
+        public void UpdateProgressBar(int value, int maximum)
         {
-            toolStripProgressBar.Value = value;
+            if (toolStripProgressBar.GetCurrentParent().InvokeRequired)
+            {
+                toolStripProgressBar.GetCurrentParent().Invoke(new Action<int, int>(UpdateProgressBar), value, maximum);
+            }
+            else
+            {
+                toolStripProgressBar.Maximum = maximum;
+                toolStripProgressBar.Value = value;
+            }
         }
 
         public void ClearTable()
@@ -232,6 +235,5 @@ namespace DicomModifier
         {
             OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
         }
-
     }
 }

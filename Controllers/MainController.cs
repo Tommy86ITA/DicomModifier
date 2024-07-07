@@ -12,7 +12,6 @@ namespace DicomModifier.Controllers
         private readonly string _tempDirectory;
         private CancellationTokenSource _cancellationTokenSource;
 
-        // Costruttore: inizializza i componenti principali del controller
         public MainController(MainForm mainForm, DicomFileHandler dicomManager, PACSSettings settings)
         {
             _mainForm = mainForm;
@@ -20,23 +19,20 @@ namespace DicomModifier.Controllers
             _communicator = new PACSCommunicator(settings, new ProgressManager(mainForm));
             _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
 
-            // Associa gli eventi del MainForm ai metodi di gestione
-            _mainForm.OnSelectFile += MainForm_OnSelectFile;
-            _mainForm.OnSelectFolder += MainForm_OnSelectFolder;
-            _mainForm.OnSelectDicomDir += MainForm_OnSelectDicomDir;
+            _mainForm.OnSelectFile += MainForm_OnSelectFileAsync;
+            _mainForm.OnSelectFolder += MainForm_OnSelectFolderAsync;
+            _mainForm.OnSelectDicomDir += MainForm_OnSelectDicomDirAsync;
             _mainForm.OnSend += MainForm_OnSend;
             _mainForm.OnResetQueue += MainForm_OnResetQueue;
-            _mainForm.OnUpdatePatientID += MainForm_OnUpdatePatientID;
+            _mainForm.OnUpdatePatientID += MainForm_OnUpdatePatientIDAsync;
 
-            // Assicura che la directory temporanea esista
             if (!Directory.Exists(_tempDirectory))
             {
                 Directory.CreateDirectory(_tempDirectory);
             }
         }
 
-        // Gestisce la selezione di un file DICOM
-        private void MainForm_OnSelectFile(object sender, EventArgs e)
+        private async void MainForm_OnSelectFileAsync(object sender, EventArgs e)
         {
             using (var openFileDialog = new OpenFileDialog())
             {
@@ -45,24 +41,46 @@ namespace DicomModifier.Controllers
                 openFileDialog.RestoreDirectory = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _dicomManager.AddDicomFile(openFileDialog.FileName);
-                    _mainForm.TableManager.AddDicomToGrid(_dicomManager.GetNextDicomFile().Dataset);
+                    _mainForm.UpdateStatus("Importazione in corso...");
+                    _mainForm.UpdateProgressBar(0, 1);
+                    await _dicomManager.AddDicomFileAsync(openFileDialog.FileName);
+                    var dicomFile = await _dicomManager.GetNextDicomFileAsync();
+                    if (dicomFile != null)
+                    {
+                        _mainForm.TableManager.AddDicomToGrid(dicomFile.Dataset);
+                    }
+                    _mainForm.EnableControls();
                     _mainForm.UpdateControlStates();
+                    _mainForm.UpdateStatus("Importazione completata.");
+                    _mainForm.UpdateProgressBar(1, 1);
                 }
             }
         }
 
-        private void MainForm_OnSelectFolder(object sender, EventArgs e)
+        private async void MainForm_OnSelectFolderAsync(object sender, EventArgs e)
         {
             using (var folderBrowserDialog = new FolderBrowserDialog())
             {
                 if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
                 {
+                    _mainForm.DisableControls();
                     Debug.WriteLine($"Selected folder: {folderBrowserDialog.SelectedPath}");
-                    _dicomManager.AddDicomFolder(folderBrowserDialog.SelectedPath);
+                    _mainForm.UpdateStatus("Importazione in corso...");
+                    var files = Directory.GetFiles(folderBrowserDialog.SelectedPath, "*.*", SearchOption.AllDirectories).ToList();
+                    _mainForm.UpdateProgressBar(0, files.Count);
+                    _mainForm.UpdateFileCount(0, files.Count);
+
+                    int processedFiles = 0;
+                    foreach (var file in files)
+                    {
+                        await _dicomManager.AddDicomFileAsync(file);
+                        _mainForm.UpdateProgressBar(++processedFiles, files.Count);
+                        _mainForm.UpdateFileCount(processedFiles, files.Count);
+                    }
+
                     while (_dicomManager.DicomQueueCount > 0)
                     {
-                        var dicomFile = _dicomManager.GetNextDicomFile();
+                        var dicomFile = await _dicomManager.GetNextDicomFileAsync();
                         if (dicomFile != null)
                         {
                             _mainForm.TableManager.AddDicomToGrid(dicomFile.Dataset);
@@ -72,14 +90,16 @@ namespace DicomModifier.Controllers
                             Debug.WriteLine("No more DICOM files in queue.");
                         }
                     }
+
+                    _mainForm.EnableControls();
                     _mainForm.UpdateControlStates();
+                    _mainForm.UpdateStatus("Importazione completata.");
+                    _mainForm.UpdateProgressBar(files.Count, files.Count);
                 }
             }
         }
 
-
-        // Gestisce la selezione di un file DICOMDIR
-        private void MainForm_OnSelectDicomDir(object sender, EventArgs e)
+        private async void MainForm_OnSelectDicomDirAsync(object sender, EventArgs e)
         {
             using (var openFileDialog = new OpenFileDialog())
             {
@@ -89,27 +109,26 @@ namespace DicomModifier.Controllers
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _dicomManager.AddDicomDir(openFileDialog.FileName);
+                    _mainForm.DisableControls();
+                    _mainForm.UpdateStatus("Importazione in corso...");
+                    await _dicomManager.AddDicomDirAsync(openFileDialog.FileName);
+
                     while (_dicomManager.DicomQueueCount > 0)
                     {
-                        _mainForm.TableManager.AddDicomToGrid(_dicomManager.GetNextDicomFile().Dataset);
+                        var dicomFile = await _dicomManager.GetNextDicomFileAsync();
+                        if (dicomFile != null)
+                        {
+                            _mainForm.TableManager.AddDicomToGrid(dicomFile.Dataset);
+                        }
                     }
+                    _mainForm.EnableControls();
                     _mainForm.UpdateControlStates();
+                    _mainForm.UpdateStatus("Importazione completata.");
                 }
             }
         }
 
-        // Gestisce il reset della coda di file DICOM
-        private void MainForm_OnResetQueue(object sender, EventArgs e)
-        {
-            _dicomManager.ResetQueue();
-            _mainForm.ClearTempFolder();
-            _mainForm.ClearTable();
-            _mainForm.ClearNewPatientIDTextBox();
-            _mainForm.UpdateControlStates();
-        }
-
-        private void MainForm_OnUpdatePatientID(object sender, EventArgs e)
+        private async void MainForm_OnUpdatePatientIDAsync(object sender, EventArgs e)
         {
             string newPatientID = _mainForm.GetNewPatientID();
             if (string.IsNullOrEmpty(newPatientID))
@@ -131,21 +150,30 @@ namespace DicomModifier.Controllers
                 return;
             }
 
+            _mainForm.DisableControls();
+            _mainForm.UpdateStatus("Aggiornamento ID Paziente in corso...");
+            _mainForm.UpdateProgressBar(0, selectedRows.Count);
+            _mainForm.UpdateFileCount(0, selectedRows.Count);
+
+            int processedRows = 0;
             foreach (var row in selectedRows)
             {
                 string studyInstanceUID = row.Cells["StudyInstanceUIDColumn"].Value.ToString();
-                _dicomManager.UpdatePatientIDInTempFolder(studyInstanceUID, newPatientID);
+                await _dicomManager.UpdatePatientIDInTempFolderAsync(studyInstanceUID, newPatientID, (progress, total) =>
+                {
+                    _mainForm.UpdateProgressBar(progress, total);
+                    _mainForm.UpdateFileCount(progress, total);
+                });
                 row.Cells["PatientIDColumn"].Value = newPatientID; // Aggiorna l'ID visualizzato nella DataGridView
             }
 
+            _mainForm.UpdateStatus("ID Paziente aggiornato con successo.");
             MessageBox.Show("ID Paziente aggiornato con successo.", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             _mainForm.ClearNewPatientIDTextBox();
             _mainForm.UpdateControlStates();
         }
 
 
-
-        // Gestisce l'invio dei file DICOM
         private async void MainForm_OnSend(object sender, EventArgs e)
         {
             try
@@ -162,10 +190,15 @@ namespace DicomModifier.Controllers
                     return;
                 }
 
-                // Assicura che la directory temporanea esista prima di accedervi
-                if (!Directory.Exists(_tempDirectory))
+                // Controlla se esiste la cartella "modified"
+                string modifiedFolder = _dicomManager.ModifiedFolder;
+                var filePaths = Directory.Exists(modifiedFolder) && Directory.GetFiles(modifiedFolder).Any()
+                    ? Directory.GetFiles(modifiedFolder).ToList()
+                    : Directory.GetFiles(_tempDirectory).ToList();
+
+                if (!filePaths.Any())
                 {
-                    MessageBox.Show("La cartella temporanea non esiste.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Nessun file DICOM trovato nella cartella temporanea per l'invio.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     _mainForm.EnableControls();
                     _mainForm.isSending = false;
                     return;
@@ -173,15 +206,11 @@ namespace DicomModifier.Controllers
 
                 _cancellationTokenSource = new CancellationTokenSource();
 
-                // Cerca tutti i file nella cartella temporanea, indipendentemente dall'estensione
-                var filePaths = Directory.GetFiles(_tempDirectory).ToList();
                 var dicomFiles = new List<string>();
-
                 foreach (var filePath in filePaths)
                 {
                     try
                     {
-                        // Prova ad aprire il file come DICOM per assicurarti che sia un file DICOM valido
                         var dicomFile = DicomFile.Open(filePath);
                         dicomFiles.Add(filePath);
                     }
@@ -193,13 +222,14 @@ namespace DicomModifier.Controllers
 
                 if (dicomFiles.Count == 0)
                 {
-                    MessageBox.Show("Nessun file DICOM trovato nella cartella temporanea per l'invio.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Nessun file DICOM valido trovato per l'invio.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     _mainForm.EnableControls();
                     _mainForm.isSending = false;
                     return;
                 }
 
-                bool success = await _communicator.SendFiles(_cancellationTokenSource.Token);
+                _mainForm.UpdateProgressBar(0, dicomFiles.Count);
+                bool success = await _communicator.SendFiles(dicomFiles, _cancellationTokenSource.Token);
                 if (success)
                 {
                     MessageBox.Show("Invio dei file riuscito!", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -207,7 +237,7 @@ namespace DicomModifier.Controllers
                     _mainForm.ClearTable();
                     _mainForm.ClearNewPatientIDTextBox();
                     _mainForm.UpdateFileCount(0, 0);
-                    _mainForm.UpdateProgressBar(0);
+                    _mainForm.UpdateProgressBar(0, 1);
                     _mainForm.UpdateStatus("Pronto");
                     _mainForm.ClearTempFolder();
                     _mainForm.UpdateControlStates();
@@ -235,11 +265,18 @@ namespace DicomModifier.Controllers
         }
 
 
-
-        // Metodo per cancellare l'invio dei file
         public void CancelSending()
         {
             _cancellationTokenSource?.Cancel();
+        }
+
+        private void MainForm_OnResetQueue(object sender, EventArgs e)
+        {
+            _dicomManager.ResetQueue();
+            _mainForm.ClearTempFolder();
+            _mainForm.ClearTable();
+            _mainForm.ClearNewPatientIDTextBox();
+            _mainForm.UpdateControlStates();
         }
     }
 }
