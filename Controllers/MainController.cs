@@ -277,6 +277,10 @@ namespace DicomModifier.Controllers
             _mainForm.ClearTable();
             _mainForm.ClearNewPatientIDTextBox();
             _mainForm.UpdateControlStates();
+            _mainForm.UpdateProgressBar(0, 1);
+            _mainForm.UpdateFileCount(0, 0, "Attesa file");
+            _mainForm.UpdateStatus("Pronto");
+           
         }
     }
 }
