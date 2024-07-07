@@ -17,6 +17,7 @@ namespace DicomModifier
             _settingsController = settingsController;
             _progressManager = new ProgressManager(_settingsController.GetMainForm());
             LoadSettings(_settings);
+            ValidateFields(); // iniziale validazione dei campi
         }
 
         private void InitializeEvents()
@@ -28,6 +29,8 @@ namespace DicomModifier
             textBoxServerPort.TextChanged += TextBoxServerPort_TextChanged;
             textBoxTimeout.TextChanged += TextBoxTimeout_TextChanged;
             textBoxServerIP.TextChanged += TextBoxServerIP_TextChanged;
+            textBoxAETitle.TextChanged += TextBox_TextChanged;
+            textBoxLocalAETitle.TextChanged += TextBox_TextChanged;
             buttonSave.Click += buttonSave_Click;
             buttonCancel.Click += buttonCancel_Click;
             buttonEchoTest.Click += buttonCEcho_Click;
@@ -80,18 +83,27 @@ namespace DicomModifier
         private async void buttonCEcho_Click(object sender, EventArgs e)
         {
             buttonEchoTest.Text = "Test in corso...";
+            buttonEchoTest.Enabled = false;
+            panelEchoStatus.BackColor = Color.Yellow;
             this.Enabled = false;
-            var communicator = new PACSCommunicator(_settings, _progressManager);
+
+            var testSettings = GetSettings();
+            var communicator = new PACSCommunicator(testSettings, _progressManager);
             bool success = await communicator.SendCEcho();
+
             if (success)
             {
+                panelEchoStatus.BackColor = Color.Green;
                 MessageBox.Show("C-ECHO riuscito!", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
+                panelEchoStatus.BackColor = Color.Red;
                 MessageBox.Show("C-ECHO fallito.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
             buttonEchoTest.Text = "Esegui C-ECHO";
+            buttonEchoTest.Enabled = true;
             this.Enabled = true;
         }
 
@@ -140,6 +152,7 @@ namespace DicomModifier
             {
                 textBoxServerPort.BackColor = Color.Red;
             }
+            ValidateFields();
         }
 
         private void TextBoxTimeout_TextChanged(object sender, EventArgs e)
@@ -160,6 +173,7 @@ namespace DicomModifier
             {
                 textBoxTimeout.BackColor = Color.Red;
             }
+            ValidateFields();
         }
 
         private void TextBoxServerIP_TextChanged(object sender, EventArgs e)
@@ -174,40 +188,45 @@ namespace DicomModifier
             {
                 textBoxServerIP.BackColor = Color.Red;
             }
+            ValidateFields();
+        }
+
+        private void TextBox_TextChanged(object sender, EventArgs e)
+        {
+            ValidateFields();
         }
 
         private bool ValidateFields()
         {
+            bool isValid = true;
+
             if (string.IsNullOrEmpty(textBoxAETitle.Text) ||
                 string.IsNullOrEmpty(textBoxServerIP.Text) ||
                 string.IsNullOrEmpty(textBoxServerPort.Text) ||
                 string.IsNullOrEmpty(textBoxTimeout.Text) ||
                 string.IsNullOrEmpty(textBoxLocalAETitle.Text))
             {
-                MessageBox.Show("Per favore, compila tutti i campi.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+                isValid = false;
             }
 
             if (!int.TryParse(textBoxServerPort.Text, out int port) || port < 1 || port > 65535)
             {
-                MessageBox.Show("Inserisci una porta valida (1-65535).", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+                isValid = false;
             }
 
             if (!int.TryParse(textBoxTimeout.Text, out int timeout) || timeout < 0)
             {
-                MessageBox.Show("Inserisci un timeout valido (>= 0).", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+                isValid = false;
             }
 
             var ipSegments = textBoxServerIP.Text.Split('.');
             if (ipSegments.Length != 4 || ipSegments.Any(segment => !int.TryParse(segment, out int num) || num < 0 || num > 255))
             {
-                MessageBox.Show("Inserisci un indirizzo IP valido.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+                isValid = false;
             }
 
-            return true;
+            buttonEchoTest.Enabled = isValid;
+            return isValid;
         }
     }
 }

@@ -3,5 +3,5 @@
   "LocalAETitle": "DICOM_MOD",
   "ServerIP": "192.168.1.30",
   "ServerPort": "104",
-  "Timeout": "30"
+  "Timeout": "30000"
 }
