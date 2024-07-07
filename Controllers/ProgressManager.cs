@@ -46,14 +46,14 @@ namespace DicomModifier.Controllers
                 {
                     _mainForm.UpdateFileCount(sentFiles, totalFiles);
                     _mainForm.UpdateProgressBar(sentFiles, totalFiles);
-                    _mainForm.UpdateStatus($"Invio in corso... ({sentFiles}/{totalFiles} file inviati)");
+                    _mainForm.UpdateStatus($"Invio in corso...");
                 }));
             }
             else
             {
                 _mainForm.UpdateFileCount(sentFiles, totalFiles);
                 _mainForm.UpdateProgressBar(sentFiles, totalFiles);
-                _mainForm.UpdateStatus($"Invio in corso... ({sentFiles}/{totalFiles} file inviati)");
+                _mainForm.UpdateStatus($"Invio in corso...");
             }
         }
     }

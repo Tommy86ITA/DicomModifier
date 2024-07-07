@@ -22,11 +22,12 @@ namespace DicomModifier
         private void InitializeEvents()
         {
             // Inizializza gli eventi
-
             textBoxServerPort.KeyPress += TextBoxServerPort_KeyPress;
             textBoxTimeout.KeyPress += TextBoxTimeout_KeyPress;
             textBoxServerIP.KeyPress += TextBoxServerIP_KeyPress;
             textBoxServerPort.TextChanged += TextBoxServerPort_TextChanged;
+            textBoxTimeout.TextChanged += TextBoxTimeout_TextChanged;
+            textBoxServerIP.TextChanged += TextBoxServerIP_TextChanged;
             buttonSave.Click += buttonSave_Click;
             buttonCancel.Click += buttonCancel_Click;
             buttonEchoTest.Click += buttonCEcho_Click;
@@ -55,19 +56,20 @@ namespace DicomModifier
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            if (!int.TryParse(textBoxServerPort.Text, out int port) || port < 1 || port > 65535)
+            if (!ValidateFields())
             {
-                MessageBox.Show("Inserisci una porta valida (1-65535).", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (!int.TryParse(textBoxTimeout.Text, out int timeout) || timeout < 0)
-            {
-                MessageBox.Show("Inserisci un timeout valido (>= 0).", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+            _settings.ServerIP = textBoxServerIP.Text;
+            _settings.ServerPort = textBoxServerPort.Text;
+            _settings.AETitle = textBoxAETitle.Text;
+            _settings.Timeout = textBoxTimeout.Text;
+            _settings.LocalAETitle = textBoxLocalAETitle.Text;
+            _settingsController.SaveSettings(_settings);
 
             DialogResult = DialogResult.OK;
+            this.Close();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -127,10 +129,85 @@ namespace DicomModifier
             {
                 if (port < 1 || port > 65535)
                 {
-                    MessageBox.Show("La porta deve essere compresa tra 1 e 65535.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    textBoxServerPort.Text = "";
+                    textBoxServerPort.BackColor = Color.Red;
+                }
+                else
+                {
+                    textBoxServerPort.BackColor = Color.Green;
                 }
             }
+            else
+            {
+                textBoxServerPort.BackColor = Color.Red;
+            }
+        }
+
+        private void TextBoxTimeout_TextChanged(object sender, EventArgs e)
+        {
+            // Controlla se il timeout è valido
+            if (int.TryParse(textBoxTimeout.Text, out int timeout))
+            {
+                if (timeout < 0)
+                {
+                    textBoxTimeout.BackColor = Color.Red;
+                }
+                else
+                {
+                    textBoxTimeout.BackColor = Color.Green;
+                }
+            }
+            else
+            {
+                textBoxTimeout.BackColor = Color.Red;
+            }
+        }
+
+        private void TextBoxServerIP_TextChanged(object sender, EventArgs e)
+        {
+            // Controlla se l'indirizzo IP è valido
+            var ipSegments = textBoxServerIP.Text.Split('.');
+            if (ipSegments.Length == 4 && ipSegments.All(segment => int.TryParse(segment, out int num) && num >= 0 && num <= 255))
+            {
+                textBoxServerIP.BackColor = Color.Green;
+            }
+            else
+            {
+                textBoxServerIP.BackColor = Color.Red;
+            }
+        }
+
+        private bool ValidateFields()
+        {
+            if (string.IsNullOrEmpty(textBoxAETitle.Text) ||
+                string.IsNullOrEmpty(textBoxServerIP.Text) ||
+                string.IsNullOrEmpty(textBoxServerPort.Text) ||
+                string.IsNullOrEmpty(textBoxTimeout.Text) ||
+                string.IsNullOrEmpty(textBoxLocalAETitle.Text))
+            {
+                MessageBox.Show("Per favore, compila tutti i campi.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (!int.TryParse(textBoxServerPort.Text, out int port) || port < 1 || port > 65535)
+            {
+                MessageBox.Show("Inserisci una porta valida (1-65535).", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (!int.TryParse(textBoxTimeout.Text, out int timeout) || timeout < 0)
+            {
+                MessageBox.Show("Inserisci un timeout valido (>= 0).", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            var ipSegments = textBoxServerIP.Text.Split('.');
+            if (ipSegments.Length != 4 || ipSegments.Any(segment => !int.TryParse(segment, out int num) || num < 0 || num > 255))
+            {
+                MessageBox.Show("Inserisci un indirizzo IP valido.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            return true;
         }
     }
 }

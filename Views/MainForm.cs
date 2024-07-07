@@ -1,6 +1,5 @@
 using DicomModifier.Controllers;
 using DicomModifier.Models;
-using System.Diagnostics;
 
 namespace DicomModifier
 {

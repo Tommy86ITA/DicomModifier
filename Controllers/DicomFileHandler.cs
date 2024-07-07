@@ -1,12 +1,8 @@
-﻿using DicomModifier.Models;
-using FellowOakDicom.Media;
+﻿using DicomModifier;
+using DicomModifier.Models;
 using FellowOakDicom;
+using FellowOakDicom.Media;
 using System.Diagnostics;
-using DicomModifier;
-using System.Threading.Tasks;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
 
 public class DicomFileHandler
 {
