@@ -29,11 +29,11 @@ namespace DicomModifier.Controllers
         {
             if (_mainForm.InvokeRequired)
             {
-                _mainForm.Invoke(new Action(() => _mainForm.UpdateFileCount(sent, total)));
+                _mainForm.Invoke(new Action(() => _mainForm.UpdateFileCount(sent, total, "File inviati")));
             }
             else
             {
-                _mainForm.UpdateFileCount(sent, total);
+                _mainForm.UpdateFileCount(sent, total, "File inviati");
             }
         }
 
@@ -44,14 +44,14 @@ namespace DicomModifier.Controllers
             {
                 _mainForm.Invoke(new Action(() =>
                 {
-                    _mainForm.UpdateFileCount(sentFiles, totalFiles);
+                    _mainForm.UpdateFileCount(sentFiles, totalFiles, "File inviati");
                     _mainForm.UpdateProgressBar(sentFiles, totalFiles);
                     _mainForm.UpdateStatus($"Invio in corso...");
                 }));
             }
             else
             {
-                _mainForm.UpdateFileCount(sentFiles, totalFiles);
+                _mainForm.UpdateFileCount(sentFiles, totalFiles, "File inviati");
                 _mainForm.UpdateProgressBar(sentFiles, totalFiles);
                 _mainForm.UpdateStatus($"Invio in corso...");
             }

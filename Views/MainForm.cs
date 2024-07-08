@@ -201,9 +201,16 @@ namespace DicomModifier
             return textBoxNewID.Text;
         }
 
-        public void UpdateFileCount(int sent, int total, string message = "File inviati")
+        public void UpdateFileCount(int sent, int total, string message)
         {
-            toolStripStatusLabelFileCount.Text = $"{message}: {sent}/{total}";
+            if (total == 0)
+            {
+                toolStripStatusLabelFileCount.Text = message;
+            }
+            else
+            {
+                toolStripStatusLabelFileCount.Text = $"{message}: {sent}/{total}";
+            }
         }
 
         public void UpdateStatus(string status)

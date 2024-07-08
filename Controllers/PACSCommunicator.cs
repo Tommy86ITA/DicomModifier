@@ -2,6 +2,7 @@
 using FellowOakDicom;
 using FellowOakDicom.Network;
 using FellowOakDicom.Network.Client;
+using System.Diagnostics;
 
 namespace DicomModifier.Controllers
 {
@@ -95,6 +96,7 @@ namespace DicomModifier.Controllers
             catch (Exception ex)
             {
                 _progressManager.UpdateStatus($"Errore durante l'invio dei file: {ex.Message}");
+                Debug.Print($"Errore durante l'invio dei file: {ex.Message}");
                 return false;
             }
         }

@@ -63,7 +63,7 @@ public class DicomFileHandler
         await AddDicomFilesAsync(dicomFiles, (progress, total) =>
         {
             _mainForm.UpdateProgressBar(progress, total);
-            _mainForm.UpdateFileCount(progress, total);
+            _mainForm.UpdateFileCount(progress, total, "File elaborati");
         });
     }
 

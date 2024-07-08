@@ -68,14 +68,14 @@ namespace DicomModifier.Controllers
                     _mainForm.UpdateStatus("Importazione in corso...");
                     var files = Directory.GetFiles(folderBrowserDialog.SelectedPath, "*.*", SearchOption.AllDirectories).ToList();
                     _mainForm.UpdateProgressBar(0, files.Count);
-                    _mainForm.UpdateFileCount(0, files.Count);
+                    _mainForm.UpdateFileCount(0, files.Count, "File importati");
 
                     int processedFiles = 0;
                     foreach (var file in files)
                     {
                         await _dicomManager.AddDicomFileAsync(file);
                         _mainForm.UpdateProgressBar(++processedFiles, files.Count);
-                        _mainForm.UpdateFileCount(processedFiles, files.Count);
+                        _mainForm.UpdateFileCount(processedFiles, files.Count, "File importati");
                     }
 
                     while (_dicomManager.DicomQueueCount > 0)
@@ -153,7 +153,7 @@ namespace DicomModifier.Controllers
             _mainForm.DisableControls();
             _mainForm.UpdateStatus("Aggiornamento ID Paziente in corso...");
             _mainForm.UpdateProgressBar(0, selectedRows.Count);
-            _mainForm.UpdateFileCount(0, selectedRows.Count);
+            _mainForm.UpdateFileCount(0, selectedRows.Count, "File elaborati");
 
             int processedRows = 0;
             foreach (var row in selectedRows)
@@ -162,7 +162,7 @@ namespace DicomModifier.Controllers
                 await _dicomManager.UpdatePatientIDInTempFolderAsync(studyInstanceUID, newPatientID, (progress, total) =>
                 {
                     _mainForm.UpdateProgressBar(progress, total);
-                    _mainForm.UpdateFileCount(progress, total);
+                    _mainForm.UpdateFileCount(progress, total, "File elaborati");
                 });
                 row.Cells["PatientIDColumn"].Value = newPatientID; // Aggiorna l'ID visualizzato nella DataGridView
             }
@@ -236,7 +236,7 @@ namespace DicomModifier.Controllers
                     _dicomManager.ResetQueue();
                     _mainForm.ClearTable();
                     _mainForm.ClearNewPatientIDTextBox();
-                    _mainForm.UpdateFileCount(0, 0);
+                    _mainForm.UpdateFileCount(0, 0, "Attesa file");
                     _mainForm.UpdateProgressBar(0, 1);
                     _mainForm.UpdateStatus("Pronto");
                     _mainForm.ClearTempFolder();
