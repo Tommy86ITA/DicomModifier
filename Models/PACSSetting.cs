@@ -16,7 +16,7 @@ namespace DicomModifier.Models
         {
             if (File.Exists(configFilePath))
             {
-                var json = File.ReadAllText(configFilePath);
+                string json = File.ReadAllText(configFilePath);
                 return JsonSerializer.Deserialize<PACSSettings>(json);
             }
 
@@ -25,7 +25,7 @@ namespace DicomModifier.Models
 
         public void SaveSettings()
         {
-            var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+            string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(configFilePath, json);
         }
     }

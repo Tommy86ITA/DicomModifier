@@ -28,8 +28,8 @@ namespace DicomModifier.Controllers
 
             try
             {
-                var json = File.ReadAllText(ConfigFilePath);
-                var settings = JsonSerializer.Deserialize<PACSSettings>(json);
+                string json = File.ReadAllText(ConfigFilePath);
+                PACSSettings? settings = JsonSerializer.Deserialize<PACSSettings>(json);
                 _mainForm.UpdateStatus("Impostazioni caricate correttamente.");
                 return settings;
             }
@@ -44,7 +44,7 @@ namespace DicomModifier.Controllers
         {
             try
             {
-                var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(ConfigFilePath, json);
                 _mainForm.UpdateStatus("Impostazioni salvate correttamente.");
             }

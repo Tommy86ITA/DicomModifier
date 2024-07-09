@@ -18,7 +18,7 @@ namespace DicomModifier.Models
             string seriesInstanceUID = dataset.GetSingleValueOrDefault(DicomTag.SeriesInstanceUID, "Unknown");
             string modality = dataset.GetSingleValueOrDefault(DicomTag.Modality, "Unknown");
 
-            var existingRow = _dataGridView.Rows
+            DataGridViewRow? existingRow = _dataGridView.Rows
                 .Cast<DataGridViewRow>()
                 .FirstOrDefault(row => row.Cells["PatientIDColumn"].Value?.ToString() == patientID &&
                                        row.Cells["StudyInstanceUIDColumn"].Value?.ToString() == studyInstanceUID);
@@ -38,7 +38,7 @@ namespace DicomModifier.Models
             }
             else
             {
-                var newRow = new DataGridViewRow();
+                DataGridViewRow newRow = new();
                 newRow.CreateCells(_dataGridView);
 
                 newRow.Cells[_dataGridView.Columns["PatientIDColumn"].Index].Value = patientID;

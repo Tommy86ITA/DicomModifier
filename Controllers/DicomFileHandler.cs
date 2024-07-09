@@ -42,7 +42,7 @@ public class DicomFileHandler
         int count = 0;
         int total = filePaths.Count();
 
-        foreach (var filePath in filePaths)
+        foreach (string filePath in filePaths)
         {
             string tempFilePath = await CopyToTempFolderAsync(filePath);
             dicomQueue.Enqueue(tempFilePath);
@@ -53,10 +53,12 @@ public class DicomFileHandler
 
     public async Task AddDicomDirAsync(string dicomDirPath)
     {
+#pragma warning disable CS8601 // Possibile assegnazione di riferimento Null.
         dicomDirBasePath = Path.GetDirectoryName(dicomDirPath);
+#pragma warning restore CS8601 // Possibile assegnazione di riferimento Null.
         Debug.WriteLine($"DICOMDIR base path: {dicomDirBasePath}");
-        var dicomDir = await DicomDirectory.OpenAsync(dicomDirPath);
-        var dicomFiles = new List<string>();
+        DicomDirectory dicomDir = await DicomDirectory.OpenAsync(dicomDirPath);
+        List<string> dicomFiles = new();
 
         TraverseDirectoryRecords(dicomDir.RootDirectoryRecord, dicomFiles);
 
@@ -69,14 +71,14 @@ public class DicomFileHandler
 
     public async Task AddDicomFolderAsync(string folderPath, Action<int, int> updateProgress)
     {
-        var dicomFiles = Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories)
+        string[] dicomFiles = Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories)
             .Where(file => !string.IsNullOrEmpty(Path.GetExtension(file))).ToArray();
         Debug.WriteLine($"Found {dicomFiles.Length} DICOM files in folder: {folderPath}");
 
         int count = 0;
         int total = dicomFiles.Length;
 
-        foreach (var filePath in dicomFiles)
+        foreach (string? filePath in dicomFiles)
         {
             string tempFilePath = await CopyToTempFolderAsync(filePath);
             dicomQueue.Enqueue(tempFilePath);
@@ -93,7 +95,7 @@ public class DicomFileHandler
         {
             if (record.Contains(DicomTag.ReferencedFileID))
             {
-                var fileIDs = record.GetValues<string>(DicomTag.ReferencedFileID);
+                string[] fileIDs = record.GetValues<string>(DicomTag.ReferencedFileID);
                 Debug.WriteLine($"ReferencedFileID values: {string.Join(", ", fileIDs)}");
 
                 string combinedPath = Path.Combine(dicomDirBasePath, Path.Combine(fileIDs));
@@ -118,14 +120,14 @@ public class DicomFileHandler
 
     public int DicomQueueCount => dicomQueue.Count;
 
-    public async Task<DicomFile> GetNextDicomFileAsync()
+    public async Task<DicomFile?> GetNextDicomFileAsync()
     {
         if (dicomQueue.Count == 0) return null;
         string filePath = dicomQueue.Dequeue();
         return await DicomFile.OpenAsync(filePath);
     }
 
-    public async Task<DicomDataset> GetDicomDataAsync(string filePath)
+    public static async Task<DicomDataset> GetDicomDataAsync(string filePath)
     {
         return (await DicomFile.OpenAsync(filePath)).Dataset;
     }
@@ -133,8 +135,8 @@ public class DicomFileHandler
     private async Task<string> CopyToTempFolderAsync(string filePath)
     {
         string tempFilePath = Path.Combine(_tempFolder, $"{Path.GetFileNameWithoutExtension(filePath)}_{Guid.NewGuid()}{Path.GetExtension(filePath)}");
-        using (var sourceStream = File.Open(filePath, FileMode.Open))
-        using (var destinationStream = File.Create(tempFilePath))
+        using (FileStream sourceStream = File.Open(filePath, FileMode.Open))
+        using (FileStream destinationStream = File.Create(tempFilePath))
         {
             await sourceStream.CopyToAsync(destinationStream);
         }
@@ -143,23 +145,23 @@ public class DicomFileHandler
 
     public async Task UpdatePatientIDInTempFolderAsync(string studyInstanceUID, string newPatientID, Action<int, int> updateProgress)
     {
-        var updatedFilePaths = new List<string>();
+        List<string> updatedFilePaths = new();
 
         if (!Directory.Exists(_modifiedFolder))
         {
             Directory.CreateDirectory(_modifiedFolder);
         }
 
-        var filePaths = Directory.GetFiles(_tempFolder);
+        string[] filePaths = Directory.GetFiles(_tempFolder);
         int count = 0;
         int total = filePaths.Length;
 
         for (int i = 0; i < filePaths.Length; i++)
         {
-            var filePath = filePaths[i];
+            string filePath = filePaths[i];
             try
             {
-                var dicomFile = await DicomFile.OpenAsync(filePath, FileReadOption.ReadAll);
+                DicomFile dicomFile = await DicomFile.OpenAsync(filePath, FileReadOption.ReadAll);
                 if (dicomFile.Dataset.GetString(DicomTag.StudyInstanceUID) == studyInstanceUID)
                 {
                     dicomFile.Dataset.AddOrUpdate(DicomTag.PatientID, newPatientID);
@@ -177,7 +179,7 @@ public class DicomFileHandler
         }
 
         dicomQueue.Clear();
-        foreach (var filePath in updatedFilePaths)
+        foreach (string filePath in updatedFilePaths)
         {
             dicomQueue.Enqueue(filePath);
         }

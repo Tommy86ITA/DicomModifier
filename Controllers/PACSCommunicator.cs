@@ -24,10 +24,10 @@ namespace DicomModifier.Controllers
             try
             {
                 // Crea un client DICOM per il C-ECHO
-                var client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
-                var cEcho = new DicomCEchoRequest();
+                IDicomClient client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
+                DicomCEchoRequest cEcho = new();
 
-                var tcs = new TaskCompletionSource<bool>();
+                TaskCompletionSource<bool> tcs = new();
 
                 cEcho.OnResponseReceived += (req, resp) =>
                 {
@@ -58,7 +58,7 @@ namespace DicomModifier.Controllers
         {
             try
             {
-                var client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
+                IDicomClient client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
 
                 if (filePaths.Count == 0)
                 {
@@ -69,7 +69,7 @@ namespace DicomModifier.Controllers
                 _progressManager.UpdateStatus("Inizio invio file...");
                 _progressManager.UpdateProgress(0, filePaths.Count);
 
-                foreach (var filePath in filePaths)
+                foreach (string filePath in filePaths)
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
@@ -77,8 +77,8 @@ namespace DicomModifier.Controllers
                         return false;
                     }
 
-                    var dicomFile = await DicomFile.OpenAsync(filePath).ConfigureAwait(false);
-                    var cStoreRequest = new DicomCStoreRequest(dicomFile);
+                    DicomFile dicomFile = await DicomFile.OpenAsync(filePath).ConfigureAwait(false);
+                    DicomCStoreRequest cStoreRequest = new(dicomFile);
 
                     cStoreRequest.OnResponseReceived += (req, resp) =>
                     {

@@ -34,7 +34,7 @@ namespace DicomModifier.Controllers
 
         private async void MainForm_OnSelectFileAsync(object sender, EventArgs e)
         {
-            using (var openFileDialog = new OpenFileDialog())
+            using (OpenFileDialog openFileDialog = new())
             {
                 openFileDialog.Filter = "DICOM files (*.dcm)|*.dcm|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
@@ -44,7 +44,7 @@ namespace DicomModifier.Controllers
                     _mainForm.UpdateStatus("Importazione in corso...");
                     _mainForm.UpdateProgressBar(0, 1);
                     await _dicomManager.AddDicomFileAsync(openFileDialog.FileName);
-                    var dicomFile = await _dicomManager.GetNextDicomFileAsync();
+                    DicomFile dicomFile = await _dicomManager.GetNextDicomFileAsync();
                     if (dicomFile != null)
                     {
                         _mainForm.TableManager.AddDicomToGrid(dicomFile.Dataset);
@@ -59,19 +59,19 @@ namespace DicomModifier.Controllers
 
         private async void MainForm_OnSelectFolderAsync(object sender, EventArgs e)
         {
-            using (var folderBrowserDialog = new FolderBrowserDialog())
+            using (FolderBrowserDialog folderBrowserDialog = new())
             {
                 if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
                 {
                     _mainForm.DisableControls();
                     Debug.WriteLine($"Selected folder: {folderBrowserDialog.SelectedPath}");
                     _mainForm.UpdateStatus("Importazione in corso...");
-                    var files = Directory.GetFiles(folderBrowserDialog.SelectedPath, "*.*", SearchOption.AllDirectories).ToList();
+                    List<string> files = Directory.GetFiles(folderBrowserDialog.SelectedPath, "*.*", SearchOption.AllDirectories).ToList();
                     _mainForm.UpdateProgressBar(0, files.Count);
                     _mainForm.UpdateFileCount(0, files.Count, "File importati");
 
                     int processedFiles = 0;
-                    foreach (var file in files)
+                    foreach (string? file in files)
                     {
                         await _dicomManager.AddDicomFileAsync(file);
                         _mainForm.UpdateProgressBar(++processedFiles, files.Count);
@@ -80,7 +80,7 @@ namespace DicomModifier.Controllers
 
                     while (_dicomManager.DicomQueueCount > 0)
                     {
-                        var dicomFile = await _dicomManager.GetNextDicomFileAsync();
+                        DicomFile dicomFile = await _dicomManager.GetNextDicomFileAsync();
                         if (dicomFile != null)
                         {
                             _mainForm.TableManager.AddDicomToGrid(dicomFile.Dataset);
@@ -101,7 +101,7 @@ namespace DicomModifier.Controllers
 
         private async void MainForm_OnSelectDicomDirAsync(object sender, EventArgs e)
         {
-            using (var openFileDialog = new OpenFileDialog())
+            using (OpenFileDialog openFileDialog = new())
             {
                 openFileDialog.Filter = "DICOMDIR files (DICOMDIR)|DICOMDIR|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
@@ -115,7 +115,7 @@ namespace DicomModifier.Controllers
 
                     while (_dicomManager.DicomQueueCount > 0)
                     {
-                        var dicomFile = await _dicomManager.GetNextDicomFileAsync();
+                        DicomFile dicomFile = await _dicomManager.GetNextDicomFileAsync();
                         if (dicomFile != null)
                         {
                             _mainForm.TableManager.AddDicomToGrid(dicomFile.Dataset);
@@ -137,14 +137,14 @@ namespace DicomModifier.Controllers
                 return;
             }
 
-            var selectedRows = _mainForm.GetSelectedRows();
+            List<DataGridViewRow> selectedRows = _mainForm.GetSelectedRows();
             if (selectedRows.Count == 0)
             {
                 MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            var confirmResult = MessageBox.Show($"Sei sicuro di voler modificare l'ID Paziente in '{newPatientID}'?", "Conferma Modifica ID Paziente", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult confirmResult = MessageBox.Show($"Sei sicuro di voler modificare l'ID Paziente in '{newPatientID}'?", "Conferma Modifica ID Paziente", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirmResult == DialogResult.No)
             {
                 return;
@@ -155,8 +155,7 @@ namespace DicomModifier.Controllers
             _mainForm.UpdateProgressBar(0, selectedRows.Count);
             _mainForm.UpdateFileCount(0, selectedRows.Count, "File elaborati");
 
-            int processedRows = 0;
-            foreach (var row in selectedRows)
+            foreach (DataGridViewRow row in selectedRows)
             {
                 string studyInstanceUID = row.Cells["StudyInstanceUIDColumn"].Value.ToString();
                 await _dicomManager.UpdatePatientIDInTempFolderAsync(studyInstanceUID, newPatientID, (progress, total) =>
@@ -181,7 +180,7 @@ namespace DicomModifier.Controllers
                 _mainForm.DisableControls();
                 _mainForm.isSending = true;
 
-                var selectedRows = _mainForm.GetSelectedRows();
+                List<DataGridViewRow> selectedRows = _mainForm.GetSelectedRows();
                 if (selectedRows.Count == 0)
                 {
                     MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -192,7 +191,7 @@ namespace DicomModifier.Controllers
 
                 // Controlla se esiste la cartella "modified"
                 string modifiedFolder = _dicomManager.ModifiedFolder;
-                var filePaths = Directory.Exists(modifiedFolder) && Directory.GetFiles(modifiedFolder).Any()
+                List<string> filePaths = Directory.Exists(modifiedFolder) && Directory.GetFiles(modifiedFolder).Any()
                     ? Directory.GetFiles(modifiedFolder).ToList()
                     : Directory.GetFiles(_tempDirectory).ToList();
 
@@ -206,12 +205,12 @@ namespace DicomModifier.Controllers
 
                 _cancellationTokenSource = new CancellationTokenSource();
 
-                var dicomFiles = new List<string>();
-                foreach (var filePath in filePaths)
+                List<string> dicomFiles = new();
+                foreach (string? filePath in filePaths)
                 {
                     try
                     {
-                        var dicomFile = DicomFile.Open(filePath);
+                        DicomFile dicomFile = DicomFile.Open(filePath);
                         dicomFiles.Add(filePath);
                     }
                     catch
@@ -239,7 +238,7 @@ namespace DicomModifier.Controllers
                     _mainForm.UpdateFileCount(0, 0, "Attesa file");
                     _mainForm.UpdateProgressBar(0, 1);
                     _mainForm.UpdateStatus("Pronto");
-                    _mainForm.ClearTempFolder();
+                    MainForm.ClearTempFolder();
                     _mainForm.UpdateControlStates();
                 }
                 else
@@ -253,7 +252,7 @@ namespace DicomModifier.Controllers
             }
             catch (AggregateException ex)
             {
-                foreach (var innerException in ex.InnerExceptions)
+                foreach (Exception innerException in ex.InnerExceptions)
                 {
                     MessageBox.Show($"Errore durante l'invio dei file: {innerException.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -273,14 +272,14 @@ namespace DicomModifier.Controllers
         private void MainForm_OnResetQueue(object sender, EventArgs e)
         {
             _dicomManager.ResetQueue();
-            _mainForm.ClearTempFolder();
+            MainForm.ClearTempFolder();
             _mainForm.ClearTable();
             _mainForm.ClearNewPatientIDTextBox();
             _mainForm.UpdateControlStates();
             _mainForm.UpdateProgressBar(0, 1);
             _mainForm.UpdateFileCount(0, 0, "Attesa file");
             _mainForm.UpdateStatus("Pronto");
-           
+
         }
     }
 }

@@ -109,11 +109,11 @@ namespace DicomModifier
         {
             if (isSending && !confirmClose)
             {
-                var result = MessageBox.Show("Ci sono trasferimenti in corso. Vuoi davvero chiudere il programma?", "Trasferimenti in corso", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show("Ci sono trasferimenti in corso. Vuoi davvero chiudere il programma?", "Trasferimenti in corso", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
                 {
                     confirmClose = true;
-                    var mainController = (MainController)this.Tag;
+                    MainController? mainController = (MainController)this.Tag;
                     DisableControls();
                     dataGridView1.Enabled = false;
                     mainController.CancelSending();
@@ -133,12 +133,12 @@ namespace DicomModifier
             }
         }
 
-        public void ClearTempFolder()
+        public static void ClearTempFolder()
         {
             string tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
             if (Directory.Exists(tempDirectory))
             {
-                DirectoryInfo di = new DirectoryInfo(tempDirectory);
+                DirectoryInfo di = new(tempDirectory);
                 foreach (FileInfo file in di.GetFiles())
                 {
                     file.Delete();
@@ -186,7 +186,7 @@ namespace DicomModifier
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var settingsForm = new SettingsForm(_settings, _settingsController))
+            using (SettingsForm settingsForm = new(_settings, _settingsController))
             {
                 if (settingsForm.ShowDialog() == DialogResult.OK)
                 {
@@ -245,7 +245,7 @@ namespace DicomModifier
 
         public List<DataGridViewRow> GetSelectedRows()
         {
-            List<DataGridViewRow> selectedRows = new List<DataGridViewRow>();
+            List<DataGridViewRow> selectedRows = new();
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
             {
                 selectedRows.Add(row);

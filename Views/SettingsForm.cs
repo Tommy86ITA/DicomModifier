@@ -87,8 +87,8 @@ namespace DicomModifier
             panelEchoStatus.BackColor = Color.Yellow;
             this.Enabled = false;
 
-            var testSettings = GetSettings();
-            var communicator = new PACSCommunicator(testSettings, _progressManager);
+            PACSSettings testSettings = GetSettings();
+            PACSCommunicator communicator = new(testSettings, _progressManager);
             bool success = await communicator.SendCEcho();
 
             if (success)
@@ -179,7 +179,7 @@ namespace DicomModifier
         private void TextBoxServerIP_TextChanged(object sender, EventArgs e)
         {
             // Controlla se l'indirizzo IP è valido
-            var ipSegments = textBoxServerIP.Text.Split('.');
+            string[] ipSegments = textBoxServerIP.Text.Split('.');
             if (ipSegments.Length == 4 && ipSegments.All(segment => int.TryParse(segment, out int num) && num >= 0 && num <= 255))
             {
                 textBoxServerIP.BackColor = Color.Green;
@@ -219,7 +219,7 @@ namespace DicomModifier
                 isValid = false;
             }
 
-            var ipSegments = textBoxServerIP.Text.Split('.');
+            string[] ipSegments = textBoxServerIP.Text.Split('.');
             if (ipSegments.Length != 4 || ipSegments.Any(segment => !int.TryParse(segment, out int num) || num < 0 || num > 255))
             {
                 isValid = false;
