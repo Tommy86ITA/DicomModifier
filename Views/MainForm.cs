@@ -16,6 +16,9 @@ namespace DicomModifier
 
         public TableManager TableManager { get; private set; }
         private readonly SettingsController _settingsController;
+
+        private ToolTip toolTip;
+
         private PACSSettings _settings;
         public bool isSending = false; // Flag per controllare se ci sono trasferimenti in corso
         private bool confirmClose = false;
@@ -24,6 +27,7 @@ namespace DicomModifier
         {
             InitializeComponent();
             InitializeEvents();
+            InitializeTooltips();
             UpdateControlStates();
             TableManager = new TableManager(DataGridView1);
 
@@ -47,6 +51,18 @@ namespace DicomModifier
             buttonResetQueue.Click += ButtonResetQueue_Click;
             buttonUpdateID.Click += ButtonUpdateID_Click;
             esciToolStripMenuItem.Click += EsciToolStripMenuItem_Click;
+        }
+
+        private void InitializeTooltips()
+        {
+            toolTip = new ToolTip();
+
+            toolTip.SetToolTip(buttonDicomFile, "Seleziona un file DICOM da importare.");
+            toolTip.SetToolTip(buttonFolder, "Seleziona una cartella contenente file DICOM da importare.");
+            toolTip.SetToolTip(buttonDicomDir, "Seleziona un file DICOMDIR da importare.");
+            toolTip.SetToolTip(buttonSend, "Invia i file DICOM selezionati al server PACS.");
+            toolTip.SetToolTip(buttonResetQueue, "Pulisci la coda di file DICOM.");
+            toolTip.SetToolTip(buttonUpdateID, "Aggiorna l'ID paziente per i file DICOM selezionati.");
         }
 
         public void DisableControls()
@@ -115,7 +131,6 @@ namespace DicomModifier
                 ClearTempFolder();
                 Application.Exit();
             }
-
         }
 
         public void ClearTempFolder()
@@ -123,10 +138,17 @@ namespace DicomModifier
             string tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
             if (Directory.Exists(tempDirectory))
             {
-                Directory.Delete(tempDirectory, true);
+                DirectoryInfo di = new DirectoryInfo(tempDirectory);
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
             }
         }
-
 
         private void ButtonResetQueue_Click(object sender, EventArgs e)
         {
@@ -179,19 +201,35 @@ namespace DicomModifier
             return textBoxNewID.Text;
         }
 
+        public void UpdateFileCount(int sent, int total, string message)
+        {
+            if (total == 0)
+            {
+                toolStripStatusLabelFileCount.Text = message;
+            }
+            else
+            {
+                toolStripStatusLabelFileCount.Text = $"{message}: {sent}/{total}";
+            }
+        }
+
         public void UpdateStatus(string status)
         {
             toolStripStatusLabel.Text = $"Stato: {status}";
         }
 
-        public void UpdateFileCount(int sent, int total)
-        {
-            toolStripStatusLabelFileCount.Text = $"File inviati: {sent}/{total}";
-        }
 
-        public void UpdateProgressBar(int value)
+        public void UpdateProgressBar(int value, int maximum)
         {
-            toolStripProgressBar.Value = value;
+            if (toolStripProgressBar.GetCurrentParent().InvokeRequired)
+            {
+                toolStripProgressBar.GetCurrentParent().Invoke(new Action<int, int>(UpdateProgressBar), value, maximum);
+            }
+            else
+            {
+                toolStripProgressBar.Maximum = maximum;
+                toolStripProgressBar.Value = value;
+            }
         }
 
         public void ClearTable()
@@ -219,6 +257,5 @@ namespace DicomModifier
         {
             OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
         }
-
     }
 }

@@ -1,18 +1,18 @@
-﻿using DicomModifier.Interfaces;
-using DicomModifier.Models;
+﻿using DicomModifier.Models;
 using FellowOakDicom;
 using FellowOakDicom.Network;
 using FellowOakDicom.Network.Client;
+using System.Diagnostics;
 
 namespace DicomModifier.Controllers
 {
-    public class PACSCommunicator : IPACSCommunicator
+    public class PACSCommunicator
     {
         private readonly PACSSettings _settings;
-        private readonly IProgressManager _progressManager;
+        private readonly ProgressManager _progressManager;
 
         // Costruttore: inizializza le impostazioni PACS e il gestore del progresso
-        public PACSCommunicator(PACSSettings settings, IProgressManager progressManager)
+        public PACSCommunicator(PACSSettings settings, ProgressManager progressManager)
         {
             _settings = settings;
             _progressManager = progressManager;
@@ -58,12 +58,25 @@ namespace DicomModifier.Controllers
         {
             try
             {
-                // Crea un client DICOM per l'invio dei file
                 var client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
+
+                if (filePaths.Count == 0)
+                {
+                    _progressManager.UpdateStatus("Nessun file da inviare.");
+                    return false;
+                }
+
+                _progressManager.UpdateStatus("Inizio invio file...");
+                _progressManager.UpdateProgress(0, filePaths.Count);
 
                 foreach (var filePath in filePaths)
                 {
-                    // Apre il file DICOM e crea una richiesta C-STORE per ciascun file
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        _progressManager.UpdateStatus("Invio annullato dall'utente.");
+                        return false;
+                    }
+
                     var dicomFile = await DicomFile.OpenAsync(filePath).ConfigureAwait(false);
                     var cStoreRequest = new DicomCStoreRequest(dicomFile);
 
@@ -72,26 +85,22 @@ namespace DicomModifier.Controllers
                         _progressManager.UpdateProgress(filePaths.IndexOf(filePath) + 1, filePaths.Count);
                     };
 
-                    // Aggiungi la richiesta al client
                     await client.AddRequestAsync(cStoreRequest).ConfigureAwait(false);
-
-                    // Controlla se la cancellazione è stata richiesta
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        _progressManager.UpdateStatus("Invio annullato dall'utente.");
-                        return false;
-                    }
                 }
 
-                // Invia tutte le richieste al server PACS
                 await client.SendAsync(cancellationToken).ConfigureAwait(false);
+
+                _progressManager.UpdateStatus("Invio completato.");
                 return true;
             }
             catch (Exception ex)
             {
                 _progressManager.UpdateStatus($"Errore durante l'invio dei file: {ex.Message}");
+                Debug.Print($"Errore durante l'invio dei file: {ex.Message}");
                 return false;
             }
         }
+
+
     }
 }

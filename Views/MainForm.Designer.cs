@@ -189,6 +189,7 @@ namespace DicomModifier
             // 
             statusStrip.ImageScalingSize = new Size(32, 32);
             statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel, toolStripStatusLabelFileCount, toolStripProgressBar, toolStripStatusLabelDev, toolStripDropDownButton });
+            statusStrip.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             statusStrip.Location = new Point(0, 392);
             statusStrip.Name = "statusStrip";
             statusStrip.Padding = new Padding(1, 0, 8, 0);
@@ -210,7 +211,7 @@ namespace DicomModifier
             toolStripStatusLabelFileCount.AutoSize = false;
             toolStripStatusLabelFileCount.Name = "toolStripStatusLabelFileCount";
             toolStripStatusLabelFileCount.Size = new Size(150, 60);
-            toolStripStatusLabelFileCount.Text = "File inviati:";
+            toolStripStatusLabelFileCount.Text = "Attesa file";
             toolStripStatusLabelFileCount.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // toolStripProgressBar
@@ -253,6 +254,7 @@ namespace DicomModifier
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             settingsToolStripMenuItem.Size = new Size(151, 22);
             settingsToolStripMenuItem.Text = "Impostazioni...";
+            settingsToolStripMenuItem.ToolTipText = "Apri la finestra delle impostazioni.";
             // 
             // buttonResetQueue
             // 
@@ -270,7 +272,7 @@ namespace DicomModifier
             PatientNameColumn.MinimumWidth = 350;
             PatientNameColumn.Name = "PatientNameColumn";
             PatientNameColumn.ReadOnly = true;
-            PatientNameColumn.Width = 425;
+            PatientNameColumn.Width = 450;
             // 
             // PatientDOBColumn
             // 
@@ -293,7 +295,7 @@ namespace DicomModifier
             StudyDescriptionColumn.MinimumWidth = 150;
             StudyDescriptionColumn.Name = "StudyDescriptionColumn";
             StudyDescriptionColumn.ReadOnly = true;
-            StudyDescriptionColumn.Width = 300;
+            StudyDescriptionColumn.Width = 275;
             // 
             // StudyDateColumn
             // 

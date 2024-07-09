@@ -8,12 +8,10 @@ namespace DicomModifier.Controllers
         private const string ConfigFilePath = "Config.json";
         private readonly MainForm _mainForm;
 
-
         public MainForm GetMainForm()
         {
             return _mainForm;
         }
-
 
         public SettingsController(MainForm mainForm)
         {
