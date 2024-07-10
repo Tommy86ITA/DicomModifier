@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace DicomModifier.Models
+﻿namespace DicomModifier.Models
 {
     public class PACSSettings
     {
@@ -10,24 +8,13 @@ namespace DicomModifier.Models
         public string Timeout { get; set; }
         public string LocalAETitle { get; set; }
 
-        private static readonly string configFilePath = "config.json";
-
-        public static PACSSettings LoadSettings()
+        public void ApplyDefaults()
         {
-            if (File.Exists(configFilePath))
-            {
-                string json = File.ReadAllText(configFilePath);
-                return JsonSerializer.Deserialize<PACSSettings>(json);
-            }
-
-            return new PACSSettings(); // Return default settings if no config file is found
-        }
-
-        public void SaveSettings()
-        {
-            string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(configFilePath, json);
+            ServerIP = "127.0.0.1";
+            ServerPort = "104";
+            AETitle = "PACS";
+            Timeout = "30000";
+            LocalAETitle = "DICOM_MOD";
         }
     }
 }
-
