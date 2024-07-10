@@ -12,7 +12,8 @@ namespace DicomModifier
             Application.SetCompatibleTextRenderingDefault(false);
 
             MainForm mainForm = new();
-            TableManager tableManager = new(mainForm.DataGridView1);
+            UIController uiController = new(mainForm);
+            TableManager tableManager = new(mainForm.DataGridView1, uiController); // Passiamo uiController qui
             DicomFileHandler dicomManager = new(tableManager, mainForm);
 
             // Carica le impostazioni

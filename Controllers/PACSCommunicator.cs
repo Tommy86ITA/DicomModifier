@@ -100,7 +100,5 @@ namespace DicomModifier.Controllers
                 return false;
             }
         }
-
-
     }
 }

@@ -57,7 +57,7 @@ namespace DicomModifier.Controllers
             dicomDirBasePath = Path.GetDirectoryName(dicomDirPath);
             Debug.WriteLine($"DICOMDIR base path: {dicomDirBasePath}");
             DicomDirectory dicomDir = await DicomDirectory.OpenAsync(dicomDirPath);
-            List<string> dicomFiles = new();
+            List<string> dicomFiles = [];
 
             TraverseDirectoryRecords(dicomDir.RootDirectoryRecord, dicomFiles);
 
@@ -68,25 +68,7 @@ namespace DicomModifier.Controllers
             });
         }
 
-        public async Task AddDicomFolderAsync(string folderPath, Action<int, int> updateProgress)
-        {
-            string[] dicomFiles = Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories)
-                .Where(file => !string.IsNullOrEmpty(Path.GetExtension(file))).ToArray();
-            Debug.WriteLine($"Found {dicomFiles.Length} DICOM files in folder: {folderPath}");
-
-            int count = 0;
-            int total = dicomFiles.Length;
-
-            foreach (string? filePath in dicomFiles)
-            {
-                string tempFilePath = await CopyToTempFolderAsync(filePath);
-                dicomQueue.Enqueue(tempFilePath);
-                count++;
-                updateProgress(count, total);
-            }
-        }
-
-        #endregion
+        #endregion Funzioni di importazione
 
         private void TraverseDirectoryRecords(DicomDirectoryRecord record, List<string> dicomFiles)
         {
@@ -126,11 +108,6 @@ namespace DicomModifier.Controllers
             return await DicomFile.OpenAsync(filePath);
         }
 
-        public static async Task<DicomDataset> GetDicomDataAsync(string filePath)
-        {
-            return (await DicomFile.OpenAsync(filePath)).Dataset;
-        }
-
         private async Task<string> CopyToTempFolderAsync(string filePath)
         {
             string tempFilePath = Path.Combine(_tempFolder, $"{Path.GetFileNameWithoutExtension(filePath)}_{Guid.NewGuid()}{Path.GetExtension(filePath)}");
@@ -144,39 +121,58 @@ namespace DicomModifier.Controllers
 
         public async Task UpdatePatientIDInTempFolderAsync(string studyInstanceUID, string newPatientID, Action<int, int> updateProgress)
         {
-            List<string> updatedFilePaths = new();
+            List<string> updatedFilePaths = [];
 
+            EnsureModifiedFolderExists();
+            string[] filePaths = Directory.GetFiles(_tempFolder);
+
+            await ProcessFilesAsync(filePaths, studyInstanceUID, newPatientID, updateProgress, updatedFilePaths);
+            UpdateDicomQueue(updatedFilePaths);
+        }
+
+        private void EnsureModifiedFolderExists()
+        {
             if (!Directory.Exists(_modifiedFolder))
             {
                 Directory.CreateDirectory(_modifiedFolder);
             }
+        }
 
-            string[] filePaths = Directory.GetFiles(_tempFolder);
+        private async Task ProcessFilesAsync(string[] filePaths, string studyInstanceUID, string newPatientID, Action<int, int> updateProgress, List<string> updatedFilePaths)
+        {
             int count = 0;
             int total = filePaths.Length;
 
             for (int i = 0; i < filePaths.Length; i++)
             {
                 string filePath = filePaths[i];
-                try
+                await ProcessSingleFileAsync(filePath, studyInstanceUID, newPatientID, updatedFilePaths);
+                count++;
+                updateProgress(count, total);
+            }
+        }
+
+        private async Task ProcessSingleFileAsync(string filePath, string studyInstanceUID, string newPatientID, List<string> updatedFilePaths)
+        {
+            try
+            {
+                DicomFile dicomFile = await DicomFile.OpenAsync(filePath, FileReadOption.ReadAll);
+                if (dicomFile.Dataset.GetString(DicomTag.StudyInstanceUID) == studyInstanceUID)
                 {
-                    DicomFile dicomFile = await DicomFile.OpenAsync(filePath, FileReadOption.ReadAll);
-                    if (dicomFile.Dataset.GetString(DicomTag.StudyInstanceUID) == studyInstanceUID)
-                    {
-                        dicomFile.Dataset.AddOrUpdate(DicomTag.PatientID, newPatientID);
-                        string newFilePath = Path.Combine(_modifiedFolder, Path.GetFileName(filePath));
-                        await dicomFile.SaveAsync(newFilePath);
-                        updatedFilePaths.Add(newFilePath);
-                    }
-                    count++;
-                    updateProgress(count, total);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error updating patient ID in file {filePath}: {ex.Message}");
+                    dicomFile.Dataset.AddOrUpdate(DicomTag.PatientID, newPatientID);
+                    string newFilePath = Path.Combine(_modifiedFolder, Path.GetFileName(filePath));
+                    await dicomFile.SaveAsync(newFilePath);
+                    updatedFilePaths.Add(newFilePath);
                 }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error updating patient ID in file {filePath}: {ex.Message}");
+            }
+        }
 
+        private void UpdateDicomQueue(List<string> updatedFilePaths)
+        {
             dicomQueue.Clear();
             foreach (string filePath in updatedFilePaths)
             {
@@ -187,11 +183,6 @@ namespace DicomModifier.Controllers
         public void ResetQueue()
         {
             dicomQueue.Clear();
-        }
-
-        public string GetModifiedFolderPath()
-        {
-            return _modifiedFolder;
         }
     }
 }

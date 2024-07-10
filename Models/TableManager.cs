@@ -5,10 +5,12 @@ namespace DicomModifier.Models
     public class TableManager
     {
         private readonly DataGridView _dataGridView;
+        private readonly UIController _uiController;
 
-        public TableManager(DataGridView dataGridView)
+        public TableManager(DataGridView dataGridView, UIController uiController)
         {
             _dataGridView = dataGridView;
+            _uiController = uiController;
         }
 
         public void AddDicomToGrid(DicomDataset dataset)
@@ -56,7 +58,7 @@ namespace DicomModifier.Models
 
             // Update control states after adding a row
             var mainForm = _dataGridView.FindForm() as MainForm;
-            mainForm?.UpdateControlStates();
+            _uiController.UpdateControlStates();
 
         }
 
@@ -66,7 +68,7 @@ namespace DicomModifier.Models
 
             // Update control states after clearing the table
             var mainForm = _dataGridView.FindForm() as MainForm;
-            mainForm?.UpdateControlStates();
+            _uiController.UpdateControlStates();
 
         }
     }

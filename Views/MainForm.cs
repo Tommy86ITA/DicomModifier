@@ -7,6 +7,7 @@ namespace DicomModifier
     {
         public DataGridView DataGridView1 => dataGridView1;
 
+
         public event EventHandler? OnSelectFile;
         public event EventHandler? OnSelectFolder;
         public event EventHandler? OnSelectDicomDir;
@@ -14,13 +15,16 @@ namespace DicomModifier
         public event EventHandler? OnResetQueue;
         public event EventHandler? OnUpdatePatientID;
 
+
         public TableManager TableManager { get; private set; }
         private readonly SettingsController _settingsController;
+        private readonly UIController _uiController;
 
-        private ToolTip toolTip;
+        private readonly ToolTip toolTip;
 
         private PACSSettings _settings;
-        public bool isSending = false; // Flag per controllare se ci sono trasferimenti in corso
+
+        public bool isSending = false;                                      // Flag per controllare se ci sono trasferimenti in corso
         private bool confirmClose = false;
 
         public MainForm()
@@ -28,16 +32,18 @@ namespace DicomModifier
             InitializeComponent();
             InitializeEvents();
 
+            _uiController = new UIController(this);
             toolTip = new ToolTip();
             InitializeTooltips();
 
-            UpdateControlStates();
+            _uiController.UpdateControlStates();
 
-            TableManager = new TableManager(DataGridView1);
+            TableManager = new TableManager(DataGridView1, _uiController);
 
             // Inizializza le impostazioni
             _settingsController = new SettingsController(this);
             _settings = _settingsController.LoadSettings();
+
 
             // Gestione della chiusura del form
 
@@ -50,8 +56,8 @@ namespace DicomModifier
             buttonFolder.Click += ButtonFolder_Click;
             buttonDicomDir.Click += ButtonDicomDir_Click;
             buttonSend.Click += ButtonSend_Click;
-            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
-            settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
+            aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
+            settingsToolStripMenuItem.Click += SettingsToolStripMenuItem_Click;
             buttonResetQueue.Click += ButtonResetQueue_Click;
             buttonUpdateID.Click += ButtonUpdateID_Click;
             esciToolStripMenuItem.Click += EsciToolStripMenuItem_Click;
@@ -68,32 +74,6 @@ namespace DicomModifier
             toolTip.SetToolTip(buttonSend, "Invia i file DICOM selezionati al server PACS.");
             toolTip.SetToolTip(buttonResetQueue, "Pulisci la coda di file DICOM.");
             toolTip.SetToolTip(buttonUpdateID, "Aggiorna l'ID paziente per i file DICOM selezionati.");
-        }
-
-        public void DisableControls()
-        {
-            buttonDicomFile.Enabled = false;
-            buttonFolder.Enabled = false;
-            buttonDicomDir.Enabled = false;
-            buttonSend.Enabled = false;
-            buttonResetQueue.Enabled = false;
-            buttonUpdateID.Enabled = false;
-            settingsToolStripMenuItem.Enabled = false;
-            dataGridView1.Enabled = false;
-            textBoxNewID.Enabled = false;
-        }
-
-        public void EnableControls()
-        {
-            buttonDicomFile.Enabled = true;
-            buttonFolder.Enabled = true;
-            buttonDicomDir.Enabled = true;
-            buttonResetQueue.Enabled = true;
-            buttonUpdateID.Enabled = true;
-            settingsToolStripMenuItem.Enabled = true;
-            dataGridView1.Enabled = true;
-            textBoxNewID.Enabled = true;
-            // buttonSend remains disabled until files are loaded
         }
 
         public void UpdateControlStates()
@@ -120,7 +100,7 @@ namespace DicomModifier
                     confirmClose = true;
                     if (this.Tag is MainController mainController)
                     {
-                        DisableControls();
+                        _uiController.DisableControls();
                         dataGridView1.Enabled = false;
                         mainController.CancelSending();
 
@@ -195,12 +175,12 @@ namespace DicomModifier
             OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
         }
 
-        private void aboutToolStripMenuItem_Click(object? sender, EventArgs e)
+        private void AboutToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             MessageBox.Show("DICOM Modifier\nDeveloped by Thomas Amaranto - 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void settingsToolStripMenuItem_Click(object? sender, EventArgs e)
+        private void SettingsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             using SettingsForm settingsForm = new(_settings, _settingsController);
             if (settingsForm.ShowDialog() == DialogResult.OK)
@@ -248,24 +228,9 @@ namespace DicomModifier
         }
 
 
-        public void ClearTable()
-        {
-            dataGridView1.Rows.Clear();
-            UpdateControlStates();
-        }
-
-        public void ClearNewPatientIDTextBox()
-        {
-            textBoxNewID.Clear();
-        }
-
         public List<DataGridViewRow> GetSelectedRows()
         {
             List<DataGridViewRow> selectedRows = new();
-            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
-            {
-                selectedRows.Add(row);
-            }
             return selectedRows;
         }
     }
