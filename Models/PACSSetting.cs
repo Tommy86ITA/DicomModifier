@@ -2,11 +2,11 @@
 {
     public class PACSSettings
     {
-        public string ServerIP { get; set; }
-        public string ServerPort { get; set; }
-        public string AETitle { get; set; }
-        public string Timeout { get; set; }
-        public string LocalAETitle { get; set; }
+        public string ServerIP { get; set; } = "127.0.0.1";
+        public string ServerPort { get; set; } = "104";
+        public string AETitle { get; set; } = "PACS";
+        public string Timeout { get; set; } = "30000";
+        public string LocalAETitle { get; set; } = "DICOM_MOD";
 
         public void ApplyDefaults()
         {

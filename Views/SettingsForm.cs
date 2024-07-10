@@ -57,7 +57,7 @@ namespace DicomModifier
             };
         }
 
-        private void buttonSave_Click(object sender, EventArgs e)
+        private void buttonSave_Click(object? sender, EventArgs e)
         {
             if (!ValidateFields())
             {
@@ -75,12 +75,12 @@ namespace DicomModifier
             this.Close();
         }
 
-        private void buttonCancel_Click(object sender, EventArgs e)
+        private void buttonCancel_Click(object? sender, EventArgs e)
         {
             this.Close();
         }
 
-        private async void buttonCEcho_Click(object sender, EventArgs e)
+        private async void buttonCEcho_Click(object? sender, EventArgs e)
         {
             buttonEchoTest.Text = "Test in corso...";
             buttonEchoTest.Enabled = false;
@@ -107,7 +107,7 @@ namespace DicomModifier
             this.Enabled = true;
         }
 
-        private void TextBoxServerPort_KeyPress(object sender, KeyPressEventArgs e)
+        private void TextBoxServerPort_KeyPress(object? sender, KeyPressEventArgs e)
         {
             // Consente solo l'inserimento di cifre
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -116,7 +116,7 @@ namespace DicomModifier
             }
         }
 
-        private void TextBoxTimeout_KeyPress(object sender, KeyPressEventArgs e)
+        private void TextBoxTimeout_KeyPress(object? sender, KeyPressEventArgs e)
         {
             // Consente solo l'inserimento di cifre
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -125,7 +125,7 @@ namespace DicomModifier
             }
         }
 
-        private void TextBoxServerIP_KeyPress(object sender, KeyPressEventArgs e)
+        private void TextBoxServerIP_KeyPress(object? sender, KeyPressEventArgs e)
         {
             // Consente solo l'inserimento di cifre e punti
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
@@ -134,7 +134,7 @@ namespace DicomModifier
             }
         }
 
-        private void TextBoxServerPort_TextChanged(object sender, EventArgs e)
+        private void TextBoxServerPort_TextChanged(object? sender, EventArgs e)
         {
             // Controlla se il numero è nel range corretto
             if (int.TryParse(textBoxServerPort.Text, out int port))
@@ -155,7 +155,7 @@ namespace DicomModifier
             ValidateFields();
         }
 
-        private void TextBoxTimeout_TextChanged(object sender, EventArgs e)
+        private void TextBoxTimeout_TextChanged(object? sender, EventArgs e)
         {
             // Controlla se il timeout è valido
             if (int.TryParse(textBoxTimeout.Text, out int timeout))
@@ -176,7 +176,7 @@ namespace DicomModifier
             ValidateFields();
         }
 
-        private void TextBoxServerIP_TextChanged(object sender, EventArgs e)
+        private void TextBoxServerIP_TextChanged(object? sender, EventArgs e)
         {
             // Controlla se l'indirizzo IP è valido
             string[] ipSegments = textBoxServerIP.Text.Split('.');
@@ -191,7 +191,7 @@ namespace DicomModifier
             ValidateFields();
         }
 
-        private void TextBox_TextChanged(object sender, EventArgs e)
+        private void TextBox_TextChanged(object? sender, EventArgs e)
         {
             ValidateFields();
         }

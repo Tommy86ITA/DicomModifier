@@ -59,8 +59,6 @@
 
 using DicomModifier.Models;
 using System.Text.Json;
-using System.IO;
-using System.Windows.Forms;
 
 namespace DicomModifier.Controllers
 {

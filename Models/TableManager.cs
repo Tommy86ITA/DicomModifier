@@ -30,7 +30,7 @@ namespace DicomModifier.Models
                 existingRow.Cells[_dataGridView.Columns["ImageCountColumn"].Index].Value =
                     (int)existingRow.Cells[_dataGridView.Columns["ImageCountColumn"].Index].Value + 1;
 
-                string existingModality = existingRow.Cells[_dataGridView.Columns["ModalityColumn"].Index].Value.ToString();
+                string existingModality = existingRow.Cells[_dataGridView.Columns["ModalityColumn"].Index].Value?.ToString() ?? string.Empty;
                 if (!existingModality.Contains(modality))
                 {
                     existingRow.Cells[_dataGridView.Columns["ModalityColumn"].Index].Value = $"{existingModality}+{modality}";
@@ -55,7 +55,9 @@ namespace DicomModifier.Models
             }
 
             // Update control states after adding a row
-            ((MainForm)_dataGridView.FindForm()).UpdateControlStates();
+            var mainForm = _dataGridView.FindForm() as MainForm;
+            mainForm?.UpdateControlStates();
+
         }
 
         public void ClearTable()
@@ -63,7 +65,9 @@ namespace DicomModifier.Models
             _dataGridView.Rows.Clear();
 
             // Update control states after clearing the table
-            ((MainForm)_dataGridView.FindForm()).UpdateControlStates();
+            var mainForm = _dataGridView.FindForm() as MainForm;
+            mainForm?.UpdateControlStates();
+
         }
     }
 }

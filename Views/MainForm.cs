@@ -7,12 +7,12 @@ namespace DicomModifier
     {
         public DataGridView DataGridView1 => dataGridView1;
 
-        public event EventHandler OnSelectFile;
-        public event EventHandler OnSelectFolder;
-        public event EventHandler OnSelectDicomDir;
-        public event EventHandler OnSend;
-        public event EventHandler OnResetQueue;
-        public event EventHandler OnUpdatePatientID;
+        public event EventHandler? OnSelectFile;
+        public event EventHandler? OnSelectFolder;
+        public event EventHandler? OnSelectDicomDir;
+        public event EventHandler? OnSend;
+        public event EventHandler? OnResetQueue;
+        public event EventHandler? OnUpdatePatientID;
 
         public TableManager TableManager { get; private set; }
         private readonly SettingsController _settingsController;
@@ -27,8 +27,12 @@ namespace DicomModifier
         {
             InitializeComponent();
             InitializeEvents();
+
+            toolTip = new ToolTip();
             InitializeTooltips();
+
             UpdateControlStates();
+
             TableManager = new TableManager(DataGridView1);
 
             // Inizializza le impostazioni
@@ -36,7 +40,7 @@ namespace DicomModifier
             _settings = _settingsController.LoadSettings();
 
             // Gestione della chiusura del form
-            this.FormClosing += MainForm_FormClosing;
+
             ClearTempFolder();
         }
 
@@ -51,12 +55,13 @@ namespace DicomModifier
             buttonResetQueue.Click += ButtonResetQueue_Click;
             buttonUpdateID.Click += ButtonUpdateID_Click;
             esciToolStripMenuItem.Click += EsciToolStripMenuItem_Click;
+
+            // Gestione della chiusura del form
+            this.FormClosing += MainForm_FormClosing;
         }
 
         private void InitializeTooltips()
         {
-            toolTip = new ToolTip();
-
             toolTip.SetToolTip(buttonDicomFile, "Seleziona un file DICOM da importare.");
             toolTip.SetToolTip(buttonFolder, "Seleziona una cartella contenente file DICOM da importare.");
             toolTip.SetToolTip(buttonDicomDir, "Seleziona un file DICOMDIR da importare.");
@@ -100,12 +105,12 @@ namespace DicomModifier
             textBoxNewID.Enabled = hasExams;
         }
 
-        private void EsciToolStripMenuItem_Click(object sender, EventArgs e)
+        private void EsciToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             MainForm_FormClosing(sender, new FormClosingEventArgs(CloseReason.UserClosing, false));
         }
 
-        private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        private async void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
         {
             if (isSending && !confirmClose)
             {
@@ -113,29 +118,34 @@ namespace DicomModifier
                 if (result == DialogResult.Yes)
                 {
                     confirmClose = true;
-                    MainController? mainController = (MainController)this.Tag;
-                    DisableControls();
-                    dataGridView1.Enabled = false;
-                    mainController.CancelSending();
+                    if (this.Tag is MainController mainController)
+                    {
+                        DisableControls();
+                        dataGridView1.Enabled = false;
+                        mainController.CancelSending();
 
-                    await Task.Delay(1000); // Attendere per assicurarsi che i file vengano rilasciati
-                    Application.Exit(); // Richiama la chiusura dell'applicazione
+                        await Task.Delay(1000); // Attendere per assicurarsi che i file vengano rilasciati
+                        Application.Exit(); // Richiama la chiusura dell'applicazione
+                    }
+                    else
+                    {
+                        // Gestione del caso in cui this.Tag non è un MainController
+                        MessageBox.Show("Errore: il controller principale non è disponibile.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        e.Cancel = true;
+                    }
                 }
-                else
+                else if (!isSending)
                 {
-                    e.Cancel = true;
+                    ClearTempFolder();
+                    Application.Exit();
                 }
-            }
-            else if (!isSending)
-            {
-                ClearTempFolder();
-                Application.Exit();
             }
         }
 
         public static void ClearTempFolder()
         {
-            string tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
+            string tempPath = Path.GetTempPath() ?? throw new InvalidOperationException("Unable to get temp path");
+            string tempDirectory = Path.Combine(tempPath, "DicomModifier");
             if (Directory.Exists(tempDirectory))
             {
                 DirectoryInfo di = new(tempDirectory);
@@ -150,49 +160,53 @@ namespace DicomModifier
             }
         }
 
-        private void ButtonResetQueue_Click(object sender, EventArgs e)
+
+        private void ButtonResetQueue_Click(object? sender, EventArgs e)
         {
             OnResetQueue?.Invoke(this, EventArgs.Empty);
         }
 
-        private void ButtonDicomFile_Click(object sender, EventArgs e)
+        private void ButtonDicomFile_Click(object? sender, EventArgs e)
         {
             Console.WriteLine("ButtonDicomFile_Click called");
             OnSelectFile?.Invoke(this, EventArgs.Empty);
         }
 
-        private void ButtonFolder_Click(object sender, EventArgs e)
+        private void ButtonFolder_Click(object? sender, EventArgs e)
         {
             Console.WriteLine("ButtonFolder_Click called");
             OnSelectFolder?.Invoke(this, EventArgs.Empty);
         }
 
-        private void ButtonDicomDir_Click(object sender, EventArgs e)
+        private void ButtonDicomDir_Click(object? sender, EventArgs e)
         {
             Console.WriteLine("ButtonDicomDir_Click called");
             OnSelectDicomDir?.Invoke(this, EventArgs.Empty);
         }
 
-        private void ButtonSend_Click(object sender, EventArgs e)
+        private void ButtonSend_Click(object? sender, EventArgs e)
         {
             Console.WriteLine("ButtonSend_Click called");
             OnSend?.Invoke(this, EventArgs.Empty);
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ButtonUpdateID_Click(object? sender, EventArgs e)
+        {
+            OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void aboutToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             MessageBox.Show("DICOM Modifier\nDeveloped by Thomas Amaranto - 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void settingsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            using (SettingsForm settingsForm = new(_settings, _settingsController))
+            using SettingsForm settingsForm = new(_settings, _settingsController);
+            if (settingsForm.ShowDialog() == DialogResult.OK)
             {
-                if (settingsForm.ShowDialog() == DialogResult.OK)
-                {
-                    _settings = settingsForm.GetSettings();
-                    _settingsController.SaveSettings(_settings);
-                }
+                _settings = settingsForm.GetSettings();
+                _settingsController.SaveSettings(_settings);
             }
         }
 
@@ -221,9 +235,10 @@ namespace DicomModifier
 
         public void UpdateProgressBar(int value, int maximum)
         {
-            if (toolStripProgressBar.GetCurrentParent().InvokeRequired)
+            var parent = toolStripProgressBar.GetCurrentParent();
+            if (parent != null && parent.InvokeRequired)
             {
-                toolStripProgressBar.GetCurrentParent().Invoke(new Action<int, int>(UpdateProgressBar), value, maximum);
+                parent.Invoke(new Action<int, int>(UpdateProgressBar), value, maximum);
             }
             else
             {
@@ -231,6 +246,7 @@ namespace DicomModifier
                 toolStripProgressBar.Value = value;
             }
         }
+
 
         public void ClearTable()
         {
@@ -251,11 +267,6 @@ namespace DicomModifier
                 selectedRows.Add(row);
             }
             return selectedRows;
-        }
-
-        private void ButtonUpdateID_Click(object sender, EventArgs e)
-        {
-            OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
         }
     }
 }
