@@ -8,19 +8,16 @@ namespace DicomModifier.Controllers
     public class DicomFileHandler
     {
         private readonly Queue<string> dicomQueue;
-        private string? dicomDirBasePath;                   // Dichiarato come nullable
-        private readonly TableManager _tableManager;
-        private readonly MainForm _mainForm;
+        private string? dicomDirBasePath;                                                                   // Dichiarato come nullable
+        private readonly UIController _uiController;
         private readonly string _tempFolder;
-        private readonly string _modifiedFolder;
 
-        public DicomFileHandler(TableManager tableManager, MainForm mainForm)
+        public DicomFileHandler(UIController uiController)
         {
             dicomQueue = new Queue<string>();
-            _tableManager = tableManager;
-            _mainForm = mainForm;
+            _uiController = uiController;
             _tempFolder = Path.Combine(Path.GetTempPath(), "DicomModifier");
-            _modifiedFolder = Path.Combine(_tempFolder, "modified");
+            ModifiedFolder = Path.Combine(_tempFolder, "modified");
 
             if (!Directory.Exists(_tempFolder))
             {
@@ -28,7 +25,7 @@ namespace DicomModifier.Controllers
             }
         }
 
-        public string ModifiedFolder => _modifiedFolder;
+        public string ModifiedFolder { get; }
 
         #region Funzioni di importazione
 
@@ -63,8 +60,8 @@ namespace DicomModifier.Controllers
 
             await AddDicomFilesAsync(dicomFiles, (progress, total) =>
             {
-                _mainForm.UpdateProgressBar(progress, total);
-                _mainForm.UpdateFileCount(progress, total, "File elaborati");
+                _uiController.UpdateProgressBar(progress, total);
+                _uiController.UpdateFileCount(progress, total, "File elaborati");
             });
         }
 
@@ -132,9 +129,9 @@ namespace DicomModifier.Controllers
 
         private void EnsureModifiedFolderExists()
         {
-            if (!Directory.Exists(_modifiedFolder))
+            if (!Directory.Exists(ModifiedFolder))
             {
-                Directory.CreateDirectory(_modifiedFolder);
+                Directory.CreateDirectory(ModifiedFolder);
             }
         }
 
@@ -160,7 +157,7 @@ namespace DicomModifier.Controllers
                 if (dicomFile.Dataset.GetString(DicomTag.StudyInstanceUID) == studyInstanceUID)
                 {
                     dicomFile.Dataset.AddOrUpdate(DicomTag.PatientID, newPatientID);
-                    string newFilePath = Path.Combine(_modifiedFolder, Path.GetFileName(filePath));
+                    string newFilePath = Path.Combine(ModifiedFolder, Path.GetFileName(filePath));
                     await dicomFile.SaveAsync(newFilePath);
                     updatedFilePaths.Add(newFilePath);
                 }

@@ -1,5 +1,6 @@
 using DicomModifier.Controllers;
 using DicomModifier.Models;
+using System.Diagnostics;
 
 namespace DicomModifier
 {
@@ -76,51 +77,51 @@ namespace DicomModifier
             toolTip.SetToolTip(buttonUpdateID, "Aggiorna l'ID paziente per i file DICOM selezionati.");
         }
 
-        public void UpdateControlStates()
-        {
-            bool hasExams = dataGridView1.Rows.Count > 0;
-            buttonSend.Enabled = hasExams;
-            buttonResetQueue.Enabled = hasExams;
-            buttonUpdateID.Enabled = hasExams;
-            textBoxNewID.Enabled = hasExams;
-        }
-
         private void EsciToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            MainForm_FormClosing(sender, new FormClosingEventArgs(CloseReason.UserClosing, false));
+            CloseApplication();
         }
 
-        private async void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
+        private void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
         {
+            CloseApplication();
+        }
+
+        private void CloseApplication()
+        {
+            Debug.WriteLine("CloseApplication method called.");
+
             if (isSending && !confirmClose)
             {
+                Debug.WriteLine("Transfers are in progress and confirmation is not given.");
+
                 DialogResult result = MessageBox.Show("Ci sono trasferimenti in corso. Vuoi davvero chiudere il programma?", "Trasferimenti in corso", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
                 {
-                    confirmClose = true;
-                    if (this.Tag is MainController mainController)
-                    {
-                        _uiController.DisableControls();
-                        dataGridView1.Enabled = false;
-                        mainController.CancelSending();
+                    Debug.WriteLine("User confirmed to close the application.");
 
-                        await Task.Delay(1000); // Attendere per assicurarsi che i file vengano rilasciati
-                        Application.Exit(); // Richiama la chiusura dell'applicazione
-                    }
-                    else
-                    {
-                        // Gestione del caso in cui this.Tag non è un MainController
-                        MessageBox.Show("Errore: il controller principale non è disponibile.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        e.Cancel = true;
-                    }
+                    confirmClose = true;
+                    MainController mainController = (MainController)this.Tag!;
+                    _uiController.DisableControls();
+                    dataGridView1.Enabled = false;
+                    mainController.CancelSending();
+
+                    Task.Delay(1000).Wait(); // Attendere per assicurarsi che i file vengano rilasciati
+                    Application.Exit(); // Richiama la chiusura dell'applicazione
                 }
-                else if (!isSending)
+                else
                 {
-                    ClearTempFolder();
-                    Application.Exit();
+                    Debug.WriteLine("User canceled the close operation.");
                 }
             }
+            else
+            {
+                Debug.WriteLine("No transfers in progress or confirmation already given.");
+                ClearTempFolder();
+                Application.Exit();
+            }
         }
+
 
         public static void ClearTempFolder()
         {
@@ -182,7 +183,7 @@ namespace DicomModifier
 
         private void SettingsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            using SettingsForm settingsForm = new(_settings, _settingsController);
+            using SettingsForm settingsForm = new(_settings, _settingsController, _uiController);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
                 _settings = settingsForm.GetSettings();
@@ -231,7 +232,13 @@ namespace DicomModifier
         public List<DataGridViewRow> GetSelectedRows()
         {
             List<DataGridViewRow> selectedRows = new();
+            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            {
+                selectedRows.Add(row);
+                Debug.WriteLine($"Selected row: {row.Index}, PatientID: {row.Cells["PatientIDColumn"].Value}");
+            }
             return selectedRows;
         }
+
     }
 }

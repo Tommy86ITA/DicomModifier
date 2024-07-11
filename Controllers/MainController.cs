@@ -17,10 +17,10 @@ namespace DicomModifier.Controllers
         {
             _mainForm = mainForm;
             _dicomManager = dicomManager;
-            _communicator = new PACSCommunicator(settings, new ProgressManager(mainForm));
+            _uiController = new UIController(_mainForm);
+            _communicator = new PACSCommunicator(settings, _uiController);
             _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
             _cancellationTokenSource = new CancellationTokenSource();
-            _uiController = new UIController(_mainForm);
 
             _mainForm.OnSelectFile += MainForm_OnSelectFileAsync;
             _mainForm.OnSelectFolder += MainForm_OnSelectFolderAsync;
@@ -241,10 +241,10 @@ namespace DicomModifier.Controllers
 
         private void FinalizeImport(int fileCount)
         {
-            _uiController.EnableControls();
             _uiController.UpdateControlStates();
             _uiController.UpdateStatus("Importazione completata.");
             _uiController.UpdateProgressBar(fileCount, fileCount);
+            _uiController.EnableControls();
         }
 
         private bool ValidateSelectedRows(List<DataGridViewRow> selectedRows)

@@ -9,6 +9,49 @@ public class UIController
         _mainForm = mainForm;
     }
 
+    //public void UpdateStatus(string status)
+    //{
+    //    if (_mainForm.InvokeRequired)
+    //    {
+    //        _mainForm.Invoke(new Action(() => _mainForm.UpdateStatus(status)));
+    //    }
+    //    else
+    //    {
+    //        _mainForm.UpdateStatus(status);
+    //    }
+    //}
+
+    //public void UpdateFileCount(int sent, int total, string message = "File inviati")
+    //{
+    //    if (_mainForm.InvokeRequired)
+    //    {
+    //        _mainForm.Invoke(new Action(() => _mainForm.UpdateFileCount(sent, total, message)));
+    //    }
+    //    else
+    ////    public void UpdateProgressBar(int sentFiles, int totalFiles)
+    //{
+    //    if (_mainForm.InvokeRequired)
+    //    {
+    //        _mainForm.Invoke(new Action(() =>
+    //        {
+    //            _mainForm.UpdateFileCount(sentFiles, totalFiles, "File inviati");
+    //            _mainForm.UpdateProgressBar(sentFiles, totalFiles);
+    //            _mainForm.UpdateStatus("Invio in corso...");
+    //        }));
+    //    }
+    //    else
+    //    {
+    //        _mainForm.UpdateFileCount(sentFiles, totalFiles, "File inviati");
+    //        _mainForm.UpdateProgressBar(sentFiles, totalFiles);
+    //        _mainForm.UpdateStatus("Invio in corso...");
+    //    }
+    //}    {
+    //        _mainForm.UpdateFileCount(sent, total, message);
+    //    }
+    //}
+
+
+
     public void UpdateControlStates()
     {
         bool hasExams = _mainForm.DataGridView1.Rows.Count > 0;
@@ -80,5 +123,24 @@ public class UIController
     public void ClearNewPatientIDTextBox()
     {
         _mainForm.textBoxNewID.Clear();
+    }
+
+    public void UpdateProgress(int sentFiles, int totalFiles)
+    {
+        if (_mainForm.InvokeRequired)
+        {
+            _mainForm.Invoke(new Action(() =>
+            {
+                _mainForm.UpdateFileCount(sentFiles, totalFiles, "File inviati");
+                _mainForm.UpdateProgressBar(sentFiles, totalFiles);
+                _mainForm.UpdateStatus($"Invio in corso...");
+            }));
+        }
+        else
+        {
+            _mainForm.UpdateFileCount(sentFiles, totalFiles, "File inviati");
+            _mainForm.UpdateProgressBar(sentFiles, totalFiles);
+            _mainForm.UpdateStatus($"Invio in corso...");
+        }
     }
 }

@@ -9,13 +9,13 @@ namespace DicomModifier.Controllers
     public class PACSCommunicator
     {
         private readonly PACSSettings _settings;
-        private readonly ProgressManager _progressManager;
+        private readonly UIController _uiController;
 
         // Costruttore: inizializza le impostazioni PACS e il gestore del progresso
-        public PACSCommunicator(PACSSettings settings, ProgressManager progressManager)
+        public PACSCommunicator(PACSSettings settings, UIController uiController)
         {
             _settings = settings;
-            _progressManager = progressManager;
+            _uiController = uiController;
         }
 
         // Metodo per inviare un C-ECHO per verificare la connessione al server PACS
@@ -62,18 +62,18 @@ namespace DicomModifier.Controllers
 
                 if (filePaths.Count == 0)
                 {
-                    _progressManager.UpdateStatus("Nessun file da inviare.");
+                    _uiController.UpdateStatus("Nessun file da inviare.");
                     return false;
                 }
 
-                _progressManager.UpdateStatus("Inizio invio file...");
-                _progressManager.UpdateProgress(0, filePaths.Count);
+                _uiController.UpdateStatus("Inizio invio file...");
+                _uiController.UpdateProgress(0, filePaths.Count);
 
                 foreach (string filePath in filePaths)
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        _progressManager.UpdateStatus("Invio annullato dall'utente.");
+                        _uiController.UpdateStatus("Invio annullato dall'utente.");
                         return false;
                     }
 
@@ -82,7 +82,7 @@ namespace DicomModifier.Controllers
 
                     cStoreRequest.OnResponseReceived += (req, resp) =>
                     {
-                        _progressManager.UpdateProgress(filePaths.IndexOf(filePath) + 1, filePaths.Count);
+                        _uiController.UpdateProgress(filePaths.IndexOf(filePath) + 1, filePaths.Count);
                     };
 
                     await client.AddRequestAsync(cStoreRequest).ConfigureAwait(false);
@@ -90,12 +90,12 @@ namespace DicomModifier.Controllers
 
                 await client.SendAsync(cancellationToken).ConfigureAwait(false);
 
-                _progressManager.UpdateStatus("Invio completato.");
+                _uiController.UpdateStatus("Invio completato.");
                 return true;
             }
             catch (Exception ex)
             {
-                _progressManager.UpdateStatus($"Errore durante l'invio dei file: {ex.Message}");
+                _uiController.UpdateStatus($"Errore durante l'invio dei file: {ex.Message}");
                 Debug.Print($"Errore durante l'invio dei file: {ex.Message}");
                 return false;
             }

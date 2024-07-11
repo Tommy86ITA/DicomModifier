@@ -13,8 +13,8 @@ namespace DicomModifier
 
             MainForm mainForm = new();
             UIController uiController = new(mainForm);
-            TableManager tableManager = new(mainForm.DataGridView1, uiController); // Passiamo uiController qui
-            DicomFileHandler dicomManager = new(tableManager, mainForm);
+            TableManager tableManager = new(mainForm.DataGridView1, uiController);                             // Passiamo uiController qui
+            DicomFileHandler dicomManager = new(uiController);
 
             // Carica le impostazioni
             SettingsController settingsController = new(mainForm);
