@@ -1,0 +1,101 @@
+\doxysection{PACSCommunicator.\+cs}
+\hypertarget{_p_a_c_s_communicator_8cs_source}{}\label{_p_a_c_s_communicator_8cs_source}\index{Controllers/PACSCommunicator.cs@{Controllers/PACSCommunicator.cs}}
+\mbox{\hyperlink{_p_a_c_s_communicator_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00001}00001\ \textcolor{comment}{//\ Interfaces/PACSCommunicator.cs}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_dicom_modifier_1_1_models}{DicomModifier.Models}};}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00004}00004\ \textcolor{keyword}{using\ }FellowOakDicom;}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00005}00005\ \textcolor{keyword}{using\ }FellowOakDicom.Network;}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00006}00006\ \textcolor{keyword}{using\ }FellowOakDicom.Network.Client;}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00007}00007\ \textcolor{keyword}{using\ }System.Diagnostics;}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00009}00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_dicom_modifier_1_1_controllers}{DicomModifier.Controllers}}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00010}00010\ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00016}\mbox{\hyperlink{namespace_dicom_modifier_1_1_controllers_a946d2917bf8e86b3360c4cef59b4b24a}{00016}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{namespace_dicom_modifier_1_1_controllers_a946d2917bf8e86b3360c4cef59b4b24a}{PACSCommunicator}}(\mbox{\hyperlink{class_dicom_modifier_1_1_models_1_1_p_a_c_s_settings}{PACSSettings}}\ settings,\ \mbox{\hyperlink{namespace_dicom_modifier_1_1_controllers_a7f0637eaee7bb9b642f35d74599c2992}{UIController}}\ uiController)}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00017}00017\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00018}00018\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ readonly\ \mbox{\hyperlink{class_dicom_modifier_1_1_models_1_1_p_a_c_s_settings}{PACSSettings}}\ \_settings\ =\ settings;}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00019}00019\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ readonly\ \mbox{\hyperlink{namespace_dicom_modifier_1_1_controllers_a7f0637eaee7bb9b642f35d74599c2992}{UIController}}\ \_uiController\ =\ uiController;}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ async\ Task<bool>\ SendCEcho()}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00027}00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IDicomClient\ client\ =\ DicomClientFactory.Create(\_settings.ServerIP,\ \textcolor{keywordtype}{int}.Parse(\_settings.ServerPort),\ \textcolor{keyword}{false},\ \_settings.LocalAETitle,\ \_settings.AETitle);}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DicomCEchoRequest\ cEcho\ =\ \textcolor{keyword}{new}();}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TaskCompletionSource<bool>\ tcs\ =\ \textcolor{keyword}{new}();}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00034}00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cEcho.OnResponseReceived\ +=\ (req,\ resp)\ =>}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00035}00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00036}00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (resp.Status\ ==\ DicomStatus.Success)}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00037}00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00038}00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tcs.SetResult(\textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00039}00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00041}00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00042}00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tcs.SetResult(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00043}00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00044}00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00046}00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ await\ client.AddRequestAsync(cEcho);}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00047}00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ await\ client.SendAsync();}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00048}00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ await\ tcs.Task;}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00050}00050\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (Exception\ ex)}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00051}00051\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00052}00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MessageBox.Show(\$\textcolor{stringliteral}{"{}Errore\ durante\ il\ C-\/ECHO:\ \{ex.Message\}"{}},\ \textcolor{stringliteral}{"{}Errore"{}},\ MessageBoxButtons.OK,\ MessageBoxIcon.Error);}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00053}00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00054}00054\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00055}00055\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00063}00063\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ async\ Task<bool>\ SendFiles(List<string>\ filePaths,\ CancellationToken\ cancellationToken)}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00064}00064\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00065}00065\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00066}00066\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00067}00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IDicomClient\ client\ =\ DicomClientFactory.Create(\_settings.ServerIP,\ \textcolor{keywordtype}{int}.Parse(\_settings.ServerPort),\ \textcolor{keyword}{false},\ \_settings.LocalAETitle,\ \_settings.AETitle);}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00068}00068\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00069}00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (filePaths.Count\ ==\ 0)}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00070}00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00071}00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_uiController.UpdateStatus(\textcolor{stringliteral}{"{}Nessun\ file\ da\ inviare."{}});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00072}00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00073}00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00074}00074\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00075}00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_uiController.UpdateStatus(\textcolor{stringliteral}{"{}Inizio\ invio\ file..."{}});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00076}00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_uiController.UpdateProgress(0,\ filePaths.Count);}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00077}00077\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00078}00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (\textcolor{keywordtype}{string}\ filePath\ \textcolor{keywordflow}{in}\ filePaths)}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00079}00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00080}00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cancellationToken.IsCancellationRequested)}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00081}00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00082}00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_uiController.UpdateStatus(\textcolor{stringliteral}{"{}Invio\ annullato\ dall'utente."{}});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00083}00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00084}00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00085}00085\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00086}00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DicomFile\ dicomFile\ =\ await\ DicomFile.OpenAsync(filePath).ConfigureAwait(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00087}00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DicomCStoreRequest\ cStoreRequest\ =\ \textcolor{keyword}{new}(dicomFile);}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00088}00088\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00089}00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cStoreRequest.OnResponseReceived\ +=\ (req,\ resp)\ =>}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00090}00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00091}00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_uiController.UpdateProgress(filePaths.IndexOf(filePath)\ +\ 1,\ filePaths.Count);}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00092}00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00093}00093\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00094}00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ await\ client.AddRequestAsync(cStoreRequest).ConfigureAwait(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00095}00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00096}00096\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00097}00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ await\ client.SendAsync(cancellationToken).ConfigureAwait(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00098}00098\ }
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00099}00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_uiController.UpdateStatus(\textcolor{stringliteral}{"{}Invio\ completato."{}});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00100}00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00101}00101\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00102}00102\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (Exception\ ex)}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00103}00103\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00104}00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_uiController.UpdateStatus(\$\textcolor{stringliteral}{"{}Errore\ durante\ l'invio\ dei\ file:\ \{ex.Message\}"{}});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00105}00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Print(\$\textcolor{stringliteral}{"{}Errore\ durante\ l'invio\ dei\ file:\ \{ex.Message\}"{}});}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00106}00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00107}00107\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00108}00108\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00109}00109\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_p_a_c_s_communicator_8cs_source_l00110}00110\ \}}
+
+\end{DoxyCode}

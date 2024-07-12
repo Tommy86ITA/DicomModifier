@@ -1,9 +1,11 @@
-﻿using System.Diagnostics;
+﻿// Interfaces/Logger.cs
 
-    public static class Logger
+using System.Diagnostics;
+
+public static class Logger
+{
+    public static void Log(string message)
     {
-        public static void Log(string message)
-        {
-            Debug.WriteLine($"[{DateTime.Now}] {message}");
-        }
+        Debug.WriteLine($"[{DateTime.Now}] {message}");
     }
+}

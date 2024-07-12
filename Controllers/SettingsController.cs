@@ -7,21 +7,28 @@ namespace DicomModifier.Controllers
 {
     public class SettingsController
     {
+        /// <summary>
+        /// The configuration file path
+        /// </summary>
         private const string ConfigFilePath = "Config.json";
         private readonly MainForm _mainForm;
-        private PACSSettings _settings;
+        private readonly PACSSettings _settings;
 
-        public MainForm GetMainForm()
-        {
-            return _mainForm;
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SettingsController"/> class.
+        /// </summary>
+        /// <param name="mainForm">The main form.</param>
         public SettingsController(MainForm mainForm)
         {
             _mainForm = mainForm;
             _settings = LoadSettings();
         }
 
+        /// <summary>
+        /// Checks if the Config.json file exists and if itìs readable, then loads the settings. Otherwise shows an error and calls the method that generates default settings.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="System.Text.Json.JsonException">Deserializzazione fallita.</exception>
         public PACSSettings LoadSettings()
         {
             if (!File.Exists(ConfigFilePath) || new FileInfo(ConfigFilePath).Length == 0)
@@ -44,6 +51,10 @@ namespace DicomModifier.Controllers
             }
         }
 
+        /// <summary>
+        /// Saves the settings.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
         public void SaveSettings(PACSSettings settings)
         {
             try
@@ -58,23 +69,16 @@ namespace DicomModifier.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates the default settings.
+        /// </summary>
+        /// <returns></returns>
         private PACSSettings CreateDefaultSettings()
         {
             var defaultSettings = new PACSSettings();
             defaultSettings.ApplyDefaults();
             SaveSettings(defaultSettings);
             return defaultSettings;
-        }
-
-        public PACSSettings GetSettings()
-        {
-            return _settings;
-        }
-
-        public void UpdateSettings(PACSSettings settings)
-        {
-            _settings = settings;
-            SaveSettings(settings);
         }
     }
 }

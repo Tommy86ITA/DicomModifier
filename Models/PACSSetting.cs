@@ -1,4 +1,6 @@
-﻿namespace DicomModifier.Models
+﻿// Interfaces/PACSSetting.cs
+
+namespace DicomModifier.Models
 {
     public class PACSSettings
     {

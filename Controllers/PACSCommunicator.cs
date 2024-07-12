@@ -1,4 +1,6 @@
-﻿using DicomModifier.Models;
+﻿// Interfaces/PACSCommunicator.cs
+
+using DicomModifier.Models;
 using FellowOakDicom;
 using FellowOakDicom.Network;
 using FellowOakDicom.Network.Client;
@@ -6,24 +8,24 @@ using System.Diagnostics;
 
 namespace DicomModifier.Controllers
 {
-    public class PACSCommunicator
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PACSCommunicator"/> class.
+    /// </summary>
+    /// <param name="settings">The settings.</param>
+    /// <param name="uiController">The UI controller.</param>
+    public class PACSCommunicator(PACSSettings settings, UIController uiController)
     {
-        private readonly PACSSettings _settings;
-        private readonly UIController _uiController;
+        private readonly PACSSettings _settings = settings;
+        private readonly UIController _uiController = uiController;
 
-        // Costruttore: inizializza le impostazioni PACS e il gestore del progresso
-        public PACSCommunicator(PACSSettings settings, UIController uiController)
-        {
-            _settings = settings;
-            _uiController = uiController;
-        }
-
-        // Metodo per inviare un C-ECHO per verificare la connessione al server PACS
+        /// <summary>
+        /// Sends the C-ECHO
+        /// </summary>
+        /// <returns></returns>
         public async Task<bool> SendCEcho()
         {
             try
             {
-                // Crea un client DICOM per il C-ECHO
                 IDicomClient client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
                 DicomCEchoRequest cEcho = new();
 
@@ -41,7 +43,6 @@ namespace DicomModifier.Controllers
                     }
                 };
 
-                // Aggiungi e invia la richiesta C-ECHO
                 await client.AddRequestAsync(cEcho);
                 await client.SendAsync();
                 return await tcs.Task;
@@ -53,7 +54,12 @@ namespace DicomModifier.Controllers
             }
         }
 
-        // Metodo per inviare una lista di file DICOM al server PACS
+        /// <summary>
+        /// Sends the DICOM files to the PACS
+        /// </summary>
+        /// <param name="filePaths">The file paths.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         public async Task<bool> SendFiles(List<string> filePaths, CancellationToken cancellationToken)
         {
             try

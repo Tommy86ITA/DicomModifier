@@ -1,0 +1,207 @@
+\doxysection{Dicom\+Modifier.\+Controllers.\+Dicom\+File\+Handler Class Reference}
+\hypertarget{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler}{}\label{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler}\index{DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a70d4a6b1fe71d47cc4a39858b42f98e8}{Dicom\+File\+Handler}} (\mbox{\hyperlink{namespace_dicom_modifier_1_1_controllers_a7f0637eaee7bb9b642f35d74599c2992}{UIController}} ui\+Controller)
+\begin{DoxyCompactList}\small\item\em Initializes a new instance of the \doxylink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler}{Dicom\+File\+Handler} class. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_ae487e84b4e4efb72e412c521f00f4c8d}{Add\+Dicom\+File\+Async}} (string file\+Path)
+\begin{DoxyCompactList}\small\item\em Adds the DICOM file asynchronous. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a08770645a4b66ab210dc499f4eaf3746}{Add\+Dicom\+Files\+Async}} (IEnumerable$<$ string $>$ file\+Paths, Action$<$ int, int $>$ update\+Progress)
+\begin{DoxyCompactList}\small\item\em Adds the DICOM files asynchronous. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a1ba4da5e1628d0c7903f588c2feda3ea}{Add\+Dicom\+Dir\+Async}} (string dicom\+Dir\+Path)
+\begin{DoxyCompactList}\small\item\em Navigates into the DICOMDIR file asynchronous. \end{DoxyCompactList}\item 
+async Task$<$ Dicom\+File?$>$ \mbox{\hyperlink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a02f93556c6513a80113a7401d7d55559}{Get\+Next\+Dicom\+File\+Async}} ()
+\begin{DoxyCompactList}\small\item\em Gets the next DICOM file asynchronous. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a0c0ee2c13f42cf0ee8b42439cbdeec5c}{Update\+Patient\+IDIn\+Temp\+Folder\+Async}} (string study\+Instance\+UID, string new\+Patient\+ID, Action$<$ int, int $>$ update\+Progress)
+\begin{DoxyCompactList}\small\item\em Updates the patient identifier in temporary folder asynchronous. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a100d17d9ebd00c5c707a9fddc6263d20}{Reset\+Queue}} ()
+\begin{DoxyCompactList}\small\item\em Resets the DICOM queue. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_aa4afb0b942b6773fd776e202fe3faf7b}{Modified\+Folder}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em Gets the modified folder path. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a60110890fd82d1e4743deac0b7ab63f7}{Dicom\+Queue\+Count}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em Gets the dicom queue count. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_dicom_file_handler_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_dicom_file_handler_8cs_source}{Dicom\+File\+Handler.\+cs}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a70d4a6b1fe71d47cc4a39858b42f98e8}\index{DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}!DicomFileHandler@{DicomFileHandler}}
+\index{DicomFileHandler@{DicomFileHandler}!DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}}
+\doxysubsubsection{\texorpdfstring{DicomFileHandler()}{DicomFileHandler()}}
+{\footnotesize\ttfamily \label{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a70d4a6b1fe71d47cc4a39858b42f98e8} 
+Dicom\+Modifier.\+Controllers.\+Dicom\+File\+Handler.\+Dicom\+File\+Handler (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_dicom_modifier_1_1_controllers_a7f0637eaee7bb9b642f35d74599c2992}{UIController}}}]{ui\+Controller}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initializes a new instance of the \doxylink{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler}{Dicom\+File\+Handler} class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ui\+Controller} & The UI controller.\\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_dicom_file_handler_8cs_source_l00029}{29}} of file \mbox{\hyperlink{_dicom_file_handler_8cs_source}{Dicom\+File\+Handler.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a1ba4da5e1628d0c7903f588c2feda3ea}\index{DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}!AddDicomDirAsync@{AddDicomDirAsync}}
+\index{AddDicomDirAsync@{AddDicomDirAsync}!DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}}
+\doxysubsubsection{\texorpdfstring{AddDicomDirAsync()}{AddDicomDirAsync()}}
+{\footnotesize\ttfamily \label{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a1ba4da5e1628d0c7903f588c2feda3ea} 
+async Task Dicom\+Modifier.\+Controllers.\+Dicom\+File\+Handler.\+Add\+Dicom\+Dir\+Async (\begin{DoxyParamCaption}\item[{string}]{dicom\+Dir\+Path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Navigates into the DICOMDIR file asynchronous. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dicom\+Dir\+Path} & The dicom dir path.\\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_dicom_file_handler_8cs_source_l00085}{85}} of file \mbox{\hyperlink{_dicom_file_handler_8cs_source}{Dicom\+File\+Handler.\+cs}}.
+
+\Hypertarget{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_ae487e84b4e4efb72e412c521f00f4c8d}\index{DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}!AddDicomFileAsync@{AddDicomFileAsync}}
+\index{AddDicomFileAsync@{AddDicomFileAsync}!DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}}
+\doxysubsubsection{\texorpdfstring{AddDicomFileAsync()}{AddDicomFileAsync()}}
+{\footnotesize\ttfamily \label{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_ae487e84b4e4efb72e412c521f00f4c8d} 
+async Task Dicom\+Modifier.\+Controllers.\+Dicom\+File\+Handler.\+Add\+Dicom\+File\+Async (\begin{DoxyParamCaption}\item[{string}]{file\+Path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adds the DICOM file asynchronous. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Path} & The file path.\\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_dicom_file_handler_8cs_source_l00056}{56}} of file \mbox{\hyperlink{_dicom_file_handler_8cs_source}{Dicom\+File\+Handler.\+cs}}.
+
+\Hypertarget{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a08770645a4b66ab210dc499f4eaf3746}\index{DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}!AddDicomFilesAsync@{AddDicomFilesAsync}}
+\index{AddDicomFilesAsync@{AddDicomFilesAsync}!DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}}
+\doxysubsubsection{\texorpdfstring{AddDicomFilesAsync()}{AddDicomFilesAsync()}}
+{\footnotesize\ttfamily \label{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a08770645a4b66ab210dc499f4eaf3746} 
+async Task Dicom\+Modifier.\+Controllers.\+Dicom\+File\+Handler.\+Add\+Dicom\+Files\+Async (\begin{DoxyParamCaption}\item[{IEnumerable$<$ string $>$}]{file\+Paths}{, }\item[{Action$<$ int, int $>$}]{update\+Progress}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adds the DICOM files asynchronous. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Paths} & The file paths.\\
+\hline
+{\em update\+Progress} & The update progress.\\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_dicom_file_handler_8cs_source_l00067}{67}} of file \mbox{\hyperlink{_dicom_file_handler_8cs_source}{Dicom\+File\+Handler.\+cs}}.
+
+\Hypertarget{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a02f93556c6513a80113a7401d7d55559}\index{DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}!GetNextDicomFileAsync@{GetNextDicomFileAsync}}
+\index{GetNextDicomFileAsync@{GetNextDicomFileAsync}!DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}}
+\doxysubsubsection{\texorpdfstring{GetNextDicomFileAsync()}{GetNextDicomFileAsync()}}
+{\footnotesize\ttfamily \label{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a02f93556c6513a80113a7401d7d55559} 
+async Task$<$ Dicom\+File?$>$ Dicom\+Modifier.\+Controllers.\+Dicom\+File\+Handler.\+Get\+Next\+Dicom\+File\+Async (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the next DICOM file asynchronous. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_dicom_file_handler_8cs_source_l00148}{148}} of file \mbox{\hyperlink{_dicom_file_handler_8cs_source}{Dicom\+File\+Handler.\+cs}}.
+
+\Hypertarget{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a100d17d9ebd00c5c707a9fddc6263d20}\index{DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}!ResetQueue@{ResetQueue}}
+\index{ResetQueue@{ResetQueue}!DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}}
+\doxysubsubsection{\texorpdfstring{ResetQueue()}{ResetQueue()}}
+{\footnotesize\ttfamily \label{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a100d17d9ebd00c5c707a9fddc6263d20} 
+void Dicom\+Modifier.\+Controllers.\+Dicom\+File\+Handler.\+Reset\+Queue (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Resets the DICOM queue. 
+
+
+
+Definition at line \mbox{\hyperlink{_dicom_file_handler_8cs_source_l00263}{263}} of file \mbox{\hyperlink{_dicom_file_handler_8cs_source}{Dicom\+File\+Handler.\+cs}}.
+
+\Hypertarget{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a0c0ee2c13f42cf0ee8b42439cbdeec5c}\index{DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}!UpdatePatientIDInTempFolderAsync@{UpdatePatientIDInTempFolderAsync}}
+\index{UpdatePatientIDInTempFolderAsync@{UpdatePatientIDInTempFolderAsync}!DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}}
+\doxysubsubsection{\texorpdfstring{UpdatePatientIDInTempFolderAsync()}{UpdatePatientIDInTempFolderAsync()}}
+{\footnotesize\ttfamily \label{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a0c0ee2c13f42cf0ee8b42439cbdeec5c} 
+async Task Dicom\+Modifier.\+Controllers.\+Dicom\+File\+Handler.\+Update\+Patient\+IDIn\+Temp\+Folder\+Async (\begin{DoxyParamCaption}\item[{string}]{study\+Instance\+UID}{, }\item[{string}]{new\+Patient\+ID}{, }\item[{Action$<$ int, int $>$}]{update\+Progress}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Updates the patient identifier in temporary folder asynchronous. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em study\+Instance\+UID} & The study instance uid.\\
+\hline
+{\em new\+Patient\+ID} & The new patient identifier.\\
+\hline
+{\em update\+Progress} & The update progress.\\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_dicom_file_handler_8cs_source_l00177}{177}} of file \mbox{\hyperlink{_dicom_file_handler_8cs_source}{Dicom\+File\+Handler.\+cs}}.
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a60110890fd82d1e4743deac0b7ab63f7}\index{DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}!DicomQueueCount@{DicomQueueCount}}
+\index{DicomQueueCount@{DicomQueueCount}!DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}}
+\doxysubsubsection{\texorpdfstring{DicomQueueCount}{DicomQueueCount}}
+{\footnotesize\ttfamily \label{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_a60110890fd82d1e4743deac0b7ab63f7} 
+int Dicom\+Modifier.\+Controllers.\+Dicom\+File\+Handler.\+Dicom\+Queue\+Count\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+Gets the dicom queue count. 
+
+The dicom queue count. 
+
+Definition at line \mbox{\hyperlink{_dicom_file_handler_8cs_source_l00142}{142}} of file \mbox{\hyperlink{_dicom_file_handler_8cs_source}{Dicom\+File\+Handler.\+cs}}.
+
+\Hypertarget{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_aa4afb0b942b6773fd776e202fe3faf7b}\index{DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}!ModifiedFolder@{ModifiedFolder}}
+\index{ModifiedFolder@{ModifiedFolder}!DicomModifier.Controllers.DicomFileHandler@{DicomModifier.Controllers.DicomFileHandler}}
+\doxysubsubsection{\texorpdfstring{ModifiedFolder}{ModifiedFolder}}
+{\footnotesize\ttfamily \label{class_dicom_modifier_1_1_controllers_1_1_dicom_file_handler_aa4afb0b942b6773fd776e202fe3faf7b} 
+string Dicom\+Modifier.\+Controllers.\+Dicom\+File\+Handler.\+Modified\+Folder\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+Gets the modified folder path. 
+
+The modified folder. 
+
+Definition at line \mbox{\hyperlink{_dicom_file_handler_8cs_source_l00048}{48}} of file \mbox{\hyperlink{_dicom_file_handler_8cs_source}{Dicom\+File\+Handler.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Controllers/\mbox{\hyperlink{_dicom_file_handler_8cs}{Dicom\+File\+Handler.\+cs}}\end{DoxyCompactItemize}

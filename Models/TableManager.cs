@@ -1,18 +1,24 @@
-﻿using FellowOakDicom;
+﻿// Interfaces/TableManager.cs
+
+using DicomModifier.Controllers;
+using FellowOakDicom;
 
 namespace DicomModifier.Models
 {
-    public class TableManager
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TableManager"/> class.
+    /// </summary>
+    /// <param name="dataGridView">The data grid view.</param>
+    /// <param name="uiController">The UI controller.</param>
+    public class TableManager(DataGridView dataGridView, UIController uiController)
     {
-        private readonly DataGridView _dataGridView;
-        private readonly UIController _uiController;
+        private readonly DataGridView _dataGridView = dataGridView;
+        private readonly UIController _uiController = uiController;
 
-        public TableManager(DataGridView dataGridView, UIController uiController)
-        {
-            _dataGridView = dataGridView;
-            _uiController = uiController;
-        }
-
+        /// <summary>
+        /// Adds the DICOM files to grid.
+        /// </summary>
+        /// <param name="dataset">The dataset.</param>
         public void AddDicomToGrid(DicomDataset dataset)
         {
             string patientID = dataset.GetSingleValueOrDefault(DicomTag.PatientID, "Unknown");
@@ -59,17 +65,6 @@ namespace DicomModifier.Models
             // Update control states after adding a row
             var mainForm = _dataGridView.FindForm() as MainForm;
             _uiController.UpdateControlStates();
-
-        }
-
-        public void ClearTable()
-        {
-            _dataGridView.Rows.Clear();
-
-            // Update control states after clearing the table
-            var mainForm = _dataGridView.FindForm() as MainForm;
-            _uiController.UpdateControlStates();
-
         }
     }
 }

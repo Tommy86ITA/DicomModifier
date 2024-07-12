@@ -1,3 +1,5 @@
+// Interfaces/Program.cs
+
 using DicomModifier.Controllers;
 using DicomModifier.Models;
 
@@ -13,10 +15,9 @@ namespace DicomModifier
 
             MainForm mainForm = new();
             UIController uiController = new(mainForm);
-            TableManager tableManager = new(mainForm.DataGridView1, uiController);                             // Passiamo uiController qui
+            TableManager tableManager = new(mainForm.DataGridView1, uiController);
             DicomFileHandler dicomManager = new(uiController);
 
-            // Carica le impostazioni
             SettingsController settingsController = new(mainForm);
             PACSSettings settings = settingsController.LoadSettings();
 

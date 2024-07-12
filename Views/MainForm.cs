@@ -1,14 +1,25 @@
+// Interfaces/MainForm.cs
+
 using DicomModifier.Controllers;
 using DicomModifier.Models;
 using System.Diagnostics;
 
 namespace DicomModifier
 {
+    //
     public partial class MainForm : Form
     {
+        /// <summary>
+        /// Gets the data grid view1.
+        /// </summary>
+        /// <value>
+        /// The data grid view1.
+        /// </value>
         public DataGridView DataGridView1 => dataGridView1;
 
-
+        /// <summary>
+        /// Event handlers
+        /// </summary>
         public event EventHandler? OnSelectFile;
         public event EventHandler? OnSelectFolder;
         public event EventHandler? OnSelectDicomDir;
@@ -16,18 +27,24 @@ namespace DicomModifier
         public event EventHandler? OnResetQueue;
         public event EventHandler? OnUpdatePatientID;
 
-
         public TableManager TableManager { get; private set; }
         private readonly SettingsController _settingsController;
         private readonly UIController _uiController;
-
         private readonly ToolTip toolTip;
-
         private PACSSettings _settings;
 
-        public bool isSending = false;                                      // Flag per controllare se ci sono trasferimenti in corso
+        /// <summary>
+        /// Checks if there is a file transfer in progress.
+        /// </summary>
+        public bool isSending = false;
+        /// <summary>
+        /// Checks if user has confirmed closing the program.
+        /// </summary>
         private bool confirmClose = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainForm"/> class.
+        /// </summary>
         public MainForm()
         {
             InitializeComponent();
@@ -45,12 +62,14 @@ namespace DicomModifier
             _settingsController = new SettingsController(this);
             _settings = _settingsController.LoadSettings();
 
-
             // Gestione della chiusura del form
 
             ClearTempFolder();
         }
 
+        /// <summary>
+        /// Initializes the events.
+        /// </summary>
         private void InitializeEvents()
         {
             buttonDicomFile.Click += ButtonDicomFile_Click;
@@ -63,10 +82,12 @@ namespace DicomModifier
             buttonUpdateID.Click += ButtonUpdateID_Click;
             esciToolStripMenuItem.Click += EsciToolStripMenuItem_Click;
 
-            // Gestione della chiusura del form
             this.FormClosing += MainForm_FormClosing;
         }
 
+        /// <summary>
+        /// Initializes the tooltips.
+        /// </summary>
         private void InitializeTooltips()
         {
             toolTip.SetToolTip(buttonDicomFile, "Seleziona un file DICOM da importare.");
@@ -77,16 +98,30 @@ namespace DicomModifier
             toolTip.SetToolTip(buttonUpdateID, "Aggiorna l'ID paziente per i file DICOM selezionati.");
         }
 
+        /// <summary>
+        /// Manages the tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void EsciToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             CloseApplication();
         }
 
+        /// <summary>
+        /// Manages the form closing.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="FormClosingEventArgs"/> instance containing the event data.</param>
         private void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
         {
             CloseApplication();
         }
 
+        /// <summary>
+        /// Checks if there are transfers in progress. If yes, asks the user if they want to continue. If yes, sends a cancellation token to the server, then awaits for 1s and closes the application.
+        /// Else, the program clears the temp folder and closes the application.
+        /// </summary>
         private void CloseApplication()
         {
             Debug.WriteLine("CloseApplication method called.");
@@ -122,7 +157,10 @@ namespace DicomModifier
             }
         }
 
-
+        /// <summary>
+        /// Clears the temporary folder.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">Unable to get temp path</exception>
         public static void ClearTempFolder()
         {
             string tempPath = Path.GetTempPath() ?? throw new InvalidOperationException("Unable to get temp path");
@@ -141,46 +179,85 @@ namespace DicomModifier
             }
         }
 
-
+        /// <summary>
+        /// Manages the queue reset button click.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonResetQueue_Click(object? sender, EventArgs e)
         {
             OnResetQueue?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Opens the dialog to import a single DICOM file.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonDicomFile_Click(object? sender, EventArgs e)
         {
             Console.WriteLine("ButtonDicomFile_Click called");
             OnSelectFile?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Opens the dialog to import a folder with DICOM files. Folders are searched recursively.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonFolder_Click(object? sender, EventArgs e)
         {
             Console.WriteLine("ButtonFolder_Click called");
             OnSelectFolder?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Opens the dialog to import a DICOMDIR file.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonDicomDir_Click(object? sender, EventArgs e)
         {
             Console.WriteLine("ButtonDicomDir_Click called");
             OnSelectDicomDir?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Manages the send button click.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonSend_Click(object? sender, EventArgs e)
         {
             Console.WriteLine("ButtonSend_Click called");
             OnSend?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Manages the update Patient ID button click.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonUpdateID_Click(object? sender, EventArgs e)
         {
             OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Opens a message box with information about the application.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void AboutToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             MessageBox.Show("DICOM Modifier\nDeveloped by Thomas Amaranto - 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        /// <summary>
+        /// Opens the Settings form.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void SettingsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             using SettingsForm settingsForm = new(_settings, _settingsController, _uiController);
@@ -191,11 +268,21 @@ namespace DicomModifier
             }
         }
 
+        /// <summary>
+        /// Gets the new Patient ID.
+        /// </summary>
+        /// <returns></returns>
         public string GetNewPatientID()
         {
             return textBoxNewID.Text;
         }
 
+        /// <summary>
+        /// Updates the file count.
+        /// </summary>
+        /// <param name="sent">The sent.</param>
+        /// <param name="total">The total.</param>
+        /// <param name="message">The message.</param>
         public void UpdateFileCount(int sent, int total, string message)
         {
             if (total == 0)
@@ -208,16 +295,24 @@ namespace DicomModifier
             }
         }
 
+        /// <summary>
+        /// Updates the status label.
+        /// </summary>
+        /// <param name="status">The status.</param>
         public void UpdateStatus(string status)
         {
             toolStripStatusLabel.Text = $"Stato: {status}";
         }
 
-
+        /// <summary>
+        /// Updates the progress bar.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="maximum">The maximum.</param>
         public void UpdateProgressBar(int value, int maximum)
         {
             var parent = toolStripProgressBar.GetCurrentParent();
-            if (parent != null && parent.InvokeRequired)
+            if (parent?.InvokeRequired == true)
             {
                 parent.Invoke(new Action<int, int>(UpdateProgressBar), value, maximum);
             }
@@ -228,7 +323,10 @@ namespace DicomModifier
             }
         }
 
-
+        /// <summary>
+        /// Gets the selected rows from the Datagrid.
+        /// </summary>
+        /// <returns></returns>
         public List<DataGridViewRow> GetSelectedRows()
         {
             List<DataGridViewRow> selectedRows = new();
@@ -239,6 +337,5 @@ namespace DicomModifier
             }
             return selectedRows;
         }
-
     }
 }
