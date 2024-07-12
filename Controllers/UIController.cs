@@ -1,6 +1,5 @@
 ﻿// Interfaces/UIController.cs
 
-
 // Interfaces/UIController.cs
 
 using DicomModifier;

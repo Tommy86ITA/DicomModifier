@@ -329,7 +329,7 @@ namespace DicomModifier
         /// <returns></returns>
         public List<DataGridViewRow> GetSelectedRows()
         {
-            List<DataGridViewRow> selectedRows = new();
+            List<DataGridViewRow> selectedRows = [];
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
             {
                 selectedRows.Add(row);

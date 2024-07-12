@@ -139,6 +139,12 @@ namespace DicomModifier.Controllers
                 return;
             }
 
+            if (!VerifySamePatient(selectedRows))
+            {
+                MessageBox.Show("Gli esami selezionati appartengono a pazienti diversi. Non è possibile modificare l'ID Paziente.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             DialogResult confirmResult = MessageBox.Show($"Sei sicuro di voler modificare l'ID Paziente in '{newPatientID}'?", "Conferma Modifica ID Paziente", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirmResult == DialogResult.No)
             {
@@ -220,6 +226,7 @@ namespace DicomModifier.Controllers
             MainForm.ClearTempFolder();
             _uiController.ClearTable();
             _uiController.ClearNewPatientIDTextBox();
+            _uiController.EnableControls();
             _uiController.UpdateControlStates();
             _uiController.UpdateProgressBar(0, 1);
             _uiController.UpdateFileCount(0, 0, "Attesa file");
@@ -448,6 +455,29 @@ namespace DicomModifier.Controllers
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
             return openFileDialog.ShowDialog() == DialogResult.OK;
+        }
+
+        private bool VerifySamePatient(List<DataGridViewRow> rows)
+        {
+            if (rows.Count < 2) return true;
+
+            var firstRow = rows[0];
+            string firstPatientName = firstRow.Cells["PatientNameColumn"].Value?.ToString() ?? string.Empty;
+            string firstPatientDOB = firstRow.Cells["PatientDOBColumn"].Value?.ToString() ?? string.Empty;
+
+            foreach (var row in rows.Skip(1))
+            {
+                string patientName = row.Cells["PatientNameColumn"].Value?.ToString() ?? string.Empty;
+                string patientDOB = row.Cells["PatientDOBColumn"].Value?.ToString() ?? string.Empty;
+
+                if (!string.Equals(firstPatientName, patientName, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(firstPatientDOB, patientDOB, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         #endregion Private Methods
