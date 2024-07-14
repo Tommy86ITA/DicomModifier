@@ -21,10 +21,15 @@ namespace DicomModifier
         /// Event handlers
         /// </summary>
         public event EventHandler? OnSelectFile;
+
         public event EventHandler? OnSelectFolder;
+
         public event EventHandler? OnSelectDicomDir;
+
         public event EventHandler? OnSend;
+
         public event EventHandler? OnResetQueue;
+
         public event EventHandler? OnUpdatePatientID;
 
         public TableManager TableManager { get; private set; }
@@ -37,6 +42,7 @@ namespace DicomModifier
         /// Checks if there is a file transfer in progress.
         /// </summary>
         public bool isSending = false;
+
         /// <summary>
         /// Checks if user has confirmed closing the program.
         /// </summary>
@@ -47,10 +53,13 @@ namespace DicomModifier
         /// </summary>
         public MainForm()
         {
+            _uiController = new UIController(this);
+
             InitializeComponent();
+            this.Text = "DICOM Modifier";
+
             InitializeEvents();
 
-            _uiController = new UIController(this);
             toolTip = new ToolTip();
             InitializeTooltips();
 
@@ -61,8 +70,6 @@ namespace DicomModifier
             // Inizializza le impostazioni
             _settingsController = new SettingsController(this);
             _settings = _settingsController.LoadSettings();
-
-            // Gestione della chiusura del form
 
             ClearTempFolder();
         }
@@ -250,7 +257,17 @@ namespace DicomModifier
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void AboutToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            MessageBox.Show("DICOM Modifier\nDeveloped by Thomas Amaranto - 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //string version = Assembly.GetExecutingAssembly()
+            //                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            //                 .InformationalVersion;
+            //if (!string.IsNullOrEmpty(version))
+            //{
+            //    MessageBox.Show($"DICOM Modifier \n Developed by Thomas Amaranto - 2024 \n Version: {version}", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //}
+            //else
+            //{
+            MessageBox.Show($"DICOM Modifier \nDeveloped by Thomas Amaranto - 2024 \nVersion: 1.0.0.2", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //}
         }
 
         /// <summary>

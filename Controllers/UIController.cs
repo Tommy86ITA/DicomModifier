@@ -1,9 +1,5 @@
 ﻿// Interfaces/UIController.cs
 
-// Interfaces/UIController.cs
-
-using DicomModifier;
-
 namespace DicomModifier.Controllers
 {
     /// <summary>

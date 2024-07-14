@@ -11,6 +11,7 @@ namespace DicomModifier.Controllers
         /// The configuration file path
         /// </summary>
         private const string ConfigFilePath = "Config.json";
+
         private readonly MainForm _mainForm;
         private readonly PACSSettings _settings;
 
