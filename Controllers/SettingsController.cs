@@ -1,9 +1,10 @@
 ﻿// Interfaces/SettingsController.cs
 
-using DicomModifier.Models;
+using DicomImport.Models;
+using DicomModifier;
 using System.Text.Json;
 
-namespace DicomModifier.Controllers
+namespace DicomImport.Controllers
 {
     /// <summary>
     /// The SettingsController class handles loading, saving, and managing PACS settings.

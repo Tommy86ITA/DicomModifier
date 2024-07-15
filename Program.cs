@@ -1,11 +1,12 @@
 // Interfaces/Program.cs
 
-using DicomModifier.Controllers;
-using DicomModifier.Models;
+using DicomImport.Controllers;
+using DicomImport.Models;
+using DicomModifier;
 using System.Reflection;
-using System.Runtime.InteropServices; // Aggiungi questo using
+using System.Runtime.InteropServices; 
 
-namespace DicomModifier
+namespace DicomImport
 {
     internal static class Program
     {

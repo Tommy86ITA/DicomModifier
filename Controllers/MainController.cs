@@ -1,10 +1,11 @@
 ﻿// Interfaces/MainController.cs
 
-using DicomModifier.Models;
+using DicomImport.Models;
+using DicomModifier;
 using FellowOakDicom;
 using System.Diagnostics;
 
-namespace DicomModifier.Controllers
+namespace DicomImport.Controllers
 {
     public class MainController
     {
@@ -545,6 +546,7 @@ namespace DicomModifier.Controllers
 
             return true;
         }
+
         #endregion Private Methods
     }
 }

@@ -1,6 +1,6 @@
 ﻿// Interfaces/PACSSetting.cs
 
-namespace DicomModifier.Models
+namespace DicomImport.Models
 {
     public class PACSSettings
     {

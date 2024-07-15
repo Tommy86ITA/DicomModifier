@@ -1,9 +1,10 @@
 ﻿// Interfaces/TableManager.cs
 
-using DicomModifier.Controllers;
+using DicomImport.Controllers;
+using DicomModifier;
 using FellowOakDicom;
 
-namespace DicomModifier.Models
+namespace DicomImport.Models
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TableManager"/> class.

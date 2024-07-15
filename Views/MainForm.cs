@@ -1,7 +1,7 @@
 // Interfaces/MainForm.cs
 
-using DicomModifier.Controllers;
-using DicomModifier.Models;
+using DicomImport.Controllers;
+using DicomImport.Models;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -57,7 +57,10 @@ namespace DicomModifier
             _uiController = new UIController(this);
 
             InitializeComponent();
-            this.Text = "DICOM Modifier";
+
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            var versionString = version != null ? version.ToString() : "Versione non disponibile";
+            this.Text = $"DICOM Import & Edit - v. {versionString}";
 
             InitializeEvents();
 
@@ -172,7 +175,7 @@ namespace DicomModifier
         public static void ClearTempFolder()
         {
             string tempPath = Path.GetTempPath() ?? throw new InvalidOperationException("Unable to get temp path");
-            string tempDirectory = Path.Combine(tempPath, "DicomModifier");
+            string tempDirectory = Path.Combine(tempPath, "DicomImport");
             if (Directory.Exists(tempDirectory))
             {
                 DirectoryInfo di = new(tempDirectory);
@@ -267,8 +270,7 @@ namespace DicomModifier
         {
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             var versionString = version != null ? version.ToString() : "Versione non disponibile";
-
-            MessageBox.Show($"DICOM Modifier \nVersione: {versionString}\n\nDeveloped by Thomas Amaranto - 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"DICOM Import & Edit \nVersione: {versionString}\n\nDeveloped by Thomas Amaranto - 2024\n Rilasciato sotto licenza MIT.", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
@@ -354,6 +356,12 @@ namespace DicomModifier
                 Debug.WriteLine($"Selected row: {row.Index}, PatientID: {row.Cells["PatientIDColumn"].Value}");
             }
             return selectedRows;
+        }
+
+        private void HelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            HelpForm helpForm = new();
+            helpForm.ShowDialog();
         }
     }
 }

@@ -4,7 +4,7 @@ using FellowOakDicom;
 using FellowOakDicom.Media;
 using System.Diagnostics;
 
-namespace DicomModifier.Controllers
+namespace DicomImport.Controllers
 {
     public class DicomFileHandler
     {
@@ -17,7 +17,7 @@ namespace DicomModifier.Controllers
         {
             dicomQueue = new Queue<string>();
             _uiController = uiController;
-            _tempFolder = Path.Combine(Path.GetTempPath(), "DicomModifier");
+            _tempFolder = Path.Combine(Path.GetTempPath(), "DicomImport");
             ModifiedFolder = Path.Combine(_tempFolder, "modified");
 
             if (!Directory.Exists(_tempFolder))

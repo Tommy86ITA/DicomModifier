@@ -1,4 +1,6 @@
-﻿namespace DicomModifier.Controllers
+﻿using DicomModifier;
+
+namespace DicomImport.Controllers
 {
     public class UIController(MainForm mainForm)
     {
