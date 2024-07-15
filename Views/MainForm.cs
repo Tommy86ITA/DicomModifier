@@ -3,6 +3,7 @@
 using DicomModifier.Controllers;
 using DicomModifier.Models;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace DicomModifier
 {
@@ -175,13 +176,20 @@ namespace DicomModifier
             if (Directory.Exists(tempDirectory))
             {
                 DirectoryInfo di = new(tempDirectory);
-                foreach (FileInfo file in di.GetFiles())
+                try
                 {
-                    file.Delete();
+                    foreach (FileInfo file in di.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                    foreach (DirectoryInfo dir in di.GetDirectories())
+                    {
+                        dir.Delete(true);
+                    }
                 }
-                foreach (DirectoryInfo dir in di.GetDirectories())
+                catch
                 {
-                    dir.Delete(true);
+                    return;
                 }
             }
         }
@@ -257,17 +265,10 @@ namespace DicomModifier
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void AboutToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            //string version = Assembly.GetExecutingAssembly()
-            //                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-            //                 .InformationalVersion;
-            //if (!string.IsNullOrEmpty(version))
-            //{
-            //    MessageBox.Show($"DICOM Modifier \n Developed by Thomas Amaranto - 2024 \n Version: {version}", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //}
-            //else
-            //{
-            MessageBox.Show($"DICOM Modifier \nDeveloped by Thomas Amaranto - 2024 \nVersion: 1.0.0.2", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //}
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            var versionString = version != null ? version.ToString() : "Versione non disponibile";
+
+            MessageBox.Show($"DICOM Modifier \nVersione: {versionString}\n\nDeveloped by Thomas Amaranto - 2024", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>

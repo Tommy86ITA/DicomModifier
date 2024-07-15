@@ -5,15 +5,23 @@ using System.Text.Json;
 
 namespace DicomModifier.Controllers
 {
+    /// <summary>
+    /// The SettingsController class handles loading, saving, and managing PACS settings.
+    /// </summary>
     public class SettingsController
     {
         /// <summary>
-        /// The configuration file path
+        /// The configuration file path in AppData.
         /// </summary>
-        private const string ConfigFilePath = "Config.json";
+        private static readonly string ConfigFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DicomModifier", "Config.json");
 
         private readonly MainForm _mainForm;
         private readonly PACSSettings _settings;
+
+        /// <summary>
+        /// JsonSerializerOptions to be used for all serialization and deserialization operations.
+        /// </summary>
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsController"/> class.
@@ -26,10 +34,10 @@ namespace DicomModifier.Controllers
         }
 
         /// <summary>
-        /// Checks if the Config.json file exists and if itìs readable, then loads the settings. Otherwise shows an error and calls the method that generates default settings.
+        /// Checks if the Config.json file exists and if it's readable, then loads the settings.
+        /// Otherwise, shows an error and calls the method that generates default settings.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="System.Text.Json.JsonException">Deserializzazione fallita.</exception>
+        /// <returns>The loaded or default PACS settings.</returns>
         public PACSSettings LoadSettings()
         {
             if (!File.Exists(ConfigFilePath) || new FileInfo(ConfigFilePath).Length == 0)
@@ -41,7 +49,7 @@ namespace DicomModifier.Controllers
             try
             {
                 string json = File.ReadAllText(ConfigFilePath);
-                PACSSettings? settings = JsonSerializer.Deserialize<PACSSettings>(json) ?? throw new JsonException("Deserializzazione fallita.");
+                PACSSettings settings = JsonSerializer.Deserialize<PACSSettings>(json, jsonSerializerOptions) ?? throw new JsonException("Deserializzazione fallita.");
                 _mainForm.UpdateStatus("Impostazioni caricate correttamente.");
                 return settings;
             }
@@ -53,14 +61,20 @@ namespace DicomModifier.Controllers
         }
 
         /// <summary>
-        /// Saves the settings.
+        /// Saves the PACS settings to the configuration file.
         /// </summary>
-        /// <param name="settings">The settings.</param>
+        /// <param name="settings">The settings to save.</param>
         public void SaveSettings(PACSSettings settings)
         {
             try
             {
-                string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                string? directoryPath = Path.GetDirectoryName(ConfigFilePath);
+                if (directoryPath != null && !Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                string json = JsonSerializer.Serialize(settings, jsonSerializerOptions);
                 File.WriteAllText(ConfigFilePath, json);
                 _mainForm.UpdateStatus("Impostazioni salvate correttamente.");
             }
@@ -71,9 +85,9 @@ namespace DicomModifier.Controllers
         }
 
         /// <summary>
-        /// Creates the default settings.
+        /// Creates the default PACS settings and saves them.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The default PACS settings.</returns>
         private PACSSettings CreateDefaultSettings()
         {
             var defaultSettings = new PACSSettings();

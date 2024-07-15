@@ -128,52 +128,98 @@ namespace DicomModifier.Controllers
             string newPatientID = _mainForm.GetNewPatientID();
             if (string.IsNullOrEmpty(newPatientID))
             {
-                MessageBox.Show("Per favore, inserisci un nuovo ID Paziente.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _mainForm.Invoke((MethodInvoker)delegate
+                {
+                    MessageBox.Show("Per favore, inserisci un nuovo ID Paziente.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                });
                 return;
             }
 
             List<DataGridViewRow> selectedRows = _mainForm.GetSelectedRows();
             if (selectedRows.Count == 0)
             {
-                MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _mainForm.Invoke((MethodInvoker)delegate
+                {
+                    MessageBox.Show("Per favore, seleziona almeno un esame dalla tabella.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                });
                 return;
             }
 
             if (!VerifySamePatient(selectedRows))
             {
-                MessageBox.Show("Gli esami selezionati appartengono a pazienti diversi. Non è possibile modificare l'ID Paziente.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _mainForm.Invoke((MethodInvoker)delegate
+                {
+                    MessageBox.Show("Gli esami selezionati appartengono a pazienti diversi. Non è possibile modificare l'ID Paziente.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                });
                 return;
             }
 
-            DialogResult confirmResult = MessageBox.Show($"Sei sicuro di voler modificare l'ID Paziente in '{newPatientID}'?", "Conferma Modifica ID Paziente", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            bool allIDsSame = true;
+            foreach (var row in selectedRows)
+            {
+                string? currentPatientID = row.Cells["PatientIDColumn"].Value?.ToString();
+                if (currentPatientID != newPatientID)
+                {
+                    allIDsSame = false;
+                    break;
+                }
+            }
+
+            if (allIDsSame)
+            {
+                _mainForm.Invoke((MethodInvoker)delegate
+                {
+                    MessageBox.Show($"L'ID paziente '{newPatientID}' è uguale all'ID attuale per tutti i file selezionati. I file non verranno modificati.", "Informazione", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                });
+                return;
+            }
+
+            DialogResult confirmResult = DialogResult.No;
+            _mainForm.Invoke((MethodInvoker)delegate
+            {
+                confirmResult = MessageBox.Show($"Sei sicuro di voler modificare l'ID Paziente in '{newPatientID}'?", "Conferma Modifica ID Paziente", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            });
             if (confirmResult == DialogResult.No)
             {
                 return;
             }
 
-            _uiController.DisableControls();
-            _uiController.UpdateStatus("Aggiornamento ID Paziente in corso...");
-            _uiController.UpdateProgressBar(0, selectedRows.Count);
-            _uiController.UpdateFileCount(0, selectedRows.Count, "File elaborati");
+            _mainForm.Invoke((MethodInvoker)delegate
+            {
+                _uiController.DisableControls();
+                _uiController.UpdateStatus("Aggiornamento ID Paziente in corso...");
+                _uiController.UpdateProgressBar(0, selectedRows.Count);
+                _uiController.UpdateFileCount(0, selectedRows.Count, "File elaborati");
+            });
 
             foreach (DataGridViewRow row in selectedRows)
             {
                 string? studyInstanceUID = row.Cells["StudyInstanceUIDColumn"].Value?.ToString();
-                if (studyInstanceUID != null)
+                string? currentPatientID = row.Cells["PatientIDColumn"].Value?.ToString();
+                if (studyInstanceUID != null && currentPatientID != newPatientID)
                 {
                     await _dicomManager.UpdatePatientIDInTempFolderAsync(studyInstanceUID, newPatientID, (progress, total) =>
                     {
-                        _uiController.UpdateProgressBar(progress, total);
-                        _uiController.UpdateFileCount(progress, total, "File elaborati");
+                        _mainForm.Invoke((MethodInvoker)delegate
+                        {
+                            _uiController.UpdateProgressBar(progress, total);
+                            _uiController.UpdateFileCount(progress, total, "File elaborati");
+                        });
                     });
-                    row.Cells["PatientIDColumn"].Value = newPatientID; // Aggiorna l'ID visualizzato nella DataGridView
+                    _mainForm.Invoke((MethodInvoker)delegate
+                    {
+                        row.Cells["PatientIDColumn"].Value = newPatientID; // Aggiorna l'ID visualizzato nella DataGridView
+                    });
                 }
             }
 
-            _uiController.UpdateStatus("ID Paziente aggiornato con successo.");
-            MessageBox.Show("ID Paziente aggiornato con successo.", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            _uiController.ClearNewPatientIDTextBox();
-            _uiController.UpdateControlStates();
+            _mainForm.Invoke((MethodInvoker)delegate
+            {
+                _uiController.UpdateStatus("ID Paziente aggiornato con successo.");
+                MessageBox.Show("ID Paziente aggiornato con successo.", "Successo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                _uiController.ClearNewPatientIDTextBox();
+                _uiController.UpdateControlStates();
+            });
         }
 
         /// <summary>
@@ -185,8 +231,12 @@ namespace DicomModifier.Controllers
         {
             try
             {
-                _uiController.DisableControls();
-                _mainForm.isSending = true;
+                // Disabilita i controlli e imposta lo stato di invio sul thread dell'interfaccia utente
+                _mainForm.Invoke((MethodInvoker)delegate
+                {
+                    _uiController.DisableControls();
+                    _mainForm.isSending = true;
+                });
 
                 List<DataGridViewRow> selectedRows = _mainForm.GetSelectedRows();
                 if (!ValidateSelectedRows(selectedRows)) return;
@@ -200,18 +250,34 @@ namespace DicomModifier.Controllers
                 if (!ValidateDicomFiles(dicomFiles)) return;
 
                 await SendDicomFiles(dicomFiles);
-
-                _uiController.EnableControls();
-                _uiController.UpdateControlStates();
-                _mainForm.isSending = false;
             }
             catch (AggregateException ex)
             {
-                HandleAggregateException(ex);
+                _mainForm.Invoke((MethodInvoker)delegate
+                {
+                    HandleAggregateException(ex);
+                    _uiController.UpdateStatus("Invio dei file fallito.");
+                });
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Errore inaspettato: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _mainForm.Invoke((MethodInvoker)delegate
+                {
+                    MessageBox.Show($"Errore inaspettato: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _uiController.UpdateStatus("Invio dei file fallito.");
+                });
+            }
+            finally
+            {
+                // Abilita i controlli e aggiorna lo stato sul thread dell'interfaccia utente
+                _mainForm.Invoke((MethodInvoker)delegate
+                {
+                    _uiController.EnableControls();
+                    _uiController.UpdateControlStates();
+                    _uiController.UpdateProgressBar(0, 1);
+                    _uiController.UpdateFileCount(0, 0, "Attesa file");
+                    _mainForm.isSending = false;
+                });
             }
         }
 
@@ -457,7 +523,7 @@ namespace DicomModifier.Controllers
             return openFileDialog.ShowDialog() == DialogResult.OK;
         }
 
-        private bool VerifySamePatient(List<DataGridViewRow> rows)
+        private static bool VerifySamePatient(List<DataGridViewRow> rows)
         {
             if (rows.Count < 2) return true;
 
@@ -479,7 +545,6 @@ namespace DicomModifier.Controllers
 
             return true;
         }
-
         #endregion Private Methods
     }
 }

@@ -8,6 +8,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>DicomModifier.Program</StartupObject>
     <ApplicationIcon>server_output.ico</ApplicationIcon>
+    <FileVersion>1.0.*.*</FileVersion>
+    <AssemblyVersion>1.0.*.*</AssemblyVersion>
+    <Deterministic>false</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>

@@ -9,7 +9,7 @@ namespace DicomModifier
 {
     internal static class Program
     {
-        private static string? appGuid;
+        private static readonly string? appGuid;
 
         static Program()
         {
@@ -29,29 +29,27 @@ namespace DicomModifier
         [STAThread]
         private static void Main()
         {
-            using (Mutex mutex = new Mutex(false, "Global\\" + appGuid))
+            using Mutex mutex = new(false, "Global\\" + appGuid);
+            if (!mutex.WaitOne(0, false))
             {
-                if (!mutex.WaitOne(0, false))
-                {
-                    MessageBox.Show("Instance already running");
-                    return;
-                }
-
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-
-                MainForm mainForm = new();
-                UIController uiController = new(mainForm);
-                DicomFileHandler dicomManager = new(uiController);
-
-                SettingsController settingsController = new(mainForm);
-                PACSSettings settings = settingsController.LoadSettings();
-
-                MainController mainController = new(mainForm, dicomManager, settings);
-                mainForm.Tag = mainController;
-
-                Application.Run(mainForm);
+                MessageBox.Show("Dicom Importer è già in esecuzione!");
+                return;
             }
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            MainForm mainForm = new();
+            UIController uiController = new(mainForm);
+            DicomFileHandler dicomManager = new(uiController);
+
+            SettingsController settingsController = new(mainForm);
+            PACSSettings settings = settingsController.LoadSettings();
+
+            MainController mainController = new(mainForm, dicomManager, settings);
+            mainForm.Tag = mainController;
+
+            Application.Run(mainForm);
         }
     }
 }
