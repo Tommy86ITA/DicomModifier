@@ -126,6 +126,7 @@ namespace DicomImport.Controllers
 
             await ProcessFilesAsync(filePaths, studyInstanceUID, newPatientID, updateProgress, updatedFilePaths);
             UpdateDicomQueue(updatedFilePaths);
+            _uiController.EnableControls();
         }
 
         private void EnsureModifiedFolderExists()
