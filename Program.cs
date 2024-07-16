@@ -4,7 +4,7 @@ using DicomImport.Controllers;
 using DicomImport.Models;
 using DicomModifier;
 using System.Reflection;
-using System.Runtime.InteropServices; 
+using System.Runtime.InteropServices;
 
 namespace DicomImport
 {

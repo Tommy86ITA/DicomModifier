@@ -4,6 +4,7 @@ using DicomImport.Controllers;
 using DicomImport.Models;
 using System.Diagnostics;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace DicomModifier
 {
@@ -57,6 +58,8 @@ namespace DicomModifier
             _uiController = new UIController(this);
 
             InitializeComponent();
+            _uiController.ApplyStyles();
+            
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             var versionString = version != null ? version.ToString() : "Versione non disponibile";

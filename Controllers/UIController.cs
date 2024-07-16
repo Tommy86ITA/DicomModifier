@@ -1,4 +1,6 @@
 ﻿using DicomModifier;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace DicomImport.Controllers
 {
@@ -16,6 +18,62 @@ namespace DicomImport.Controllers
             {
                 action();
             }
+        }
+
+        public void ApplyStyles()
+        {
+            InvokeIfRequired(() =>
+            {
+                ApplyStylesToControl(_mainForm.Controls);
+            });
+        }
+
+        private void ApplyStylesToControl(Control.ControlCollection controls)
+        {
+            foreach (Control control in controls)
+            {
+                if (control is Button button)
+                {
+                    StyleButton(button);
+                }
+                else if (control is DataGridView dataGridView)
+                {
+                    StyleDataGridView(dataGridView);
+                }
+                else if (control.HasChildren)
+                {
+                    ApplyStylesToControl(control.Controls);
+                }
+            }
+        }
+
+        private static void StyleButton(Button button)
+        {   
+            if (button.Name == "buttonResetQueue") 
+            {
+                button.BackColor = Color.FromArgb(255, 140, 0);
+            }
+            else
+            {
+                button.BackColor = Color.FromArgb(0, 123, 255); // Blu standard per altri pulsanti
+                button.Size = button.Size;
+            }
+
+            Size buttonSize = new Size(150, 40);
+            button.ForeColor = Color.White;
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 0;
+            button.Font = new Font("Segoe UI", 10);
+        }
+
+        private static void StyleDataGridView(DataGridView dataGridView)
+        {
+            dataGridView.EnableHeadersVisualStyles = false;
+            dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 45);
+            dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(235, 235, 235);
+            dataGridView.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 123, 255);
+            dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
         }
 
         public void UpdateControlStates()
