@@ -109,13 +109,33 @@ namespace DicomImport.Controllers
         private async Task<string> CopyToTempFolderAsync(string filePath)
         {
             string tempFilePath = Path.Combine(_tempFolder, $"{Path.GetFileNameWithoutExtension(filePath)}_{Guid.NewGuid()}{Path.GetExtension(filePath)}");
-            await using (FileStream sourceStream = File.Open(filePath, FileMode.Open))
-            await using (FileStream destinationStream = File.Create(tempFilePath))
+
+            try
             {
+                // Controllo se il file di origine è accessibile in lettura
+                if (!File.Exists(filePath))
+                {
+                    throw new FileNotFoundException("Il file specificato non esiste.", filePath);
+                }
+
+                await using FileStream sourceStream = new(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                await using FileStream destinationStream = new(tempFilePath, FileMode.Create, FileAccess.Write);
                 await sourceStream.CopyToAsync(destinationStream);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                // Log dell'errore o gestione appropriata
+                throw new IOException($"Accesso negato durante la copia del file {filePath} nella cartella temporanea.", ex);
+            }
+            catch (Exception ex)
+            {
+                // Log dell'errore o gestione appropriata
+                throw new IOException($"Errore durante la copia del file {filePath} nella cartella temporanea.", ex);
+            }
+
             return tempFilePath;
         }
+
 
         public async Task UpdatePatientIDInTempFolderAsync(string studyInstanceUID, string newPatientID, Action<int, int> updateProgress)
         {
