@@ -243,10 +243,10 @@ namespace DicomModifier
             // 
             // buttonUpdateID
             // 
-            buttonUpdateID.BackColor = SystemColors.Highlight;
+            buttonUpdateID.BackColor = Color.LightCoral;
             buttonUpdateID.FlatStyle = FlatStyle.Flat;
             buttonUpdateID.Font = new System.Drawing.Font("Segoe UI", 10F);
-            buttonUpdateID.ForeColor = Color.White;
+            buttonUpdateID.ForeColor = Color.Black;
             buttonUpdateID.Location = new Point(172, 30);
             buttonUpdateID.Margin = new Padding(2, 1, 2, 1);
             buttonUpdateID.Name = "buttonUpdateID";
@@ -268,10 +268,10 @@ namespace DicomModifier
             // 
             // buttonSend
             // 
-            buttonSend.BackColor = SystemColors.Highlight;
+            buttonSend.BackColor = Color.LightCoral;
             buttonSend.FlatStyle = FlatStyle.Flat;
             buttonSend.Font = new System.Drawing.Font("Segoe UI", 10F);
-            buttonSend.ForeColor = Color.White;
+            buttonSend.ForeColor = Color.Black;
             buttonSend.Location = new Point(90, 29);
             buttonSend.Margin = new Padding(2, 1, 2, 1);
             buttonSend.Name = "buttonSend";

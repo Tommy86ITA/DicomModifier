@@ -4,7 +4,6 @@ using DicomImport.Controllers;
 using DicomImport.Models;
 using System.Diagnostics;
 using System.Reflection;
-using System.Windows.Forms;
 
 namespace DicomModifier
 {
@@ -59,7 +58,6 @@ namespace DicomModifier
 
             InitializeComponent();
             _uiController.ApplyStyles();
-            
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             var versionString = version != null ? version.ToString() : "Versione non disponibile";
@@ -217,7 +215,7 @@ namespace DicomModifier
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonDicomFile_Click(object? sender, EventArgs e)
         {
-            Console.WriteLine("ButtonDicomFile_Click called");
+            Debug.WriteLine("ButtonDicomFile_Click called");
             OnSelectFile?.Invoke(this, EventArgs.Empty);
         }
 
@@ -228,7 +226,7 @@ namespace DicomModifier
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonFolder_Click(object? sender, EventArgs e)
         {
-            Console.WriteLine("ButtonFolder_Click called");
+            Debug.WriteLine("ButtonFolder_Click called");
             OnSelectFolder?.Invoke(this, EventArgs.Empty);
         }
 
@@ -239,7 +237,7 @@ namespace DicomModifier
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonDicomDir_Click(object? sender, EventArgs e)
         {
-            Console.WriteLine("ButtonDicomDir_Click called");
+            Debug.WriteLine("ButtonDicomDir_Click called");
             OnSelectDicomDir?.Invoke(this, EventArgs.Empty);
         }
 
@@ -250,8 +248,17 @@ namespace DicomModifier
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonSend_Click(object? sender, EventArgs e)
         {
-            Console.WriteLine("ButtonSend_Click called");
-            OnSend?.Invoke(this, EventArgs.Empty);
+            Debug.WriteLine("ButtonSend_Click called");
+            var confirmResult = MessageBox.Show("Sei sicuro di voler inviare i file al PACS?", "Conferma invio", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            // Se l'utente seleziona 'No', interrompi l'operazione
+            if (confirmResult != DialogResult.Yes)
+            {
+                return;
+            }
+            else
+            {
+                OnSend?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>

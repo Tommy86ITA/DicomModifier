@@ -73,9 +73,6 @@
 using DicomImport.Controllers;
 using DicomModifier;
 using FellowOakDicom;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace DicomImport.Models
 {
@@ -196,6 +193,5 @@ namespace DicomImport.Models
                 }
             }
         }
-
     }
 }

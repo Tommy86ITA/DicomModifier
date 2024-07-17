@@ -1,6 +1,4 @@
 ﻿using DicomModifier;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace DicomImport.Controllers
 {
@@ -28,42 +26,72 @@ namespace DicomImport.Controllers
             });
         }
 
-        private void ApplyStylesToControl(Control.ControlCollection controls)
+        private static void ApplyStylesToControl(Control.ControlCollection controls)
         {
             foreach (Control control in controls)
             {
-                if (control is Button button)
+                switch (control)
                 {
-                    StyleButton(button);
-                }
-                else if (control is DataGridView dataGridView)
-                {
-                    StyleDataGridView(dataGridView);
-                }
-                else if (control.HasChildren)
-                {
-                    ApplyStylesToControl(control.Controls);
+                    case Button button:
+                        StyleButton(button);
+                        break;
+
+                    case DataGridView dataGridView:
+                        StyleDataGridView(dataGridView);
+                        break;
+
+                    default:
+                        if (control.HasChildren)
+                        {
+                            ApplyStylesToControl(control.Controls);
+                        }
+
+                        break;
                 }
             }
         }
 
         private static void StyleButton(Button button)
-        {   
-            if (button.Name == "buttonResetQueue") 
+        {
+            switch (button.Name)
             {
-                button.BackColor = Color.FromArgb(255, 140, 0);
+                case "buttonUpdateID":
+                case "buttonSend":
+                    button.BackColor = Color.LightCoral;
+                    break;
+
+                default:
+                    button.BackColor = Color.DodgerBlue;
+
+                    break;
+            }
+
+            button.FlatStyle = FlatStyle.Flat;
+            button.ForeColor = Color.White;
+            button.FlatAppearance.BorderSize = 0;
+            button.Font = new Font("Segoe UI", 10);
+
+            // Event handler to change style when button is enabled/disabled
+            button.EnabledChanged += (sender, e) =>
+            {
+                using Button? btn = sender as Button;
+                if (btn != null)
+                {
+                    btn.BackColor = btn.Enabled ? GetButtonColor(btn.Name) : Color.LightGray;
+                }
+            };
+        }
+
+        private static Color GetButtonColor(string buttonName)
+        {
+            if (buttonName == "buttonUpdateID" || buttonName == "buttonSend")
+            {
+                return Color.LightCoral;
             }
             else
             {
-                button.BackColor = Color.FromArgb(0, 123, 255); // Blu standard per altri pulsanti
-                button.Size = button.Size;
+                return Color.DodgerBlue;
             }
-
-            Size buttonSize = new Size(150, 40);
-            button.ForeColor = Color.White;
-            button.FlatStyle = FlatStyle.Flat;
-            button.FlatAppearance.BorderSize = 0;
-            button.Font = new Font("Segoe UI", 10);
         }
 
         private static void StyleDataGridView(DataGridView dataGridView)
