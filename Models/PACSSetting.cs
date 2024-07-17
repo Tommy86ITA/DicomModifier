@@ -1,33 +1,22 @@
-﻿using System.Text.Json;
+﻿// Interfaces/PACSSetting.cs
 
-namespace DicomModifier.Models
+namespace DicomImport.Models
 {
     public class PACSSettings
     {
-        public string ServerIP { get; set; }
-        public string ServerPort { get; set; }
-        public string AETitle { get; set; }
-        public string Timeout { get; set; }
-        public string LocalAETitle { get; set; }
+        public string ServerIP { get; set; } = "127.0.0.1";
+        public string ServerPort { get; set; } = "104";
+        public string AETitle { get; set; } = "PACS";
+        public string Timeout { get; set; } = "30000";
+        public string LocalAETitle { get; set; } = "DICOM_MOD";
 
-        private static readonly string configFilePath = "config.json";
-
-        public static PACSSettings LoadSettings()
+        public void ApplyDefaults()
         {
-            if (File.Exists(configFilePath))
-            {
-                var json = File.ReadAllText(configFilePath);
-                return JsonSerializer.Deserialize<PACSSettings>(json);
-            }
-
-            return new PACSSettings(); // Return default settings if no config file is found
-        }
-
-        public void SaveSettings()
-        {
-            var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(configFilePath, json);
+            ServerIP = "127.0.0.1";
+            ServerPort = "104";
+            AETitle = "PACS";
+            Timeout = "30000";
+            LocalAETitle = "DICOM_MOD";
         }
     }
 }
-

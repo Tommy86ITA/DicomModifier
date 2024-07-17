@@ -1,33 +1,35 @@
-﻿using DicomModifier.Models;
+﻿// Interfaces/PACSCommunicator.cs
+
+using DicomImport.Models;
 using FellowOakDicom;
 using FellowOakDicom.Network;
 using FellowOakDicom.Network.Client;
 using System.Diagnostics;
 
-namespace DicomModifier.Controllers
+namespace DicomImport.Controllers
 {
-    public class PACSCommunicator
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PACSCommunicator"/> class.
+    /// </summary>
+    /// <param name="settings">The settings.</param>
+    /// <param name="uiController">The UI controller.</param>
+    public class PACSCommunicator(PACSSettings settings, UIController uiController)
     {
-        private readonly PACSSettings _settings;
-        private readonly ProgressManager _progressManager;
+        private readonly PACSSettings _settings = settings;
+        private readonly UIController _uiController = uiController;
 
-        // Costruttore: inizializza le impostazioni PACS e il gestore del progresso
-        public PACSCommunicator(PACSSettings settings, ProgressManager progressManager)
-        {
-            _settings = settings;
-            _progressManager = progressManager;
-        }
-
-        // Metodo per inviare un C-ECHO per verificare la connessione al server PACS
+        /// <summary>
+        /// Sends the C-ECHO
+        /// </summary>
+        /// <returns></returns>
         public async Task<bool> SendCEcho()
         {
             try
             {
-                // Crea un client DICOM per il C-ECHO
-                var client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
-                var cEcho = new DicomCEchoRequest();
+                IDicomClient client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
+                DicomCEchoRequest cEcho = new();
 
-                var tcs = new TaskCompletionSource<bool>();
+                TaskCompletionSource<bool> tcs = new();
 
                 cEcho.OnResponseReceived += (req, resp) =>
                 {
@@ -41,7 +43,6 @@ namespace DicomModifier.Controllers
                     }
                 };
 
-                // Aggiungi e invia la richiesta C-ECHO
                 await client.AddRequestAsync(cEcho);
                 await client.SendAsync();
                 return await tcs.Task;
@@ -53,54 +54,54 @@ namespace DicomModifier.Controllers
             }
         }
 
-        // Metodo per inviare una lista di file DICOM al server PACS
+        /// <summary>
+        /// Sends the DICOM files to the PACS
+        /// </summary>
+        /// <param name="filePaths">The file paths.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         public async Task<bool> SendFiles(List<string> filePaths, CancellationToken cancellationToken)
         {
             try
             {
-                var client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
+                IDicomClient client = DicomClientFactory.Create(_settings.ServerIP, int.Parse(_settings.ServerPort), false, _settings.LocalAETitle, _settings.AETitle);
 
                 if (filePaths.Count == 0)
                 {
-                    _progressManager.UpdateStatus("Nessun file da inviare.");
+                    _uiController.UpdateStatus("Nessun file da inviare.");
                     return false;
                 }
 
-                _progressManager.UpdateStatus("Inizio invio file...");
-                _progressManager.UpdateProgress(0, filePaths.Count);
+                _uiController.UpdateStatus("Inizio invio file...");
+                _uiController.UpdateProgress(0, filePaths.Count);
 
-                foreach (var filePath in filePaths)
+                foreach (string filePath in filePaths)
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        _progressManager.UpdateStatus("Invio annullato dall'utente.");
+                        _uiController.UpdateStatus("Invio annullato dall'utente.");
                         return false;
                     }
 
-                    var dicomFile = await DicomFile.OpenAsync(filePath).ConfigureAwait(false);
-                    var cStoreRequest = new DicomCStoreRequest(dicomFile);
+                    DicomFile dicomFile = await DicomFile.OpenAsync(filePath).ConfigureAwait(false);
+                    DicomCStoreRequest cStoreRequest = new(dicomFile);
 
-                    cStoreRequest.OnResponseReceived += (req, resp) =>
-                    {
-                        _progressManager.UpdateProgress(filePaths.IndexOf(filePath) + 1, filePaths.Count);
-                    };
+                    cStoreRequest.OnResponseReceived += (req, resp) => _uiController.UpdateProgress(filePaths.IndexOf(filePath) + 1, filePaths.Count);
 
                     await client.AddRequestAsync(cStoreRequest).ConfigureAwait(false);
                 }
 
                 await client.SendAsync(cancellationToken).ConfigureAwait(false);
 
-                _progressManager.UpdateStatus("Invio completato.");
+                _uiController.UpdateStatus("Invio completato.");
                 return true;
             }
             catch (Exception ex)
             {
-                _progressManager.UpdateStatus($"Errore durante l'invio dei file: {ex.Message}");
+                _uiController.UpdateStatus($"Errore durante l'invio dei file: {ex.Message}");
                 Debug.Print($"Errore durante l'invio dei file: {ex.Message}");
                 return false;
             }
         }
-
-
     }
 }

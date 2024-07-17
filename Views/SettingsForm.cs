@@ -1,25 +1,40 @@
-﻿using DicomModifier.Controllers;
-using DicomModifier.Models;
+﻿// Interfaces/SettingsForm.cs
+
+using DicomImport.Controllers;
+using DicomImport.Models;
 
 namespace DicomModifier
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <seealso cref="System.Windows.Forms.Form" />
     public partial class SettingsForm : Form
     {
         private readonly PACSSettings _settings;
         private readonly SettingsController _settingsController;
-        private readonly ProgressManager _progressManager;
+        private readonly UIController _uiController;
 
-        public SettingsForm(PACSSettings settings, SettingsController settingsController)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SettingsForm"/> class.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="settingsController">The settings controller.</param>
+        /// <param name="uiController">The UI controller.</param>
+        public SettingsForm(PACSSettings settings, SettingsController settingsController, UIController uiController)
         {
             InitializeComponent();
             InitializeEvents();
             _settings = settings;
             _settingsController = settingsController;
-            _progressManager = new ProgressManager(_settingsController.GetMainForm());
+            _uiController = uiController;
             LoadSettings(_settings);
             ValidateFields(); // iniziale validazione dei campi
         }
 
+        /// <summary>
+        /// Initializes the events.
+        /// </summary>
         private void InitializeEvents()
         {
             // Inizializza gli eventi
@@ -31,11 +46,16 @@ namespace DicomModifier
             textBoxServerIP.TextChanged += TextBoxServerIP_TextChanged;
             textBoxAETitle.TextChanged += TextBox_TextChanged;
             textBoxLocalAETitle.TextChanged += TextBox_TextChanged;
-            buttonSave.Click += buttonSave_Click;
-            buttonCancel.Click += buttonCancel_Click;
-            buttonEchoTest.Click += buttonCEcho_Click;
+            buttonSave.Click += ButtonSave_Click;
+            buttonCancel.Click += ButtonCancel_Click;
+            buttonEchoTest.Click += ButtonCEcho_Click;
         }
 
+        /// <summary>
+        /// Loads the settings to the corresponding textbox
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <returns></returns>
         public void LoadSettings(PACSSettings settings)
         {
             textBoxServerIP.Text = settings.ServerIP;
@@ -45,6 +65,10 @@ namespace DicomModifier
             textBoxLocalAETitle.Text = settings.LocalAETitle;
         }
 
+        /// <summary>
+        /// Gets the settings from the textboxes.
+        /// </summary>
+        /// <returns></returns>
         public PACSSettings GetSettings()
         {
             return new PACSSettings
@@ -57,7 +81,13 @@ namespace DicomModifier
             };
         }
 
-        private void buttonSave_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Starts the settings saving procedure when clickink the "Save" button.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        /// <returns></returns>
+        private void ButtonSave_Click(object? sender, EventArgs e)
         {
             if (!ValidateFields())
             {
@@ -75,20 +105,31 @@ namespace DicomModifier
             this.Close();
         }
 
-        private void buttonCancel_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Closes the settings window.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void ButtonCancel_Click(object? sender, EventArgs e)
         {
             this.Close();
         }
 
-        private async void buttonCEcho_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Buttons the c echo click.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private async void ButtonCEcho_Click(object? sender, EventArgs e)
         {
             buttonEchoTest.Text = "Test in corso...";
             buttonEchoTest.Enabled = false;
             panelEchoStatus.BackColor = Color.Yellow;
             this.Enabled = false;
 
-            var testSettings = GetSettings();
-            var communicator = new PACSCommunicator(testSettings, _progressManager);
+            PACSSettings testSettings = GetSettings();
+            PACSCommunicator communicator = new(testSettings, _uiController);
             bool success = await communicator.SendCEcho();
 
             if (success)
@@ -107,7 +148,13 @@ namespace DicomModifier
             this.Enabled = true;
         }
 
-        private void TextBoxServerPort_KeyPress(object sender, KeyPressEventArgs e)
+        /// <summary>
+        /// Texts the box server port key press.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.Windows.Forms.KeyPressEventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void TextBoxServerPort_KeyPress(object? sender, KeyPressEventArgs e)
         {
             // Consente solo l'inserimento di cifre
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -116,7 +163,13 @@ namespace DicomModifier
             }
         }
 
-        private void TextBoxTimeout_KeyPress(object sender, KeyPressEventArgs e)
+        /// <summary>
+        /// Texts the box timeout key press.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.Windows.Forms.KeyPressEventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void TextBoxTimeout_KeyPress(object? sender, KeyPressEventArgs e)
         {
             // Consente solo l'inserimento di cifre
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -125,7 +178,13 @@ namespace DicomModifier
             }
         }
 
-        private void TextBoxServerIP_KeyPress(object sender, KeyPressEventArgs e)
+        /// <summary>
+        /// Texts the box server ip key press.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.Windows.Forms.KeyPressEventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void TextBoxServerIP_KeyPress(object? sender, KeyPressEventArgs e)
         {
             // Consente solo l'inserimento di cifre e punti
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
@@ -134,7 +193,13 @@ namespace DicomModifier
             }
         }
 
-        private void TextBoxServerPort_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Texts the box server port text changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void TextBoxServerPort_TextChanged(object? sender, EventArgs e)
         {
             // Controlla se il numero è nel range corretto
             if (int.TryParse(textBoxServerPort.Text, out int port))
@@ -155,7 +220,13 @@ namespace DicomModifier
             ValidateFields();
         }
 
-        private void TextBoxTimeout_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Texts the box timeout text changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void TextBoxTimeout_TextChanged(object? sender, EventArgs e)
         {
             // Controlla se il timeout è valido
             if (int.TryParse(textBoxTimeout.Text, out int timeout))
@@ -176,10 +247,16 @@ namespace DicomModifier
             ValidateFields();
         }
 
-        private void TextBoxServerIP_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Texts the box server ip text changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void TextBoxServerIP_TextChanged(object? sender, EventArgs e)
         {
             // Controlla se l'indirizzo IP è valido
-            var ipSegments = textBoxServerIP.Text.Split('.');
+            string[] ipSegments = textBoxServerIP.Text.Split('.');
             if (ipSegments.Length == 4 && ipSegments.All(segment => int.TryParse(segment, out int num) && num >= 0 && num <= 255))
             {
                 textBoxServerIP.BackColor = Color.Green;
@@ -191,42 +268,86 @@ namespace DicomModifier
             ValidateFields();
         }
 
-        private void TextBox_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Texts the box text changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void TextBox_TextChanged(object? sender, EventArgs e)
         {
             ValidateFields();
         }
 
+        /// <summary>
+        /// Validates the settings fields.
+        /// </summary>
+        /// <returns></returns>
         private bool ValidateFields()
         {
-            bool isValid = true;
-
-            if (string.IsNullOrEmpty(textBoxAETitle.Text) ||
-                string.IsNullOrEmpty(textBoxServerIP.Text) ||
-                string.IsNullOrEmpty(textBoxServerPort.Text) ||
-                string.IsNullOrEmpty(textBoxTimeout.Text) ||
-                string.IsNullOrEmpty(textBoxLocalAETitle.Text))
-            {
-                isValid = false;
-            }
-
-            if (!int.TryParse(textBoxServerPort.Text, out int port) || port < 1 || port > 65535)
-            {
-                isValid = false;
-            }
-
-            if (!int.TryParse(textBoxTimeout.Text, out int timeout) || timeout < 0)
-            {
-                isValid = false;
-            }
-
-            var ipSegments = textBoxServerIP.Text.Split('.');
-            if (ipSegments.Length != 4 || ipSegments.Any(segment => !int.TryParse(segment, out int num) || num < 0 || num > 255))
-            {
-                isValid = false;
-            }
-
+            bool isValid = AreTextFieldsValid() && IsServerPortValid() && IsTimeoutValid() && IsServerIPValid();
             buttonEchoTest.Enabled = isValid;
+            buttonSave.Enabled = isValid;
             return isValid;
+        }
+
+        /// <summary>
+        /// Checks if all text fiels are valid.
+        /// </summary>
+        /// <returns></returns>
+        private bool AreTextFieldsValid()
+        {
+            return !string.IsNullOrEmpty(textBoxAETitle.Text) &&
+                   !string.IsNullOrEmpty(textBoxServerIP.Text) &&
+                   !string.IsNullOrEmpty(textBoxServerPort.Text) &&
+                   !string.IsNullOrEmpty(textBoxTimeout.Text) &&
+                   !string.IsNullOrEmpty(textBoxLocalAETitle.Text);
+        }
+
+        /// <summary>
+        /// Determines whether [is server port valid].
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if [is server port valid]; otherwise, <c>false</c>.
+        /// </returns>
+        private bool IsServerPortValid()
+        {
+            if (!int.TryParse(textBoxServerPort.Text, out int port))
+            {
+                return false;
+            }
+            return port >= 1 && port <= 65535;
+        }
+
+        /// <summary>
+        /// Determines whether [is timeout valid].
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if [is timeout valid]; otherwise, <c>false</c>.
+        /// </returns>
+        private bool IsTimeoutValid()
+        {
+            if (!int.TryParse(textBoxTimeout.Text, out int timeout))
+            {
+                return false;
+            }
+            return timeout >= 1;
+        }
+
+        /// <summary>
+        /// Determines whether [is server ip valid].
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if [is server ip valid]; otherwise, <c>false</c>.
+        /// </returns>
+        private bool IsServerIPValid()
+        {
+            string[] ipSegments = textBoxServerIP.Text.Split('.');
+            if (ipSegments.Length != 4)
+            {
+                return false;
+            }
+            return ipSegments.All(segment => int.TryParse(segment, out int num) && num >= 0 && num <= 255);
         }
     }
 }
