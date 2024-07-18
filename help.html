@@ -2,7 +2,8 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Guida per DICOM Import & Edit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida utente - DICOM Import & Edit</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -10,177 +11,137 @@
         }
 
         h1, h2, h3 {
-            color: #2c3e50;
+            color: #333;
         }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
         }
 
-            ul li {
-                margin-bottom: 10px;
+            .image-container img {
+                max-width: 100%;
+                height: auto;
             }
 
-                ul li a {
-                    text-decoration: none;
-                    color: #2980b9;
-                }
-
-                    ul li a:hover {
-                        text-decoration: underline;
-                    }
-
-        .content img {
-            max-width: 100%;
-            height: auto;
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-    <h1>Guida completa per DICOM Import & Edit</h1>
+    <h1>Guida utente - DICOM Import & Edit</h1>
 
-    <h2>Indice</h2>
+    <h2>1. Introduzione</h2>
+    <p>Benvenuto nella guida utente di DICOM Import & Edit. Questa applicazione è stata progettata per facilitare l'importazione, la modifica e l'invio di file DICOM. Seguendo questa guida, sarai in grado di utilizzare tutte le funzionalità del programma.</p>
+
+    <h2>2. Installazione</h2>
+    <p>Per installare DICOM Import & Edit, eseguire il file di installazione e seguire le istruzioni sullo schermo.</p>
+
+    <div class="image-container">
+        <img src="Installer1.png" alt="Installazione - Selezione cartella">
+    </div>
+
+    <div class="image-container">
+        <img src="Installer2.png" alt="Installazione completata">
+    </div>
+
+    <h2>3. Avvio del programma</h2>
+    <p>Dopo l'installazione, avviare DICOM Import & Edit dall'icona sul desktop o dal menu Start.</p>
+
+    <h2>4. Interfaccia principale</h2>
+    <p>L'interfaccia principale di DICOM Import & Edit è composta da vari pulsanti e tabelle che consentono di importare e gestire i file DICOM.</p>
+
+    <div class="image-container">
+        <img src="MainForm.png" alt="Interfaccia principale">
+    </div>
+
+    <h2>5. Importazione di file DICOM</h2>
+    <p>È possibile importare file DICOM utilizzando uno dei tre pulsanti nella parte superiore dell'interfaccia principale:</p>
     <ul>
-        <li><a href="#introduzione">1. Introduzione</a></li>
-        <li><a href="#funzionalita">2. Panoramica delle funzionalità principali</a></li>
-        <li><a href="#installazione">3. Installazione e Configurazione</a></li>
-        <li><a href="#utilizzo">4. Utilizzo dell'Applicazione</a></li>
-        <li><a href="#problemi">5. Risoluzione dei Problemi</a></li>
-        <li><a href="#faq">6. Domande Frequenti (FAQ)</a></li>
-        <li><a href="#supporto">7. Contatti per Supporto</a></li>
-        <li><a href="#aggiornamenti">8. Aggiornamenti e Versioni</a></li>
-        <li><a href="#ringraziamenti">9. Ringraziamenti</a></li>
-        <li><a href="#licenza">10. Licenza</a></li>
+        <li><strong>Apri file DICOM:</strong> consente di selezionare e importare singoli file DICOM.</li>
+        <li><strong>Apri DICOMDIR:</strong> consente di selezionare e importare una directory DICOMDIR.</li>
+        <li><strong>Apri cartella:</strong> consente di selezionare e importare una cartella contenente file DICOM.</li>
     </ul>
 
-    <div class="content">
-        <h2 id="introduzione">1. Introduzione</h2>
-        <p>Benvenuto in DICOM Import & Edit, uno strumento avanzato per la gestione, modifica e invio dei file DICOM. Questo manuale ti guiderà attraverso tutte le funzionalità dell'applicazione, permettendoti di sfruttare al massimo il suo potenziale.</p>
-
-        <h2 id="funzionalita">2. Panoramica delle funzionalità principali</h2>
-        <ul>
-            <li>Importazione di file DICOM da diverse fonti</li>
-            <li>Modifica dell'ID Paziente nei file DICOM</li>
-            <li>Invio dei file DICOM al server PACS</li>
-            <li>Gestione delle configurazioni del server PACS</li>
-            <li>Supporto per operazioni batch e gestione della coda di file</li>
-        </ul>
-
-        <h2 id="installazione">3. Installazione e Configurazione</h2>
-        <h3>Requisiti di sistema</h3>
-        <ul>
-            <li>Sistema operativo: Windows 10 o successivo</li>
-            <li>.NET Framework 8.0</li>
-            <li>Spazio su disco: minimo 100 MB</li>
-            <li>RAM: minimo 4 GB</li>
-        </ul>
-
-        <h3>Procedura di installazione</h3>
-        <ol>
-            <li>Scarica l'installer di DICOM Import & Edit.</li>
-            <li>Esegui il file .exe e segui le istruzioni sullo schermo.</li>
-            <li>L'installer verificherà la presenza di .NET Framework 8.0 e, se necessario, lo scaricherà e lo installerà automaticamente.</li>
-            <li>Una volta completata l'installazione, avvia DICOM Import & Edit dal menu Start o dall'icona sul desktop.</li>
-        </ol>
-        <img src="images/Installer1.png" alt="Installazione Step 1">
-        <img src="images/Installer2.png" alt="Installazione Step 2">
-
-        <h3>Configurazione iniziale</h3>
-        <ol>
-            <li>All'avvio dell'applicazione, accedi al menu "Impostazioni" per configurare i parametri del server PACS.</li>
-            <li>Inserisci l'indirizzo IP del server, il numero di porta, l'AETitle locale e remoto.</li>
-            <li>Salva le impostazioni e chiudi la finestra di configurazione.</li>
-            <li>Al primo avvio, è normale che il programma avvisi che non esiste un file di configurazione e carichi i parametri di default.</li>
-        </ol>
-        <img src="images/settings.png" alt="Configurazione iniziale">
-
-        <h2 id="utilizzo">4. Utilizzo dell'Applicazione</h2>
-        <h3>Importazione dei file DICOM</h3>
-        <ol>
-            <li>Clicca su "File" -> "Importa" e seleziona la fonte dei file DICOM (cartella, DICOMDIR, singolo file).</li>
-            <li>Seleziona i file o la cartella da importare e clicca su "Apri".</li>
-            <li>I file importati verranno visualizzati nella tabella principale.</li>
-        </ol>
-        <img src="images/OpenFolder.png" alt="Importazione Cartella">
-        <img src="images/OpenFile.png" alt="Importazione File">
-        <img src="images/OpenDICOMDIR.png" alt="Importazione DICOMDIR">
-
-        <h3>Modifica dell'ID Paziente</h3>
-        <ol>
-            <li>Seleziona uno o più file dalla tabella.</li>
-            <li>Inserisci il nuovo ID Paziente nel campo dedicato.</li>
-            <li>Clicca su "Modifica ID Paziente" per applicare le modifiche.</li>
-        </ol>
-        <img src="images/ModifyID.png" alt="Modifica ID Paziente">
-
-        <h3>Invio dei file al PACS</h3>
-        <ol>
-            <li>Seleziona i file da inviare dalla tabella principale.</li>
-            <li>Clicca su "Invia al PACS".</li>
-            <li>Monitora lo stato dell'invio tramite la barra di progresso e le notifiche.</li>
-        </ol>
-        <img src="images/SendButton.png" alt="Invio al PACS">
-
-        <h3>Gestione delle configurazioni</h3>
-        <ol>
-            <li>Accedi al menu "Impostazioni".</li>
-            <li>Modifica i parametri di connessione al server PACS.</li>
-            <li>Salva le impostazioni e chiudi la finestra.</li>
-        </ol>
-
-        <h3>Test C-ECHO</h3>
-        <ol>
-            <li>Nella finestra delle impostazioni, clicca su "Test C-ECHO".</li>
-            <li>Verifica che la connessione al server PACS sia funzionante.</li>
-        </ol>
-
-        <h2 id="problemi">5. Risoluzione dei Problemi</h2>
-        <h3>Errori comuni e soluzioni</h3>
-        <ul>
-            <li>
-                <strong>Errore: "Per favore, seleziona almeno un esame dalla tabella."</strong><br>
-                Assicurati di aver selezionato almeno un esame dalla tabella prima di procedere con l'operazione.
-            </li>
-        </ul>
-
-        <h2 id="faq">6. Domande Frequenti (FAQ)</h2>
-        <ol>
-            <li>
-                <strong>Perché ricevo un errore quando provo a modificare l'ID Paziente?</strong><br>
-                Assicurati che l'ID Paziente inserito non sia uguale a quello attuale.<br>
-                Verifica che tutti i file selezionati appartengano allo stesso paziente.
-            </li>
-            <li>
-                <strong>Come posso verificare la connessione al server PACS?</strong><br>
-                Utilizza la funzione di test C-ECHO nelle impostazioni.
-            </li>
-            <li>
-                <strong>Posso importare esami di pazienti diversi contemporaneamente?</strong><br>
-                Sì, ma assicurati di non selezionare file di pazienti diversi quando modifichi l'ID Paziente.
-            </li>
-        </ol>
-
-        <h2 id="supporto">7. Contatti per Supporto</h2>
-        <p>Se hai bisogno di ulteriore assistenza, puoi contattare:</p>
-        <ul>
-            <li><strong>Email:</strong> t.amaranto@studioradiologiacrea.it</li>
-            <li><strong>Telefono:</strong> +39 340 954 2225</li>
-        </ul>
-
-        <h2 id="aggiornamenti">8. Aggiornamenti e Versioni</h2>
-        <p>Tieniti aggiornato sulle ultime versioni di DICOM Import & Edit per usufruire delle nuove funzionalità e dei miglioramenti.</p>
-        <h3>Come aggiornare</h3>
-        <ol>
-            <li>Visita il sito ufficiale o il repository del progetto per scaricare la versione più recente dell'installer.</li>
-            <li>Esegui l'installer e segui le istruzioni sullo schermo. Il programma di installazione aggiornerà automaticamente la versione esistente senza perdere le configurazioni salvate.</li>
-        </ol>
-
-        <h2 id="ringraziamenti">9. Ringraziamenti</h2>
-        <p>Ringraziamo tutti coloro che hanno contribuito allo sviluppo di DICOM Import & Edit, in particolare alle mie gatte, Milù e Maggie, per la compagnia durante il lavoro.</p>
-
-        <h2 id="licenza">10. Licenza</h2>
-        <p>DICOM Import & Edit è distribuito sotto la licenza MIT. Puoi utilizzare, modificare e distribuire questo software secondo i termini della licenza.</p>
+    <div class="image-container">
+        <img src="OpenFile.png" alt="Apertura file DICOM">
     </div>
+
+    <div class="image-container">
+        <img src="OpenDICOMDIR.png" alt="Apertura directory DICOMDIR">
+    </div>
+
+    <div class="image-container">
+        <img src="OpenFolder.png" alt="Apertura cartella">
+    </div>
+
+    <h2>6. Modifica dell'ID Paziente</h2>
+    <p>Per modificare l'ID Paziente, inserire il nuovo ID nel campo di testo e cliccare su "Modifica ID Paziente".</p>
+
+    <div class="image-container">
+        <img src="ModifyID.png" alt="Modifica ID Paziente">
+    </div>
+
+    <h2>7. Invio al PACS</h2>
+    <p>Per inviare i file DICOM al PACS, cliccare sul pulsante "Invia al PACS".</p>
+
+    <div class="image-container">
+        <img src="SendButton.png" alt="Invio al PACS">
+    </div>
+
+    <h2>8. Configurazione delle impostazioni</h2>
+    <p>Per accedere alle impostazioni, cliccare sull'icona dell'ingranaggio in basso a destra nella finestra principale e selezionare "Impostazioni". Si aprirà il form delle impostazioni dove è possibile configurare i parametri del server PACS.</p>
+
+    <div class="image-container">
+        <img src="settings.png" alt="Impostazioni">
+    </div>
+
+    <h3>8.1 Parametri Server PACS</h3>
+    <p>Nella sezione dei parametri del server PACS, è possibile configurare i seguenti campi:</p>
+    <ul>
+        <li><strong>AE Title Locale:</strong> Il titolo AE (Application Entity) per il dispositivo locale.</li>
+        <li><strong>AE Title Server:</strong> Il titolo AE per il server PACS.</li>
+        <li><strong>Indirizzo IP Server:</strong> L'indirizzo IP del server PACS.</li>
+        <li><strong>Porta:</strong> La porta utilizzata per comunicare con il server PACS.</li>
+        <li><strong>Timeout [ms]:</strong> Il tempo di timeout in millisecondi per le comunicazioni con il server PACS.</li>
+    </ul>
+
+    <h3>8.2 Esecuzione del test C-ECHO</h3>
+    <p>È possibile eseguire un test C-ECHO per verificare la connettività con il server PACS. Per fare ciò, cliccare sul pulsante "Esegui C-ECHO". Verrà visualizzato un messaggio di conferma se il test ha esito positivo.</p>
+
+    <h3>8.3 Validazione degli input</h3>
+    <p>Il form delle impostazioni include un sistema di validazione degli input che verifica se i parametri sono valori che rientrano nei range corretti e sono formattati correttamente. Se un valore inserito non è valido, il campo diventerà rosso fino a quando il parametro non è corretto. Una volta corretto, il campo diventerà verde.</p>
+
+    <h2>9. Visualizzazione degli esami importati</h2>
+    <p>Dopo aver importato i file DICOM, questi saranno visualizzati nella tabella principale. È possibile selezionare un esame per visualizzarne i dettagli.</p>
+
+    <div class="image-container">
+        <img src="ExamLoaded.png" alt="Esame importato">
+    </div>
+
+    <h2>10. Contatti per Supporto</h2>
+    <p>Se hai bisogno di ulteriore assistenza, puoi contattare:</p>
+    <ul>
+        <li><strong>Email:</strong> t.amaranto@studioradiologiacrea.it</li>
+        <li><strong>Telefono:</strong> +39 340 954 2225</li>
+    </ul>
+
+    <h2>11. Licenza MIT</h2>
+    <p>Il software DICOM Import & Edit è distribuito sotto la Licenza MIT. Di seguito è riportato il testo della licenza:</p>
+    <pre>
+<code>
+The MIT License (MIT)
+Copyright (c) 2024 [Thomas Amaranto]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</code>
+    </pre>
 </body>
 </html>

@@ -356,7 +356,6 @@ namespace DicomModifier
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             helpToolStripMenuItem.Size = new Size(151, 22);
             helpToolStripMenuItem.Text = "Help";
-            helpToolStripMenuItem.Click += HelpToolStripMenuItem_Click;
             // 
             // aboutToolStripMenuItem
             // 
@@ -402,6 +401,7 @@ namespace DicomModifier
             Margin = new Padding(2, 1, 2, 1);
             MaximizeBox = false;
             Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "DICOM Import & Edit";
             groupSelectFiles.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();

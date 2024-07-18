@@ -1,4 +1,6 @@
 ﻿using DicomModifier;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace DicomImport.Controllers
 {
@@ -6,6 +8,7 @@ namespace DicomImport.Controllers
     {
         private readonly MainForm _mainForm = mainForm;
 
+        // Invoke the action on the UI thread if required
         private void InvokeIfRequired(Action action)
         {
             if (_mainForm.InvokeRequired)
@@ -18,14 +21,13 @@ namespace DicomImport.Controllers
             }
         }
 
+        // Apply styles to the main form controls
         public void ApplyStyles()
         {
-            InvokeIfRequired(() =>
-            {
-                ApplyStylesToControl(_mainForm.Controls);
-            });
+            InvokeIfRequired(() => ApplyStylesToControl(_mainForm.Controls));
         }
 
+        // Apply styles to a collection of controls
         private static void ApplyStylesToControl(Control.ControlCollection controls)
         {
             foreach (Control control in controls)
@@ -51,21 +53,10 @@ namespace DicomImport.Controllers
             }
         }
 
+        // Apply styles to a button
         private static void StyleButton(Button button)
         {
-            switch (button.Name)
-            {
-                case "buttonUpdateID":
-                case "buttonSend":
-                    button.BackColor = Color.LightCoral;
-                    break;
-
-                default:
-                    button.BackColor = Color.DodgerBlue;
-
-                    break;
-            }
-
+            button.BackColor = GetButtonColor(button.Name);
             button.FlatStyle = FlatStyle.Flat;
             button.ForeColor = Color.White;
             button.FlatAppearance.BorderSize = 0;
@@ -74,14 +65,14 @@ namespace DicomImport.Controllers
             // Event handler to change style when button is enabled/disabled
             button.EnabledChanged += (sender, e) =>
             {
-                using Button? btn = sender as Button;
-                if (btn != null)
+                if (sender is Button btn)
                 {
                     btn.BackColor = btn.Enabled ? GetButtonColor(btn.Name) : Color.LightGray;
                 }
             };
         }
 
+        // Get the appropriate color for a button based on its name
         private static Color GetButtonColor(string buttonName)
         {
             if (buttonName == "buttonUpdateID" || buttonName == "buttonSend")
@@ -94,6 +85,7 @@ namespace DicomImport.Controllers
             }
         }
 
+        // Apply styles to a DataGridView
         private static void StyleDataGridView(DataGridView dataGridView)
         {
             dataGridView.EnableHeadersVisualStyles = false;
@@ -104,11 +96,12 @@ namespace DicomImport.Controllers
             dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
         }
 
+        // Update the state of various controls based on the current state of the application
         public void UpdateControlStates()
         {
             InvokeIfRequired(() =>
             {
-                bool hasExams = _mainForm.DataGridView1.Rows.Count > 0;
+                bool hasExams = _mainForm.dataGridView1.Rows.Count > 0;
                 _mainForm.buttonSend.Enabled = hasExams;
                 _mainForm.buttonResetQueue.Enabled = hasExams;
                 _mainForm.buttonUpdateID.Enabled = hasExams;
@@ -116,6 +109,7 @@ namespace DicomImport.Controllers
             });
         }
 
+        // Update the progress bar with the given value and maximum
         public void UpdateProgressBar(int value, int maximum)
         {
             InvokeIfRequired(() =>
@@ -129,11 +123,13 @@ namespace DicomImport.Controllers
             });
         }
 
+        // Update the status label with the given status message
         public void UpdateStatus(string status)
         {
             InvokeIfRequired(() => _mainForm.toolStripStatusLabel.Text = $"Stato: {status}");
         }
 
+        // Update the file count label with the given counts and message
         public void UpdateFileCount(int sent, int total, string message)
         {
             InvokeIfRequired(() =>
@@ -149,6 +145,7 @@ namespace DicomImport.Controllers
             });
         }
 
+        // Enable all relevant controls
         public void EnableControls()
         {
             InvokeIfRequired(() =>
@@ -161,10 +158,11 @@ namespace DicomImport.Controllers
                 _mainForm.settingsToolStripMenuItem.Enabled = true;
                 _mainForm.dataGridView1.Enabled = true;
                 _mainForm.textBoxNewID.Enabled = true;
-                _mainForm.buttonSend.Enabled = _mainForm.DataGridView1.Rows.Count > 0;
+                _mainForm.buttonSend.Enabled = _mainForm.dataGridView1.Rows.Count > 0;
             });
         }
 
+        // Disable all relevant controls
         public void DisableControls()
         {
             InvokeIfRequired(() =>
@@ -181,6 +179,7 @@ namespace DicomImport.Controllers
             });
         }
 
+        // Clear the table and update control states
         public void ClearTable()
         {
             InvokeIfRequired(() =>
@@ -190,19 +189,34 @@ namespace DicomImport.Controllers
             });
         }
 
+        // Clear the new patient ID text box
         public void ClearNewPatientIDTextBox()
         {
             InvokeIfRequired(() => _mainForm.textBoxNewID.Clear());
         }
 
+        // Update the progress and status based on the given counts
         public void UpdateProgress(int sentFiles, int totalFiles)
         {
             InvokeIfRequired(() =>
             {
-                _mainForm.UpdateFileCount(sentFiles, totalFiles, "File inviati");
-                _mainForm.UpdateProgressBar(sentFiles, totalFiles);
-                _mainForm.UpdateStatus("Invio in corso...");
+                UpdateFileCount(sentFiles, totalFiles, "File inviati");
+                UpdateProgressBar(sentFiles, totalFiles);
+                UpdateStatus("Invio in corso...");
             });
+        }
+        public static void ShowHelpForm()
+        {
+            if (Program.HelpFormInstance?.IsDisposed != false)
+            {
+                Program.HelpFormInstance = new HelpForm();
+                Program.HelpFormInstance.FormClosed += (s, args) => Program.HelpFormInstance = null;
+                Program.HelpFormInstance.Show();
+            }
+            else
+            {
+                Program.HelpFormInstance.BringToFront();
+            }
         }
     }
 }

@@ -2,13 +2,10 @@
 
 using DicomImport.Controllers;
 using DicomImport.Models;
+using System.ComponentModel;
 
 namespace DicomModifier
 {
-    /// <summary>
-    ///
-    /// </summary>
-    /// <seealso cref="System.Windows.Forms.Form" />
     public partial class SettingsForm : Form
     {
         private readonly PACSSettings _settings;
@@ -25,6 +22,7 @@ namespace DicomModifier
         {
             InitializeComponent();
             InitializeEvents();
+            this.HelpButtonClicked += this.SettingsForm_HelpButtonClicked;
             _settings = settings;
             _settingsController = settingsController;
             _uiController = uiController;
@@ -52,6 +50,12 @@ namespace DicomModifier
             buttonEchoTest.Click += ButtonCEcho_Click;
             buttonSave.EnabledChanged += Button_EnabledChanged;
             buttonEchoTest.EnabledChanged += Button_EnabledChanged;
+        }
+
+        private void SettingsForm_HelpButtonClicked(object? sender, CancelEventArgs e)
+        {
+            UIController.ShowHelpForm();
+            e.Cancel = true;
         }
 
         private void Button_EnabledChanged(object? sender, EventArgs e)
@@ -407,5 +411,10 @@ namespace DicomModifier
             }
             return ipSegments.All(segment => int.TryParse(segment, out int num) && num >= 0 && num <= 255);
         }
+        //private static void ShowHelpForm()
+        //{
+        //    UIController.ShowHelpForm();
+        //    Cursor.Current = Cursors.Default;
+        //}
     }
 }
