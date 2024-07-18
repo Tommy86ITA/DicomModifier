@@ -5,11 +5,6 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DicomModifier", "DicomModifier.csproj", "{D7B30254-B81D-4374-8643-D079985E4AEA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementi di soluzione", "Elementi di soluzione", "{DEAEAB50-206E-4BDE-9ACD-C942FBF50230}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\..\Downloads\DICOM_Guida_Utente.pdf = ..\..\..\..\Downloads\DICOM_Guida_Utente.pdf
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

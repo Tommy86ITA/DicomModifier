@@ -195,7 +195,7 @@ namespace DicomModifier
             groupBoxLocalAE.Size = new Size(359, 82);
             groupBoxLocalAE.TabIndex = 1;
             groupBoxLocalAE.TabStop = false;
-            groupBoxLocalAE.Text = "AE Title locale";
+            groupBoxLocalAE.Text = "Test C-ECHO";
             // 
             // panelEchoStatus
             // 

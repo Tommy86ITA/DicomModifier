@@ -48,8 +48,28 @@
         <img src="Installer2.png" alt="Installazione completata">
     </div>
 
-    <h2>3. Avvio del programma</h2>
-    <p>Dopo l'installazione, avviare DICOM Import & Edit dall'icona sul desktop o dal menu Start.</p>
+    <h2>3. Configurazione delle impostazioni</h2>
+    <p>Per accedere alle impostazioni, cliccare sull'icona dell'ingranaggio in basso a destra nella finestra principale. Si aprirà il form delle impostazioni dove è possibile configurare i parametri del server PACS.</p>
+
+    <div class="image-container">
+        <img src="settings.png" alt="Impostazioni">
+    </div>
+
+    <h3>3.1 Parametri Server PACS</h3>
+    <p>Nella sezione dei parametri del server PACS, è possibile configurare i seguenti campi:</p>
+    <ul>
+        <li><strong>AE Title Locale:</strong> Il titolo AE (Application Entity) per il dispositivo locale.</li>
+        <li><strong>AE Title Server:</strong> Il titolo AE per il server PACS.</li>
+        <li><strong>Indirizzo IP Server:</strong> L'indirizzo IP del server PACS.</li>
+        <li><strong>Porta:</strong> La porta utilizzata per comunicare con il server PACS.</li>
+        <li><strong>Timeout [ms]:</strong> Il tempo di timeout in millisecondi per le comunicazioni con il server PACS.</li>
+    </ul>
+
+    <h3>3.2 Esecuzione del test C-ECHO</h3>
+    <p>È possibile eseguire un test C-ECHO per verificare la connettività con il server PACS. Per fare ciò, cliccare sul pulsante "Esegui C-ECHO". Verrà visualizzato un messaggio di conferma se il test ha esito positivo.</p>
+
+    <h3>3.3 Validazione degli input</h3>
+    <p>Il form delle impostazioni include un sistema di validazione degli input che verifica se i parametri sono valori che rientrano nei range corretti e sono formattati correttamente. Se un valore inserito non è valido, il campo diventerà rosso fino a quando il parametro non è corretto. Una volta corretto, il campo diventerà verde.</p>
 
     <h2>4. Interfaccia principale</h2>
     <p>L'interfaccia principale di DICOM Import & Edit è composta da vari pulsanti e tabelle che consentono di importare e gestire i file DICOM.</p>
@@ -78,63 +98,40 @@
         <img src="OpenFolder.png" alt="Apertura cartella">
     </div>
 
-    <h2>6. Modifica dell'ID Paziente</h2>
-    <p>Per modificare l'ID Paziente, inserire il nuovo ID nel campo di testo e cliccare su "Modifica ID Paziente".</p>
-
-    <div class="image-container">
-        <img src="ModifyID.png" alt="Modifica ID Paziente">
-    </div>
-
-    <h2>7. Invio al PACS</h2>
-    <p>Per inviare i file DICOM al PACS, cliccare sul pulsante "Invia al PACS".</p>
-
-    <div class="image-container">
-        <img src="SendButton.png" alt="Invio al PACS">
-    </div>
-
-    <h2>8. Configurazione delle impostazioni</h2>
-    <p>Per accedere alle impostazioni, cliccare sull'icona dell'ingranaggio in basso a destra nella finestra principale e selezionare "Impostazioni". Si aprirà il form delle impostazioni dove è possibile configurare i parametri del server PACS.</p>
-
-    <div class="image-container">
-        <img src="settings.png" alt="Impostazioni">
-    </div>
-
-    <h3>8.1 Parametri Server PACS</h3>
-    <p>Nella sezione dei parametri del server PACS, è possibile configurare i seguenti campi:</p>
-    <ul>
-        <li><strong>AE Title Locale:</strong> Il titolo AE (Application Entity) per il dispositivo locale.</li>
-        <li><strong>AE Title Server:</strong> Il titolo AE per il server PACS.</li>
-        <li><strong>Indirizzo IP Server:</strong> L'indirizzo IP del server PACS.</li>
-        <li><strong>Porta:</strong> La porta utilizzata per comunicare con il server PACS.</li>
-        <li><strong>Timeout [ms]:</strong> Il tempo di timeout in millisecondi per le comunicazioni con il server PACS.</li>
-    </ul>
-
-    <h3>8.2 Esecuzione del test C-ECHO</h3>
-    <p>È possibile eseguire un test C-ECHO per verificare la connettività con il server PACS. Per fare ciò, cliccare sul pulsante "Esegui C-ECHO". Verrà visualizzato un messaggio di conferma se il test ha esito positivo.</p>
-
-    <h3>8.3 Validazione degli input</h3>
-    <p>Il form delle impostazioni include un sistema di validazione degli input che verifica se i parametri sono valori che rientrano nei range corretti e sono formattati correttamente. Se un valore inserito non è valido, il campo diventerà rosso fino a quando il parametro non è corretto. Una volta corretto, il campo diventerà verde.</p>
-
-    <h2>9. Visualizzazione degli esami importati</h2>
+    <h2>6. Visualizzazione degli esami importati</h2>
     <p>Dopo aver importato i file DICOM, questi saranno visualizzati nella tabella principale. È possibile selezionare un esame per visualizzarne i dettagli.</p>
 
     <div class="image-container">
         <img src="ExamLoaded.png" alt="Esame importato">
     </div>
 
-    <h2>10. Contatti per Supporto</h2>
+    <h2>7. Modifica dell'ID Paziente</h2>
+    <p>Per modificare l'ID Paziente, inserire il nuovo ID nel campo di testo e cliccare su "Modifica ID Paziente".</p>
+
+    <div class="image-container">
+        <img src="ModifyID.png" alt="Modifica ID Paziente">
+    </div>
+
+    <h2>8. Invio al PACS</h2>
+    <p>Per inviare i file DICOM al PACS, cliccare sul pulsante "Invia al PACS".</p>
+
+    <div class="image-container">
+        <img src="SendButton.png" alt="Invio al PACS">
+    </div>
+
+    <h2>9. Contatti per Supporto</h2>
     <p>Se hai bisogno di ulteriore assistenza, puoi contattare:</p>
     <ul>
         <li><strong>Email:</strong> t.amaranto@studioradiologiacrea.it</li>
-        <li><strong>Telefono:</strong> +39 340 954 2225</li>
+        <li><strong>Telefono:</strong> +39 340 954</li>
     </ul>
 
-    <h2>11. Licenza MIT</h2>
+    <h2>10. Licenza MIT</h2>
     <p>Il software DICOM Import & Edit è distribuito sotto la Licenza MIT. Di seguito è riportato il testo della licenza:</p>
     <pre>
 <code>
 The MIT License (MIT)
-Copyright (c) 2024 [Thomas Amaranto]
+Copyright (c) 2024 [Your Name]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
