@@ -11,6 +11,7 @@ namespace DicomModifier
         private readonly PACSSettings _settings;
         private readonly SettingsController _settingsController;
         private readonly UIController _uiController;
+        private readonly ToolTip toolTip;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsForm"/> class.
@@ -28,6 +29,8 @@ namespace DicomModifier
             _uiController = uiController;
             LoadSettings(_settings);
             ApplyStyles();
+            toolTip = new ToolTip();
+            InitializeTooltips();
             ValidateFields(); // iniziale validazione dei campi
         }
 
@@ -52,10 +55,16 @@ namespace DicomModifier
             buttonEchoTest.EnabledChanged += Button_EnabledChanged;
         }
 
+        private void InitializeTooltips()
+        {
+            toolTip.SetToolTip(buttonCancel, "Annulla la modifica");
+            toolTip.SetToolTip(buttonSave, "Salva le impostazioni");
+            toolTip.SetToolTip(buttonEchoTest, "Esegue il test C-ECHO utilizzando le impostazioni correnti");
+        }
+
         private void SettingsForm_HelpButtonClicked(object? sender, CancelEventArgs e)
         {
-            UIController.ShowHelpForm();
-            e.Cancel = true;
+            UIController.ShowHelp();
         }
 
         private void Button_EnabledChanged(object? sender, EventArgs e)

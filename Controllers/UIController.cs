@@ -1,6 +1,8 @@
-﻿using DicomModifier;
-using System.Drawing;
-using System.Windows.Forms;
+﻿// Interfaces/UIController.cs
+
+using DicomModifier;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace DicomImport.Controllers
 {
@@ -205,17 +207,26 @@ namespace DicomImport.Controllers
                 UpdateStatus("Invio in corso...");
             });
         }
-        public static void ShowHelpForm()
+
+        public static void ShowHelp()
         {
-            if (Program.HelpFormInstance?.IsDisposed != false)
+            string? exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            if (exeDir == null)
             {
-                Program.HelpFormInstance = new HelpForm();
-                Program.HelpFormInstance.FormClosed += (s, args) => Program.HelpFormInstance = null;
-                Program.HelpFormInstance.Show();
+                MessageBox.Show("Il percorso dell'eseguibile non è stato trovato.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string pdfPath = Path.Combine(exeDir, "Help", "UserGuide.pdf");
+
+            if (File.Exists(pdfPath))
+            {
+                Process.Start(new ProcessStartInfo(pdfPath) { UseShellExecute = true });
             }
             else
             {
-                Program.HelpFormInstance.BringToFront();
+                MessageBox.Show("Il file della guida non è stato trovato.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

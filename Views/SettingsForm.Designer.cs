@@ -85,8 +85,10 @@ namespace DicomModifier
             // 
             textBoxLocalAETitle.Location = new Point(157, 38);
             textBoxLocalAETitle.Name = "textBoxLocalAETitle";
+            textBoxLocalAETitle.PlaceholderText = "Inserire AE Title Locale";
             textBoxLocalAETitle.Size = new Size(163, 23);
             textBoxLocalAETitle.TabIndex = 0;
+            textBoxLocalAETitle.WordWrap = false;
             // 
             // textBoxTimeout
             // 
@@ -144,6 +146,7 @@ namespace DicomModifier
             // 
             textBoxAETitle.Location = new Point(157, 76);
             textBoxAETitle.Name = "textBoxAETitle";
+            textBoxAETitle.PlaceholderText = "Inserire AE Title Server PACS";
             textBoxAETitle.Size = new Size(163, 23);
             textBoxAETitle.TabIndex = 1;
             // 
@@ -216,6 +219,7 @@ namespace DicomModifier
             Controls.Add(buttonSave);
             Controls.Add(groupBoxLocalAE);
             Controls.Add(groupBox1);
+            HelpButton = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;

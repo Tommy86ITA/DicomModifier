@@ -11,7 +11,6 @@ namespace DicomImport
     internal static class Program
     {
         private static readonly string? appGuid;
-        public static HelpForm? HelpFormInstance { get; set; }
 
         static Program()
         {

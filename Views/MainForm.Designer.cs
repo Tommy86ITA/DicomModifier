@@ -348,25 +348,28 @@ namespace DicomModifier
             // esciToolStripMenuItem
             // 
             esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-            esciToolStripMenuItem.Size = new Size(151, 22);
+            esciToolStripMenuItem.Size = new Size(180, 22);
             esciToolStripMenuItem.Text = "Esci";
+            esciToolStripMenuItem.ToolTipText = "Chiude l'applicazione";
             // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(151, 22);
+            helpToolStripMenuItem.Size = new Size(180, 22);
             helpToolStripMenuItem.Text = "Help";
+            helpToolStripMenuItem.ToolTipText = "Apre il file PDF della guida";
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(151, 22);
+            aboutToolStripMenuItem.Size = new Size(180, 22);
             aboutToolStripMenuItem.Text = "About...";
+            aboutToolStripMenuItem.ToolTipText = "Informazioni sul programma";
             // 
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(151, 22);
+            settingsToolStripMenuItem.Size = new Size(180, 22);
             settingsToolStripMenuItem.Text = "Impostazioni...";
             settingsToolStripMenuItem.ToolTipText = "Apri la finestra delle impostazioni.";
             // 

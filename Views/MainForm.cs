@@ -1,9 +1,7 @@
 // Interfaces/MainForm.cs
 
-using DicomImport;
 using DicomImport.Controllers;
 using DicomImport.Models;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -118,11 +116,9 @@ namespace DicomModifier
             CloseApplication();
         }
 
-        private void HelpToolStripMenuItem_Click(object sender, EventArgs e)
+        private void HelpToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            Debug.WriteLine("Help button clicked");
-            UIController.ShowHelpForm();
-            Cursor.Current = Cursors.Default;
+            UIController.ShowHelp();
         }
 
         /// <summary>
