@@ -243,10 +243,10 @@ namespace DicomModifier
             // 
             // buttonUpdateID
             // 
-            buttonUpdateID.BackColor = SystemColors.Highlight;
+            buttonUpdateID.BackColor = Color.LightCoral;
             buttonUpdateID.FlatStyle = FlatStyle.Flat;
             buttonUpdateID.Font = new System.Drawing.Font("Segoe UI", 10F);
-            buttonUpdateID.ForeColor = Color.White;
+            buttonUpdateID.ForeColor = Color.Black;
             buttonUpdateID.Location = new Point(172, 30);
             buttonUpdateID.Margin = new Padding(2, 1, 2, 1);
             buttonUpdateID.Name = "buttonUpdateID";
@@ -268,10 +268,10 @@ namespace DicomModifier
             // 
             // buttonSend
             // 
-            buttonSend.BackColor = SystemColors.Highlight;
+            buttonSend.BackColor = Color.LightCoral;
             buttonSend.FlatStyle = FlatStyle.Flat;
             buttonSend.Font = new System.Drawing.Font("Segoe UI", 10F);
-            buttonSend.ForeColor = Color.White;
+            buttonSend.ForeColor = Color.Black;
             buttonSend.Location = new Point(90, 29);
             buttonSend.Margin = new Padding(2, 1, 2, 1);
             buttonSend.Name = "buttonSend";
@@ -348,26 +348,28 @@ namespace DicomModifier
             // esciToolStripMenuItem
             // 
             esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-            esciToolStripMenuItem.Size = new Size(151, 22);
+            esciToolStripMenuItem.Size = new Size(180, 22);
             esciToolStripMenuItem.Text = "Esci";
+            esciToolStripMenuItem.ToolTipText = "Chiude l'applicazione";
             // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(151, 22);
+            helpToolStripMenuItem.Size = new Size(180, 22);
             helpToolStripMenuItem.Text = "Help";
-            helpToolStripMenuItem.Click += HelpToolStripMenuItem_Click;
+            helpToolStripMenuItem.ToolTipText = "Apre il file PDF della guida";
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(151, 22);
+            aboutToolStripMenuItem.Size = new Size(180, 22);
             aboutToolStripMenuItem.Text = "About...";
+            aboutToolStripMenuItem.ToolTipText = "Informazioni sul programma";
             // 
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(151, 22);
+            settingsToolStripMenuItem.Size = new Size(180, 22);
             settingsToolStripMenuItem.Text = "Impostazioni...";
             settingsToolStripMenuItem.ToolTipText = "Apri la finestra delle impostazioni.";
             // 
@@ -402,6 +404,7 @@ namespace DicomModifier
             Margin = new Padding(2, 1, 2, 1);
             MaximizeBox = false;
             Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "DICOM Import & Edit";
             groupSelectFiles.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();

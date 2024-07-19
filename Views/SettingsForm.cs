@@ -2,18 +2,16 @@
 
 using DicomImport.Controllers;
 using DicomImport.Models;
+using System.ComponentModel;
 
 namespace DicomModifier
 {
-    /// <summary>
-    ///
-    /// </summary>
-    /// <seealso cref="System.Windows.Forms.Form" />
     public partial class SettingsForm : Form
     {
         private readonly PACSSettings _settings;
         private readonly SettingsController _settingsController;
         private readonly UIController _uiController;
+        private readonly ToolTip toolTip;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsForm"/> class.
@@ -25,10 +23,14 @@ namespace DicomModifier
         {
             InitializeComponent();
             InitializeEvents();
+            this.HelpButtonClicked += this.SettingsForm_HelpButtonClicked;
             _settings = settings;
             _settingsController = settingsController;
             _uiController = uiController;
             LoadSettings(_settings);
+            ApplyStyles();
+            toolTip = new ToolTip();
+            InitializeTooltips();
             ValidateFields(); // iniziale validazione dei campi
         }
 
@@ -49,6 +51,75 @@ namespace DicomModifier
             buttonSave.Click += ButtonSave_Click;
             buttonCancel.Click += ButtonCancel_Click;
             buttonEchoTest.Click += ButtonCEcho_Click;
+            buttonSave.EnabledChanged += Button_EnabledChanged;
+            buttonEchoTest.EnabledChanged += Button_EnabledChanged;
+        }
+
+        private void InitializeTooltips()
+        {
+            toolTip.SetToolTip(buttonCancel, "Annulla la modifica");
+            toolTip.SetToolTip(buttonSave, "Salva le impostazioni");
+            toolTip.SetToolTip(buttonEchoTest, "Esegue il test C-ECHO utilizzando le impostazioni correnti");
+        }
+
+        private void SettingsForm_HelpButtonClicked(object? sender, CancelEventArgs e)
+        {
+            UIController.ShowHelp();
+        }
+
+        private void Button_EnabledChanged(object? sender, EventArgs e)
+        {
+            ApplyStyles();
+        }
+
+        private void ApplyStyles()
+        {
+            // Imposta lo stile dei controlli
+            this.BackColor = Color.White;
+
+            foreach (Control control in this.Controls)
+            {
+                ApplyControlStyle(control);
+            }
+        }
+
+        private void ApplyControlStyle(Control control)
+        {
+            if (control is Button button)
+            {
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 0;
+                button.ForeColor = Color.Black;
+                button.Font = new Font("Segoe UI", 10, FontStyle.Regular);
+
+                if (button == buttonSave || button == buttonEchoTest)
+                {
+                    button.BackColor = Color.DodgerBlue;
+                    button.ForeColor = Color.White;
+                }
+                else if (button == buttonCancel)
+                {
+                    button.BackColor = Color.LightCoral;
+                    button.ForeColor = Color.White;
+                }
+
+                // Gestione colore pulsanti disabilitati
+                if (!button.Enabled)
+                {
+                    button.BackColor = Color.LightGray;
+                    button.ForeColor = Color.Gray;
+                }
+            }
+            else if (control is TextBox textBox)
+            {
+                textBox.BorderStyle = BorderStyle.FixedSingle;
+            }
+
+            // Applicare lo stile ai controlli figli
+            foreach (Control childControl in control.Controls)
+            {
+                ApplyControlStyle(childControl);
+            }
         }
 
         /// <summary>
@@ -210,7 +281,7 @@ namespace DicomModifier
                 }
                 else
                 {
-                    textBoxServerPort.BackColor = Color.Green;
+                    textBoxServerPort.BackColor = Color.LightGreen;
                 }
             }
             else
@@ -237,7 +308,7 @@ namespace DicomModifier
                 }
                 else
                 {
-                    textBoxTimeout.BackColor = Color.Green;
+                    textBoxTimeout.BackColor = Color.LightGreen;
                 }
             }
             else
@@ -259,7 +330,7 @@ namespace DicomModifier
             string[] ipSegments = textBoxServerIP.Text.Split('.');
             if (ipSegments.Length == 4 && ipSegments.All(segment => int.TryParse(segment, out int num) && num >= 0 && num <= 255))
             {
-                textBoxServerIP.BackColor = Color.Green;
+                textBoxServerIP.BackColor = Color.LightGreen;
             }
             else
             {
@@ -349,5 +420,10 @@ namespace DicomModifier
             }
             return ipSegments.All(segment => int.TryParse(segment, out int num) && num >= 0 && num <= 255);
         }
+        //private static void ShowHelpForm()
+        //{
+        //    UIController.ShowHelpForm();
+        //    Cursor.Current = Cursors.Default;
+        //}
     }
 }

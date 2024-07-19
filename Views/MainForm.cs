@@ -4,7 +4,6 @@ using DicomImport.Controllers;
 using DicomImport.Models;
 using System.Diagnostics;
 using System.Reflection;
-using System.Windows.Forms;
 
 namespace DicomModifier
 {
@@ -23,15 +22,10 @@ namespace DicomModifier
         /// Event handlers
         /// </summary>
         public event EventHandler? OnSelectFile;
-
         public event EventHandler? OnSelectFolder;
-
         public event EventHandler? OnSelectDicomDir;
-
         public event EventHandler? OnSend;
-
         public event EventHandler? OnResetQueue;
-
         public event EventHandler? OnUpdatePatientID;
 
         public TableManager TableManager { get; private set; }
@@ -59,7 +53,6 @@ namespace DicomModifier
 
             InitializeComponent();
             _uiController.ApplyStyles();
-            
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             var versionString = version != null ? version.ToString() : "Versione non disponibile";
@@ -95,6 +88,7 @@ namespace DicomModifier
             buttonResetQueue.Click += ButtonResetQueue_Click;
             buttonUpdateID.Click += ButtonUpdateID_Click;
             esciToolStripMenuItem.Click += EsciToolStripMenuItem_Click;
+            helpToolStripMenuItem.Click += HelpToolStripMenuItem_Click;
 
             this.FormClosing += MainForm_FormClosing;
         }
@@ -120,6 +114,38 @@ namespace DicomModifier
         private void EsciToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             CloseApplication();
+        }
+
+        private void HelpToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            UIController.ShowHelp();
+        }
+
+        /// <summary>
+        /// Opens a message box with information about the application.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void AboutToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            var versionString = version != null ? version.ToString() : "Versione non disponibile";
+            MessageBox.Show($"DICOM Import & Edit \nVersione: {versionString}\n\nDeveloped by Thomas Amaranto - 2024\n Rilasciato sotto licenza MIT.", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Opens the Settings form.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void SettingsToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            using SettingsForm settingsForm = new(_settings, _settingsController, _uiController);
+            if (settingsForm.ShowDialog() == DialogResult.OK)
+            {
+                _settings = settingsForm.GetSettings();
+                _settingsController.SaveSettings(_settings);
+            }
         }
 
         /// <summary>
@@ -217,7 +243,7 @@ namespace DicomModifier
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonDicomFile_Click(object? sender, EventArgs e)
         {
-            Console.WriteLine("ButtonDicomFile_Click called");
+            Debug.WriteLine("ButtonDicomFile_Click called");
             OnSelectFile?.Invoke(this, EventArgs.Empty);
         }
 
@@ -228,7 +254,7 @@ namespace DicomModifier
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonFolder_Click(object? sender, EventArgs e)
         {
-            Console.WriteLine("ButtonFolder_Click called");
+            Debug.WriteLine("ButtonFolder_Click called");
             OnSelectFolder?.Invoke(this, EventArgs.Empty);
         }
 
@@ -239,7 +265,7 @@ namespace DicomModifier
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonDicomDir_Click(object? sender, EventArgs e)
         {
-            Console.WriteLine("ButtonDicomDir_Click called");
+            Debug.WriteLine("ButtonDicomDir_Click called");
             OnSelectDicomDir?.Invoke(this, EventArgs.Empty);
         }
 
@@ -250,8 +276,13 @@ namespace DicomModifier
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ButtonSend_Click(object? sender, EventArgs e)
         {
-            Console.WriteLine("ButtonSend_Click called");
-            OnSend?.Invoke(this, EventArgs.Empty);
+            Debug.WriteLine("ButtonSend_Click called");
+            var confirmResult = MessageBox.Show("Sei sicuro di voler inviare i file al PACS?", "Conferma invio", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            // Se l'utente seleziona 'No', interrompi l'operazione
+            if (confirmResult == DialogResult.Yes)
+            {
+                OnSend?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -262,33 +293,6 @@ namespace DicomModifier
         private void ButtonUpdateID_Click(object? sender, EventArgs e)
         {
             OnUpdatePatientID?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Opens a message box with information about the application.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void AboutToolStripMenuItem_Click(object? sender, EventArgs e)
-        {
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            var versionString = version != null ? version.ToString() : "Versione non disponibile";
-            MessageBox.Show($"DICOM Import & Edit \nVersione: {versionString}\n\nDeveloped by Thomas Amaranto - 2024\n Rilasciato sotto licenza MIT.", "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        /// <summary>
-        /// Opens the Settings form.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void SettingsToolStripMenuItem_Click(object? sender, EventArgs e)
-        {
-            using SettingsForm settingsForm = new(_settings, _settingsController, _uiController);
-            if (settingsForm.ShowDialog() == DialogResult.OK)
-            {
-                _settings = settingsForm.GetSettings();
-                _settingsController.SaveSettings(_settings);
-            }
         }
 
         /// <summary>
@@ -359,12 +363,6 @@ namespace DicomModifier
                 Debug.WriteLine($"Selected row: {row.Index}, PatientID: {row.Cells["PatientIDColumn"].Value}");
             }
             return selectedRows;
-        }
-
-        private void HelpToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            HelpForm helpForm = new();
-            helpForm.ShowDialog();
         }
     }
 }

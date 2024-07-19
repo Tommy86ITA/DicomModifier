@@ -28,7 +28,7 @@ namespace DicomImport.Controllers
             _dicomManager = dicomManager;
             _uiController = new UIController(_mainForm);
             _communicator = new PACSCommunicator(settings, _uiController);
-            _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomModifier");
+            _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomImport");
             _cancellationTokenSource = new CancellationTokenSource();
 
             _mainForm.OnSelectFile += MainForm_OnSelectFileAsync;

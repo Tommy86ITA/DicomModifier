@@ -33,7 +33,7 @@ namespace DicomImport
             using Mutex mutex = new(false, "Global\\" + appGuid);
             if (!mutex.WaitOne(0, false))
             {
-                MessageBox.Show("Dicom Importer è già in esecuzione!");
+                MessageBox.Show("Dicom Import & Edit è già in esecuzione!");
                 return;
             }
 

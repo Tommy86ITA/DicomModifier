@@ -7,19 +7,21 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>DicomImport.Program</StartupObject>
-    <ApplicationIcon>server_output.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\server_output.ico</ApplicationIcon>
     <FileVersion>1.0.*.*</FileVersion>
     <AssemblyVersion>1.0.*.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
+    <UserSecretsId>b7e7640f-0945-4eab-8271-8e9591ab20c7</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="server_output.ico" />
+    <Content Include="Resources\server_output.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.2.2" />
     <PackageReference Include="fo-dicom" Version="5.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2592.51" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
@@ -49,6 +51,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="help.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Help\UserGuide.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="images\ExamLoaded.png">
@@ -81,12 +86,15 @@
     <None Update="images\settings.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="LICENSE.txt">
+    <None Update="LICENSE.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

@@ -1,6 +1,8 @@
-﻿using DicomModifier;
-using System.Drawing;
-using System.Windows.Forms;
+﻿// Interfaces/UIController.cs
+
+using DicomModifier;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace DicomImport.Controllers
 {
@@ -8,6 +10,7 @@ namespace DicomImport.Controllers
     {
         private readonly MainForm _mainForm = mainForm;
 
+        // Invoke the action on the UI thread if required
         private void InvokeIfRequired(Action action)
         {
             if (_mainForm.InvokeRequired)
@@ -20,52 +23,71 @@ namespace DicomImport.Controllers
             }
         }
 
+        // Apply styles to the main form controls
         public void ApplyStyles()
         {
-            InvokeIfRequired(() =>
-            {
-                ApplyStylesToControl(_mainForm.Controls);
-            });
+            InvokeIfRequired(() => ApplyStylesToControl(_mainForm.Controls));
         }
 
-        private void ApplyStylesToControl(Control.ControlCollection controls)
+        // Apply styles to a collection of controls
+        private static void ApplyStylesToControl(Control.ControlCollection controls)
         {
             foreach (Control control in controls)
             {
-                if (control is Button button)
+                switch (control)
                 {
-                    StyleButton(button);
-                }
-                else if (control is DataGridView dataGridView)
-                {
-                    StyleDataGridView(dataGridView);
-                }
-                else if (control.HasChildren)
-                {
-                    ApplyStylesToControl(control.Controls);
+                    case Button button:
+                        StyleButton(button);
+                        break;
+
+                    case DataGridView dataGridView:
+                        StyleDataGridView(dataGridView);
+                        break;
+
+                    default:
+                        if (control.HasChildren)
+                        {
+                            ApplyStylesToControl(control.Controls);
+                        }
+
+                        break;
                 }
             }
         }
 
+        // Apply styles to a button
         private static void StyleButton(Button button)
-        {   
-            if (button.Name == "buttonResetQueue") 
+        {
+            button.BackColor = GetButtonColor(button.Name);
+            button.FlatStyle = FlatStyle.Flat;
+            button.ForeColor = Color.White;
+            button.FlatAppearance.BorderSize = 0;
+            button.Font = new Font("Segoe UI", 10);
+
+            // Event handler to change style when button is enabled/disabled
+            button.EnabledChanged += (sender, e) =>
             {
-                button.BackColor = Color.FromArgb(255, 140, 0);
+                if (sender is Button btn)
+                {
+                    btn.BackColor = btn.Enabled ? GetButtonColor(btn.Name) : Color.LightGray;
+                }
+            };
+        }
+
+        // Get the appropriate color for a button based on its name
+        private static Color GetButtonColor(string buttonName)
+        {
+            if (buttonName == "buttonUpdateID" || buttonName == "buttonSend")
+            {
+                return Color.LightCoral;
             }
             else
             {
-                button.BackColor = Color.FromArgb(0, 123, 255); // Blu standard per altri pulsanti
-                button.Size = button.Size;
+                return Color.DodgerBlue;
             }
-
-            Size buttonSize = new Size(150, 40);
-            button.ForeColor = Color.White;
-            button.FlatStyle = FlatStyle.Flat;
-            button.FlatAppearance.BorderSize = 0;
-            button.Font = new Font("Segoe UI", 10);
         }
 
+        // Apply styles to a DataGridView
         private static void StyleDataGridView(DataGridView dataGridView)
         {
             dataGridView.EnableHeadersVisualStyles = false;
@@ -76,11 +98,12 @@ namespace DicomImport.Controllers
             dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
         }
 
+        // Update the state of various controls based on the current state of the application
         public void UpdateControlStates()
         {
             InvokeIfRequired(() =>
             {
-                bool hasExams = _mainForm.DataGridView1.Rows.Count > 0;
+                bool hasExams = _mainForm.dataGridView1.Rows.Count > 0;
                 _mainForm.buttonSend.Enabled = hasExams;
                 _mainForm.buttonResetQueue.Enabled = hasExams;
                 _mainForm.buttonUpdateID.Enabled = hasExams;
@@ -88,6 +111,7 @@ namespace DicomImport.Controllers
             });
         }
 
+        // Update the progress bar with the given value and maximum
         public void UpdateProgressBar(int value, int maximum)
         {
             InvokeIfRequired(() =>
@@ -101,11 +125,13 @@ namespace DicomImport.Controllers
             });
         }
 
+        // Update the status label with the given status message
         public void UpdateStatus(string status)
         {
             InvokeIfRequired(() => _mainForm.toolStripStatusLabel.Text = $"Stato: {status}");
         }
 
+        // Update the file count label with the given counts and message
         public void UpdateFileCount(int sent, int total, string message)
         {
             InvokeIfRequired(() =>
@@ -121,6 +147,7 @@ namespace DicomImport.Controllers
             });
         }
 
+        // Enable all relevant controls
         public void EnableControls()
         {
             InvokeIfRequired(() =>
@@ -133,10 +160,11 @@ namespace DicomImport.Controllers
                 _mainForm.settingsToolStripMenuItem.Enabled = true;
                 _mainForm.dataGridView1.Enabled = true;
                 _mainForm.textBoxNewID.Enabled = true;
-                _mainForm.buttonSend.Enabled = _mainForm.DataGridView1.Rows.Count > 0;
+                _mainForm.buttonSend.Enabled = _mainForm.dataGridView1.Rows.Count > 0;
             });
         }
 
+        // Disable all relevant controls
         public void DisableControls()
         {
             InvokeIfRequired(() =>
@@ -153,6 +181,7 @@ namespace DicomImport.Controllers
             });
         }
 
+        // Clear the table and update control states
         public void ClearTable()
         {
             InvokeIfRequired(() =>
@@ -162,19 +191,43 @@ namespace DicomImport.Controllers
             });
         }
 
+        // Clear the new patient ID text box
         public void ClearNewPatientIDTextBox()
         {
             InvokeIfRequired(() => _mainForm.textBoxNewID.Clear());
         }
 
+        // Update the progress and status based on the given counts
         public void UpdateProgress(int sentFiles, int totalFiles)
         {
             InvokeIfRequired(() =>
             {
-                _mainForm.UpdateFileCount(sentFiles, totalFiles, "File inviati");
-                _mainForm.UpdateProgressBar(sentFiles, totalFiles);
-                _mainForm.UpdateStatus("Invio in corso...");
+                UpdateFileCount(sentFiles, totalFiles, "File inviati");
+                UpdateProgressBar(sentFiles, totalFiles);
+                UpdateStatus("Invio in corso...");
             });
+        }
+
+        public static void ShowHelp()
+        {
+            string? exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            if (exeDir == null)
+            {
+                MessageBox.Show("Il percorso dell'eseguibile non è stato trovato.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string pdfPath = Path.Combine(exeDir, "Help", "UserGuide.pdf");
+
+            if (File.Exists(pdfPath))
+            {
+                Process.Start(new ProcessStartInfo(pdfPath) { UseShellExecute = true });
+            }
+            else
+            {
+                MessageBox.Show("Il file della guida non è stato trovato.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
