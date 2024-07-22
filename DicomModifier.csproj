@@ -8,8 +8,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>DicomImport.Program</StartupObject>
     <ApplicationIcon>Resources\server_output.ico</ApplicationIcon>
-    <FileVersion>1.0.*.*</FileVersion>
-    <AssemblyVersion>1.0.*.*</AssemblyVersion>
+    <FileVersion>1.0.*</FileVersion>
+    <AssemblyVersion>1.0.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
     <UserSecretsId>b7e7640f-0945-4eab-8271-8e9591ab20c7</UserSecretsId>
   </PropertyGroup>
