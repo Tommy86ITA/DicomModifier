@@ -12,6 +12,8 @@
     <AssemblyVersion>1.0.*.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
     <UserSecretsId>b7e7640f-0945-4eab-8271-8e9591ab20c7</UserSecretsId>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup>
