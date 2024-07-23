@@ -4,7 +4,7 @@ using FellowOakDicom;
 using FellowOakDicom.Media;
 using System.Diagnostics;
 
-namespace DicomImport.Controllers
+namespace DicomModifier.Controllers
 {
     public class DicomFileHandler
     {

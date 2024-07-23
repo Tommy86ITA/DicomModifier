@@ -1,7 +1,7 @@
 ﻿// Interfaces/SettingsForm.cs
 
-using DicomImport.Controllers;
-using DicomImport.Models;
+using DicomModifier.Controllers;
+using DicomModifier.Models;
 using System.ComponentModel;
 
 namespace DicomModifier

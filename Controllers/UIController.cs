@@ -4,7 +4,7 @@ using DicomModifier;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace DicomImport.Controllers
+namespace DicomModifier.Controllers
 {
     public class UIController(MainForm mainForm)
     {
@@ -160,6 +160,8 @@ namespace DicomImport.Controllers
                 _mainForm.settingsToolStripMenuItem.Enabled = true;
                 _mainForm.dataGridView1.Enabled = true;
                 _mainForm.textBoxNewID.Enabled = true;
+                _mainForm.logoutToolStripMenuItemLogout.Enabled = true;
+                _mainForm.accountToolStripMenuItem.Enabled = true;
                 _mainForm.buttonSend.Enabled = _mainForm.dataGridView1.Rows.Count > 0;
             });
         }
@@ -178,6 +180,8 @@ namespace DicomImport.Controllers
                 _mainForm.settingsToolStripMenuItem.Enabled = false;
                 _mainForm.dataGridView1.Enabled = false;
                 _mainForm.textBoxNewID.Enabled = false;
+                _mainForm.logoutToolStripMenuItemLogout.Enabled = false;
+                _mainForm.accountToolStripMenuItem.Enabled = false;
             });
         }
 
@@ -228,6 +232,24 @@ namespace DicomImport.Controllers
             {
                 MessageBox.Show("Il file della guida non è stato trovato.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        public void UpdateUIBasedOnRole(string role)
+        {
+            InvokeIfRequired(() =>
+            {
+                // Nascondi o disabilita i controlli per i Technician
+                if (role == "Technician")
+                {
+                    _mainForm.settingsToolStripMenuItem.Visible = false;
+                }
+                else if (role == "Admin")
+                {
+                    // Abilita tutte le funzionalità
+                    _mainForm.settingsToolStripMenuItem.Visible = true;
+                    _mainForm.aboutToolStripMenuItem.Visible = true;
+                }
+            });
         }
     }
 }

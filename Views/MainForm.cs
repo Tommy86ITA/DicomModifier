@@ -1,7 +1,9 @@
 // Interfaces/MainForm.cs
 
-using DicomImport.Controllers;
-using DicomImport.Models;
+using DicomModifier.Controllers;
+using DicomModifier.Models;
+using DicomModifier.Services;
+using DicomModifier.Views;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -33,6 +35,7 @@ namespace DicomModifier
         private readonly UIController _uiController;
         private readonly ToolTip toolTip;
         private PACSSettings _settings;
+        private readonly AuthenticationService authService;
 
         /// <summary>
         /// Checks if there is a file transfer in progress.
@@ -47,16 +50,18 @@ namespace DicomModifier
         /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
         /// </summary>
-        public MainForm()
+        public MainForm(AuthenticationService authService)
         {
             _uiController = new UIController(this);
-
+            this.authService = authService;
             InitializeComponent();
             _uiController.ApplyStyles();
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             var versionString = version != null ? version.ToString() : "Versione non disponibile";
             this.Text = $"DICOM Import & Edit - v. {versionString}";
+
+            toolStripDropDownButtonUser.Text = $"Utente: {authService.CurrentUser.Username}; Livello: {authService.CurrentUser.Role}";
 
             InitializeEvents();
 
@@ -70,7 +75,7 @@ namespace DicomModifier
             // Inizializza le impostazioni
             _settingsController = new SettingsController(this);
             _settings = _settingsController.LoadSettings();
-
+            _uiController.UpdateUIBasedOnRole(authService.CurrentUser.Role);
             ClearTempFolder();
         }
 
@@ -89,6 +94,9 @@ namespace DicomModifier
             buttonUpdateID.Click += ButtonUpdateID_Click;
             esciToolStripMenuItem.Click += EsciToolStripMenuItem_Click;
             helpToolStripMenuItem.Click += HelpToolStripMenuItem_Click;
+            accountToolStripMenuItem.Click += accountOptionsToolStripMenuItem_Click;
+
+            logoutToolStripMenuItemLogout.Click += ToolStripMenuItemLogout_Click;
 
             this.FormClosing += MainForm_FormClosing;
         }
@@ -145,6 +153,31 @@ namespace DicomModifier
             {
                 _settings = settingsForm.GetSettings();
                 _settingsController.SaveSettings(_settings);
+            }
+        }
+
+        private void ToolStripMenuItemLogout_Click(object? sender, EventArgs e)
+        {
+            this.Hide();
+            ClearTempFolder();
+            using LoginForm loginForm = new(authService);
+            if (loginForm.ShowDialog() == DialogResult.OK)
+            {
+                this.Show();
+                // Riaggiorna l'interfaccia utente in base al nuovo login
+                _uiController.UpdateUIBasedOnRole(authService.CurrentUser.Role);
+                logoutToolStripMenuItemLogout.Text = $"Utente: {authService.CurrentUser.Username}; Livello: {authService.CurrentUser.Role}";
+            }
+            else
+            {
+                CloseApplication();
+            }
+        }
+        private void accountOptionsToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            using (ChangePasswordForm changePasswordForm = new(authService))
+            {
+                changePasswordForm.ShowDialog();
             }
         }
 
@@ -304,24 +337,7 @@ namespace DicomModifier
             return textBoxNewID.Text;
         }
 
-        /// <summary>
-        /// Updates the file count.
-        /// </summary>
-        /// <param name="sent">The sent.</param>
-        /// <param name="total">The total.</param>
-        /// <param name="message">The message.</param>
-        public void UpdateFileCount(int sent, int total, string message)
-        {
-            if (total == 0)
-            {
-                toolStripStatusLabelFileCount.Text = message;
-            }
-            else
-            {
-                toolStripStatusLabelFileCount.Text = $"{message}: {sent}/{total}";
-            }
-        }
-
+ 
         /// <summary>
         /// Updates the status label.
         /// </summary>

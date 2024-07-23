@@ -1,12 +1,13 @@
 // Interfaces/Program.cs
 
-using DicomImport.Controllers;
-using DicomImport.Models;
-using DicomModifier;
+using DicomModifier.Controllers;
+using DicomModifier.Models;
+using DicomModifier.Services; // Aggiungi questa direttiva using
+using DicomModifier.Views; // Aggiungi questa direttiva using
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace DicomImport
+namespace DicomModifier
 {
     internal static class Program
     {
@@ -40,7 +41,19 @@ namespace DicomImport
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            MainForm mainForm = new();
+            // Creiamo il servizio di autenticazione
+            AuthenticationService authService = new AuthenticationService();
+
+            // Mostriamo il form di login
+            using (LoginForm loginForm = new LoginForm(authService))
+            {
+                if (loginForm.ShowDialog() != DialogResult.OK)
+                {
+                    return; // Chiude l'applicazione se il login fallisce
+                }
+            }
+
+            MainForm mainForm = new(authService);
             UIController uiController = new(mainForm);
             DicomFileHandler dicomManager = new(uiController);
 

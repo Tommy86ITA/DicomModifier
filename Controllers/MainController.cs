@@ -1,11 +1,11 @@
 ﻿// Interfaces/MainController.cs
 
-using DicomImport.Models;
 using DicomModifier;
+using DicomModifier.Models;
 using FellowOakDicom;
 using System.Diagnostics;
 
-namespace DicomImport.Controllers
+namespace DicomModifier.Controllers
 {
     public class MainController
     {

@@ -1,12 +1,12 @@
 ﻿// Interfaces/PACSCommunicator.cs
 
-using DicomImport.Models;
+using DicomModifier.Models;
 using FellowOakDicom;
 using FellowOakDicom.Network;
 using FellowOakDicom.Network.Client;
 using System.Diagnostics;
 
-namespace DicomImport.Controllers
+namespace DicomModifier.Controllers
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="PACSCommunicator"/> class.
