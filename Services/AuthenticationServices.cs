@@ -1,28 +1,42 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using BCrypt.Net; // Assicurati che questa direttiva using sia presente
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.Data.Sqlite;
 using DicomModifier.Models;
 
 namespace DicomModifier.Services
 {
     public class AuthenticationService
     {
-        private List<User> users = new List<User>();
+        public User CurrentUser { get; private set; }
 
         public AuthenticationService()
         {
-            // Aggiungi utenti di esempio. In un'applicazione reale, carica utenti da un database o da un file.
-            users.Add(new User { Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), Role = "Admin" });
-            users.Add(new User { Username = "tech", PasswordHash = BCrypt.Net.BCrypt.HashPassword("tech123"), Role = "Technician" });
+            DatabaseHelper.InitializeDatabase();
+            CurrentUser = new User(); // Inizializzazione predefinita
         }
 
         public bool Authenticate(string username, string password)
         {
-            var user = users.FirstOrDefault(u => u.Username == username);
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            using var connection = DatabaseHelper.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT PasswordHash, Role, IsEnabled FROM Users WHERE Username = $username";
+            command.Parameters.AddWithValue("$username", username);
+
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
             {
-                CurrentUser = user;
-                return true;
+                var passwordHash = reader.GetString(0);
+                var role = reader.GetString(1);
+                var isEnabled = reader.GetInt32(2) == 1;
+
+                if (isEnabled && BCrypt.Net.BCrypt.Verify(password, passwordHash))
+                {
+                    CurrentUser = new User(username, passwordHash, role, isEnabled);
+                    return true;
+                }
             }
             return false;
         }
@@ -31,11 +45,99 @@ namespace DicomModifier.Services
         {
             if (BCrypt.Net.BCrypt.Verify(currentPassword, CurrentUser.PasswordHash))
             {
-                CurrentUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                using (var connection = DatabaseHelper.GetConnection())
+                {
+                    connection.Open();
+                    var command = connection.CreateCommand();
+                    command.CommandText = "UPDATE Users SET PasswordHash = $newPasswordHash WHERE Username = $username";
+                    command.Parameters.AddWithValue("$newPasswordHash", newPasswordHash);
+                    command.Parameters.AddWithValue("$username", CurrentUser.Username);
+                    command.ExecuteNonQuery();
+                }
+                CurrentUser.PasswordHash = newPasswordHash;
                 return true;
             }
             return false;
         }
-        public User CurrentUser { get; private set; }
+
+        public static bool AddUser(string username, string password, string role)
+        {
+            using var connection = DatabaseHelper.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO Users (Username, PasswordHash, Role, IsEnabled) VALUES ($username, $passwordHash, $role, 1)";
+            command.Parameters.AddWithValue("$username", username);
+            command.Parameters.AddWithValue("$passwordHash", BCrypt.Net.BCrypt.HashPassword(password));
+            command.Parameters.AddWithValue("$role", role);
+
+            try
+            {
+                command.ExecuteNonQuery();
+                return true;
+            }
+            catch (SqliteException)
+            {
+                return false; // Username già esistente
+            }
+        }
+
+        public static bool RemoveUser(string username)
+        {
+            if (username == "admin") return false; // Evita la rimozione dell'utente admin predefinito
+
+            using var connection = DatabaseHelper.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM Users WHERE Username = $username";
+            command.Parameters.AddWithValue("$username", username);
+            command.ExecuteNonQuery();
+            return true;
+        }
+
+        public static bool UpdateRole(string username, string role)
+        {
+            using var connection = DatabaseHelper.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "UPDATE Users SET Role = $role WHERE Username = $username";
+            command.Parameters.AddWithValue("$role", role);
+            command.Parameters.AddWithValue("$username", username);
+            command.ExecuteNonQuery();
+            return true;
+        }
+
+        public static bool ToggleEnableUser(string username)
+        {
+            using var connection = DatabaseHelper.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "UPDATE Users SET IsEnabled = 1 - IsEnabled WHERE Username = $username";
+            command.Parameters.AddWithValue("$username", username);
+            command.ExecuteNonQuery();
+            return true;
+        }
+
+        public static List<User> GetUsers()
+        {
+            var users = new List<User>();
+            using (var connection = DatabaseHelper.GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT Username, Role, IsEnabled FROM Users";
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    users.Add(new User
+                    {
+                        Username = reader.GetString(0),
+                        Role = reader.GetString(1),
+                        IsEnabled = reader.GetInt32(2) == 1
+                    });
+                }
+            }
+            return users;
+        }
     }
 }

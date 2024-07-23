@@ -152,13 +152,13 @@
             // labelVersion
             // 
             labelVersion.AutoSize = true;
-            labelVersion.Location = new Point(475, 61);
+            labelVersion.Location = new Point(347, 46);
             labelVersion.Margin = new Padding(2, 0, 2, 0);
             labelVersion.Name = "labelVersion";
             labelVersion.Size = new Size(51, 15);
             labelVersion.TabIndex = 6;
             labelVersion.Text = "versione";
-            labelVersion.TextAlign = ContentAlignment.MiddleCenter;
+            labelVersion.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // LoginForm
             // 

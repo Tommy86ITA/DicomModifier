@@ -1,6 +1,5 @@
 ﻿// Interfaces/SettingsController.cs
 
-using DicomModifier;
 using DicomModifier.Models;
 using System.Text.Json;
 

@@ -1,6 +1,5 @@
 ﻿// Interfaces/UIController.cs
 
-using DicomModifier;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -242,12 +241,13 @@ namespace DicomModifier.Controllers
                 if (role == "Technician")
                 {
                     _mainForm.settingsToolStripMenuItem.Visible = false;
+                    _mainForm.adminToolStripMenuItem.Visible=false;
                 }
                 else if (role == "Admin")
                 {
                     // Abilita tutte le funzionalità
                     _mainForm.settingsToolStripMenuItem.Visible = true;
-                    _mainForm.aboutToolStripMenuItem.Visible = true;
+                    _mainForm.adminToolStripMenuItem.Visible = true;
                 }
             });
         }

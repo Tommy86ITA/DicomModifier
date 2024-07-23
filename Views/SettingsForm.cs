@@ -420,6 +420,7 @@ namespace DicomModifier
             }
             return ipSegments.All(segment => int.TryParse(segment, out int num) && num >= 0 && num <= 255);
         }
+
         //private static void ShowHelpForm()
         //{
         //    UIController.ShowHelpForm();

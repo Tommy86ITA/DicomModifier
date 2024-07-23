@@ -1,6 +1,5 @@
 ﻿// Interfaces/MainController.cs
 
-using DicomModifier;
 using DicomModifier.Models;
 using FellowOakDicom;
 using System.Diagnostics;

@@ -24,10 +24,15 @@ namespace DicomModifier
         /// Event handlers
         /// </summary>
         public event EventHandler? OnSelectFile;
+
         public event EventHandler? OnSelectFolder;
+
         public event EventHandler? OnSelectDicomDir;
+
         public event EventHandler? OnSend;
+
         public event EventHandler? OnResetQueue;
+
         public event EventHandler? OnUpdatePatientID;
 
         public TableManager TableManager { get; private set; }
@@ -94,7 +99,7 @@ namespace DicomModifier
             buttonUpdateID.Click += ButtonUpdateID_Click;
             esciToolStripMenuItem.Click += EsciToolStripMenuItem_Click;
             helpToolStripMenuItem.Click += HelpToolStripMenuItem_Click;
-            accountToolStripMenuItem.Click += accountOptionsToolStripMenuItem_Click;
+            accountToolStripMenuItem.Click += AccountOptionsToolStripMenuItem_Click;
 
             logoutToolStripMenuItemLogout.Click += ToolStripMenuItemLogout_Click;
 
@@ -173,12 +178,11 @@ namespace DicomModifier
                 CloseApplication();
             }
         }
-        private void accountOptionsToolStripMenuItem_Click(object? sender, EventArgs e)
+
+        private void AccountOptionsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            using (ChangePasswordForm changePasswordForm = new(authService))
-            {
-                changePasswordForm.ShowDialog();
-            }
+            using ChangePasswordForm changePasswordForm = new(authService);
+            changePasswordForm.ShowDialog();
         }
 
         /// <summary>
@@ -337,7 +341,6 @@ namespace DicomModifier
             return textBoxNewID.Text;
         }
 
- 
         /// <summary>
         /// Updates the status label.
         /// </summary>

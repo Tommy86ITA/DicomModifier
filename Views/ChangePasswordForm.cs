@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-using DicomModifier.Services;
+﻿using DicomModifier.Services;
 
 namespace DicomModifier.Views
 {
@@ -17,11 +15,11 @@ namespace DicomModifier.Views
 
         private void InitializeEvents()
         {
-            buttonCancel.Click += ButtonCancel_Click;
             buttonChangePassword.Click += ButtonChangePassword_Click;
+            buttonCancel.Click += ButtonCancel_Click;
         }
 
-        private void ButtonChangePassword_Click(object sender, EventArgs e)
+        private void ButtonChangePassword_Click(object? sender, EventArgs e)
         {
             string currentPassword = textBoxCurrentPassword.Text;
             string newPassword = textBoxNewPassword.Text;
@@ -51,7 +49,7 @@ namespace DicomModifier.Views
             }
         }
 
-        private void ButtonCancel_Click(object sender, EventArgs e)
+        private void ButtonCancel_Click(object? sender, EventArgs e)
         {
             this.Close();
         }

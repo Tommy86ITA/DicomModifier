@@ -1,6 +1,5 @@
 ﻿// Interfaces/TableManager.cs
 
-using DicomModifier;
 using DicomModifier.Controllers;
 using FellowOakDicom;
 

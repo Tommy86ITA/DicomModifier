@@ -69,6 +69,9 @@ namespace DicomModifier
             aboutToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             buttonResetQueue = new Button();
+            adminToolStripMenuItem = new ToolStripMenuItem();
+            gestioneUtentiToolStripMenuItem = new ToolStripMenuItem();
+            visualizzaLogToolStripMenuItem = new ToolStripMenuItem();
             groupSelectFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBoxPatientID.SuspendLayout();
@@ -338,26 +341,29 @@ namespace DicomModifier
             toolStripDropDownButtonUser.Image = Properties.Resources.User_Icon;
             toolStripDropDownButtonUser.ImageAlign = ContentAlignment.MiddleLeft;
             toolStripDropDownButtonUser.ImageTransparentColor = Color.Magenta;
+            toolStripDropDownButtonUser.Margin = new Padding(5, 2, 5, 0);
             toolStripDropDownButtonUser.Name = "toolStripDropDownButtonUser";
-            toolStripDropDownButtonUser.Size = new Size(370, 36);
+            toolStripDropDownButtonUser.Size = new Size(360, 36);
             toolStripDropDownButtonUser.Text = "User";
+            toolStripDropDownButtonUser.TextAlign = ContentAlignment.MiddleRight;
+            toolStripDropDownButtonUser.ToolTipText = "Mostra l'utente attuale e le opzioni collegate";
             // 
             // logoutToolStripMenuItemLogout
             // 
             logoutToolStripMenuItemLogout.Name = "logoutToolStripMenuItemLogout";
-            logoutToolStripMenuItemLogout.Size = new Size(180, 22);
+            logoutToolStripMenuItemLogout.Size = new Size(170, 22);
             logoutToolStripMenuItemLogout.Text = "Logout";
             // 
             // accountToolStripMenuItem
             // 
             accountToolStripMenuItem.Name = "accountToolStripMenuItem";
-            accountToolStripMenuItem.Size = new Size(180, 22);
+            accountToolStripMenuItem.Size = new Size(170, 22);
             accountToolStripMenuItem.Text = "Opzioni account...";
             // 
             // toolStripDropDownButton
             // 
             toolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, helpToolStripMenuItem, aboutToolStripMenuItem, settingsToolStripMenuItem });
+            toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, helpToolStripMenuItem, aboutToolStripMenuItem, adminToolStripMenuItem, settingsToolStripMenuItem });
             toolStripDropDownButton.Image = Properties.Resources.settings_icon;
             toolStripDropDownButton.ImageTransparentColor = Color.DodgerBlue;
             toolStripDropDownButton.Name = "toolStripDropDownButton";
@@ -367,30 +373,30 @@ namespace DicomModifier
             // esciToolStripMenuItem
             // 
             esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-            esciToolStripMenuItem.Size = new Size(180, 22);
+            esciToolStripMenuItem.Size = new Size(233, 22);
             esciToolStripMenuItem.Text = "Esci";
             esciToolStripMenuItem.ToolTipText = "Chiude l'applicazione";
             // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(180, 22);
+            helpToolStripMenuItem.Size = new Size(233, 22);
             helpToolStripMenuItem.Text = "Help";
             helpToolStripMenuItem.ToolTipText = "Apre il file PDF della guida";
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(180, 22);
+            aboutToolStripMenuItem.Size = new Size(233, 22);
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.ToolTipText = "Informazioni sul programma";
             // 
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(180, 22);
-            settingsToolStripMenuItem.Text = "Impostazioni...";
-            settingsToolStripMenuItem.ToolTipText = "Apri la finestra delle impostazioni.";
+            settingsToolStripMenuItem.Size = new Size(233, 22);
+            settingsToolStripMenuItem.Text = "Impostazioni di connessione...";
+            settingsToolStripMenuItem.ToolTipText = "Apre la finestra delle impostazioni.";
             // 
             // buttonResetQueue
             // 
@@ -405,6 +411,25 @@ namespace DicomModifier
             buttonResetQueue.TabIndex = 7;
             buttonResetQueue.Text = "Pulisci";
             buttonResetQueue.UseVisualStyleBackColor = false;
+            // 
+            // adminToolStripMenuItem
+            // 
+            adminToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { gestioneUtentiToolStripMenuItem, visualizzaLogToolStripMenuItem });
+            adminToolStripMenuItem.Name = "adminToolStripMenuItem";
+            adminToolStripMenuItem.Size = new Size(233, 22);
+            adminToolStripMenuItem.Text = "Amministrazione";
+            // 
+            // gestioneUtentiToolStripMenuItem
+            // 
+            gestioneUtentiToolStripMenuItem.Name = "gestioneUtentiToolStripMenuItem";
+            gestioneUtentiToolStripMenuItem.Size = new Size(180, 22);
+            gestioneUtentiToolStripMenuItem.Text = "Gestione utenti...";
+            // 
+            // visualizzaLogToolStripMenuItem
+            // 
+            visualizzaLogToolStripMenuItem.Name = "visualizzaLogToolStripMenuItem";
+            visualizzaLogToolStripMenuItem.Size = new Size(180, 22);
+            visualizzaLogToolStripMenuItem.Text = "Visualizza Log...";
             // 
             // MainForm
             // 
@@ -471,5 +496,8 @@ namespace DicomModifier
         public ToolStripDropDownButton toolStripDropDownButtonUser;
         public ToolStripMenuItem logoutToolStripMenuItemLogout;
         public ToolStripMenuItem accountToolStripMenuItem;
+        private ToolStripMenuItem gestioneUtentiToolStripMenuItem;
+        private ToolStripMenuItem visualizzaLogToolStripMenuItem;
+        public ToolStripMenuItem adminToolStripMenuItem;
     }
 }
