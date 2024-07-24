@@ -42,10 +42,10 @@ namespace DicomModifier
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Creiamo il servizio di autenticazione
-            AuthenticationService authService = new AuthenticationService();
+            AuthenticationService authService = new();
 
             // Mostriamo il form di login
-            using (LoginForm loginForm = new LoginForm(authService))
+            using (LoginForm loginForm = new(authService))
             {
                 if (loginForm.ShowDialog() != DialogResult.OK)
                 {

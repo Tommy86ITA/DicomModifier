@@ -241,7 +241,7 @@ namespace DicomModifier.Controllers
                 if (role == "Technician")
                 {
                     _mainForm.settingsToolStripMenuItem.Visible = false;
-                    _mainForm.adminToolStripMenuItem.Visible=false;
+                    _mainForm.adminToolStripMenuItem.Visible = false;
                 }
                 else if (role == "Admin")
                 {

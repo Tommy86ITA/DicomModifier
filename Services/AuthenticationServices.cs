@@ -1,11 +1,7 @@
 ﻿// Interfaces/AuthenticationServices.cs
 
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
-using Microsoft.Data.Sqlite;
 using DicomModifier.Models;
+using Microsoft.Data.Sqlite;
 
 namespace DicomModifier.Services
 {
@@ -109,6 +105,23 @@ namespace DicomModifier.Services
             return true;
         }
 
+        public static bool VerifyPassword(string username, string password)
+        {
+            using var connection = DatabaseHelper.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT PasswordHash FROM Users WHERE Username = $username";
+            command.Parameters.AddWithValue("$username", username);
+
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                var passwordHash = reader.GetString(0);
+                return BCrypt.Net.BCrypt.Verify(password, passwordHash);
+            }
+            return false;
+        }
+
         public static bool UpdatePassword(string username, string newPasswordHash)
         {
             using var connection = DatabaseHelper.GetConnection();
@@ -120,7 +133,6 @@ namespace DicomModifier.Services
             command.ExecuteNonQuery();
             return true;
         }
-
 
         public static bool ToggleEnableUser(string username, bool isEnabled)
         {

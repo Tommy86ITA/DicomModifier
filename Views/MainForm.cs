@@ -110,7 +110,7 @@ namespace DicomModifier
 
         private void ManageUserToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            using ManageUsersForm manageUsersForm = new ManageUsersForm(authService);  // Passa authService qui
+            using ManageUsersForm manageUsersForm = new(authService);  // Passa authService qui
             manageUsersForm.ShowDialog();
         }
 
@@ -179,7 +179,7 @@ namespace DicomModifier
                 this.Show();
                 // Riaggiorna l'interfaccia utente in base al nuovo login
                 _uiController.UpdateUIBasedOnRole(authService.CurrentUser.Role);
-                logoutToolStripMenuItemLogout.Text = $"Utente: {authService.CurrentUser.Username}; Livello: {authService.CurrentUser.Role}";
+                logoutToolStripMenuItemLogout.Text = $"Utente: {authService.CurrentUser.Username};  Ruolo: {authService.CurrentUser.Role}";
             }
             else
             {

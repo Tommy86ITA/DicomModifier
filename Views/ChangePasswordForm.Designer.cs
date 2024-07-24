@@ -146,9 +146,12 @@ namespace DicomModifier.Views
             Controls.Add(buttonChangePassword);
             Controls.Add(groupBox1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "ChangePasswordForm";
+            ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
-            Text = "Opzioni Account";
+            Text = "Modifica password";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ResumeLayout(false);
