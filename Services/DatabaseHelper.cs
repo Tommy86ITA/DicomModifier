@@ -1,4 +1,6 @@
-﻿using Microsoft.Data.Sqlite;
+﻿// Interfaces/DatabaseHelper.cs
+
+using Microsoft.Data.Sqlite;
 using System;
 using System.IO;
 

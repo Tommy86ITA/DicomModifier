@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Interfaces/AuthenticationServices.cs
+
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
@@ -61,7 +63,7 @@ namespace DicomModifier.Services
             return false;
         }
 
-        public bool AddUser(string username, string password, string role)
+        public static bool AddUser(string username, string password, string role)
         {
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
@@ -82,7 +84,7 @@ namespace DicomModifier.Services
             }
         }
 
-        public bool RemoveUser(string username)
+        public static bool RemoveUser(string username)
         {
             if (username == "admin") return false; // Evita la rimozione dell'utente admin predefinito
 
@@ -95,7 +97,7 @@ namespace DicomModifier.Services
             return true;
         }
 
-        public bool UpdateRole(string username, string role)
+        public static bool UpdateRole(string username, string role)
         {
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
@@ -107,7 +109,7 @@ namespace DicomModifier.Services
             return true;
         }
 
-        public bool UpdatePassword(string username, string newPasswordHash)
+        public static bool UpdatePassword(string username, string newPasswordHash)
         {
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
@@ -119,7 +121,8 @@ namespace DicomModifier.Services
             return true;
         }
 
-        public bool ToggleEnableUser(string username, bool isEnabled)
+
+        public static bool ToggleEnableUser(string username, bool isEnabled)
         {
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
@@ -131,7 +134,7 @@ namespace DicomModifier.Services
             return true;
         }
 
-        public List<User> GetUsers()
+        public static List<User> GetUsers()
         {
             var users = new List<User>();
             using (var connection = DatabaseHelper.GetConnection())

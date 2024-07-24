@@ -1,4 +1,6 @@
-﻿namespace DicomModifier.Views
+﻿// Interfaces/ManageUsersForm.Designer.cs
+
+namespace DicomModifier.Views
 {
     partial class ManageUsersForm
     {
@@ -23,7 +25,6 @@
             buttonEditUser = new Button();
             buttonDeleteUser = new Button();
             buttonAddUser = new Button();
-            buttonChangePassword = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridViewUsers).BeginInit();
             SuspendLayout();
             // 
@@ -34,8 +35,7 @@
             dataGridViewUsers.Columns.AddRange(new DataGridViewColumn[] { columnUserName, roleColumn, enabledColumn });
             dataGridViewUsers.Location = new Point(12, 12);
             dataGridViewUsers.Name = "dataGridViewUsers";
-            dataGridViewUsers.RowTemplate.ReadOnly = true;
-            dataGridViewUsers.ShowEditingIcon = false;
+            dataGridViewUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewUsers.Size = new Size(626, 200);
             dataGridViewUsers.TabIndex = 0;
             // 
@@ -117,24 +117,9 @@
             buttonAddUser.Text = "Aggiungi...";
             buttonAddUser.UseVisualStyleBackColor = false;
             // 
-            // buttonChangePassword
-            // 
-            buttonChangePassword.BackColor = Color.DodgerBlue;
-            buttonChangePassword.FlatStyle = FlatStyle.Flat;
-            buttonChangePassword.Font = new Font("Segoe UI", 10F);
-            buttonChangePassword.ForeColor = Color.White;
-            buttonChangePassword.Location = new Point(643, 127);
-            buttonChangePassword.Margin = new Padding(2, 1, 2, 1);
-            buttonChangePassword.Name = "buttonChangePassword";
-            buttonChangePassword.Size = new Size(129, 31);
-            buttonChangePassword.TabIndex = 16;
-            buttonChangePassword.Text = "Cambia Password";
-            buttonChangePassword.UseVisualStyleBackColor = false;
-            // 
             // ManageUsersForm
             // 
             ClientSize = new Size(778, 284);
-            Controls.Add(buttonChangePassword);
             Controls.Add(buttonAddUser);
             Controls.Add(buttonDeleteUser);
             Controls.Add(buttonEditUser);
@@ -155,6 +140,5 @@
         private DataGridViewTextBoxColumn columnUserName;
         private DataGridViewComboBoxColumn roleColumn;
         private DataGridViewCheckBoxColumn enabledColumn;
-        public Button buttonChangePassword;
     }
 }

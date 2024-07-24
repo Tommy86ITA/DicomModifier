@@ -1,4 +1,6 @@
-﻿namespace DicomModifier.Views
+﻿// Interfaces/LoginForm.Designer.cs
+
+namespace DicomModifier.Views
 {
     partial class LoginForm
     {

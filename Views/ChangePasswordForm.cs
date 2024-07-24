@@ -1,4 +1,6 @@
-﻿using DicomModifier.Services;
+﻿// Interfaces/ChangePasswordForm.cs
+
+using DicomModifier.Services;
 
 namespace DicomModifier.Views
 {

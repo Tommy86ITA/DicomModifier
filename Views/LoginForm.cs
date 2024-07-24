@@ -1,4 +1,6 @@
-﻿using DicomModifier.Services;
+﻿// Interfaces/LoginForm.cs
+
+using DicomModifier.Services;
 using System.Reflection;
 
 namespace DicomModifier.Views

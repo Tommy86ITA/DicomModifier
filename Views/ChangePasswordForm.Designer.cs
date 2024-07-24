@@ -1,4 +1,6 @@
-﻿namespace DicomModifier.Views
+﻿// Interfaces/ChangePasswordForm.Designer.cs
+
+namespace DicomModifier.Views
 {
     partial class ChangePasswordForm
     {
