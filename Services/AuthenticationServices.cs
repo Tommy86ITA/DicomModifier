@@ -1,7 +1,6 @@
-﻿// Interfaces/AuthenticationServices.cs
-
-using DicomModifier.Models;
+﻿using DicomModifier.Models;
 using Microsoft.Data.Sqlite;
+using System.Collections.Generic;
 
 namespace DicomModifier.Services
 {

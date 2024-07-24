@@ -5,7 +5,6 @@ namespace DicomModifier.Views
 {
     public partial class ChangePasswordForm : Form
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Rimuovi i membri privati non letti", Justification = "<In sospeso>")]
         private readonly AuthenticationService _authService;
         private readonly User _user;
         private readonly bool _requireCurrentPassword;
