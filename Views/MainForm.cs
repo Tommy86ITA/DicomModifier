@@ -66,7 +66,7 @@ namespace DicomModifier
             var versionString = version != null ? version.ToString() : "Versione non disponibile";
             this.Text = $"DICOM Import & Edit - v. {versionString}";
 
-            toolStripDropDownButtonUser.Text = $"Utente: {authService.CurrentUser.Username}; Livello: {authService.CurrentUser.Role}";
+            toolStripDropDownButtonUser.Text = $"Utente: {authService.CurrentUser.Username};    Ruolo: {authService.CurrentUser.Role}";
 
             InitializeEvents();
 
@@ -103,7 +103,15 @@ namespace DicomModifier
 
             logoutToolStripMenuItemLogout.Click += ToolStripMenuItemLogout_Click;
 
+            manageUserToolStripMenuItem.Click += ManageUserToolStripMenuItem_Click;
+
             this.FormClosing += MainForm_FormClosing;
+        }
+
+        private void ManageUserToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            using ManageUsersForm manageUsersForm = new ManageUsersForm(authService);  // Passa authService qui
+            manageUsersForm.ShowDialog();
         }
 
         /// <summary>

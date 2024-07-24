@@ -61,7 +61,7 @@ namespace DicomModifier.Services
             return false;
         }
 
-        public static bool AddUser(string username, string password, string role)
+        public bool AddUser(string username, string password, string role)
         {
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
@@ -82,7 +82,7 @@ namespace DicomModifier.Services
             }
         }
 
-        public static bool RemoveUser(string username)
+        public bool RemoveUser(string username)
         {
             if (username == "admin") return false; // Evita la rimozione dell'utente admin predefinito
 
@@ -95,7 +95,7 @@ namespace DicomModifier.Services
             return true;
         }
 
-        public static bool UpdateRole(string username, string role)
+        public bool UpdateRole(string username, string role)
         {
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
@@ -107,18 +107,31 @@ namespace DicomModifier.Services
             return true;
         }
 
-        public static bool ToggleEnableUser(string username)
+        public bool UpdatePassword(string username, string newPasswordHash)
         {
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
             var command = connection.CreateCommand();
-            command.CommandText = "UPDATE Users SET IsEnabled = 1 - IsEnabled WHERE Username = $username";
+            command.CommandText = "UPDATE Users SET PasswordHash = $newPasswordHash WHERE Username = $username";
+            command.Parameters.AddWithValue("$newPasswordHash", newPasswordHash);
             command.Parameters.AddWithValue("$username", username);
             command.ExecuteNonQuery();
             return true;
         }
 
-        public static List<User> GetUsers()
+        public bool ToggleEnableUser(string username, bool isEnabled)
+        {
+            using var connection = DatabaseHelper.GetConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            command.CommandText = "UPDATE Users SET IsEnabled = $isEnabled WHERE Username = $username";
+            command.Parameters.AddWithValue("$isEnabled", isEnabled ? 1 : 0);
+            command.Parameters.AddWithValue("$username", username);
+            command.ExecuteNonQuery();
+            return true;
+        }
+
+        public List<User> GetUsers()
         {
             var users = new List<User>();
             using (var connection = DatabaseHelper.GetConnection())

@@ -67,11 +67,11 @@ namespace DicomModifier
             esciToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
+            adminToolStripMenuItem = new ToolStripMenuItem();
+            manageUserToolStripMenuItem = new ToolStripMenuItem();
+            visualizzaLogToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             buttonResetQueue = new Button();
-            adminToolStripMenuItem = new ToolStripMenuItem();
-            gestioneUtentiToolStripMenuItem = new ToolStripMenuItem();
-            visualizzaLogToolStripMenuItem = new ToolStripMenuItem();
             groupSelectFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBoxPatientID.SuspendLayout();
@@ -95,7 +95,7 @@ namespace DicomModifier
             // 
             // buttonFolder
             // 
-            buttonFolder.BackColor = SystemColors.Highlight;
+            buttonFolder.BackColor = Color.DodgerBlue;
             buttonFolder.FlatStyle = FlatStyle.Flat;
             buttonFolder.Font = new System.Drawing.Font("Segoe UI", 10F);
             buttonFolder.ForeColor = Color.White;
@@ -109,7 +109,7 @@ namespace DicomModifier
             // 
             // buttonDicomDir
             // 
-            buttonDicomDir.BackColor = SystemColors.Highlight;
+            buttonDicomDir.BackColor = Color.DodgerBlue;
             buttonDicomDir.FlatStyle = FlatStyle.Flat;
             buttonDicomDir.Font = new System.Drawing.Font("Segoe UI", 10F);
             buttonDicomDir.ForeColor = Color.White;
@@ -123,7 +123,7 @@ namespace DicomModifier
             // 
             // buttonDicomFile
             // 
-            buttonDicomFile.BackColor = SystemColors.Highlight;
+            buttonDicomFile.BackColor = Color.DodgerBlue;
             buttonDicomFile.FlatStyle = FlatStyle.Flat;
             buttonDicomFile.Font = new System.Drawing.Font("Segoe UI", 10F);
             buttonDicomFile.ForeColor = Color.White;
@@ -391,6 +391,25 @@ namespace DicomModifier
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.ToolTipText = "Informazioni sul programma";
             // 
+            // adminToolStripMenuItem
+            // 
+            adminToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { manageUserToolStripMenuItem, visualizzaLogToolStripMenuItem });
+            adminToolStripMenuItem.Name = "adminToolStripMenuItem";
+            adminToolStripMenuItem.Size = new Size(233, 22);
+            adminToolStripMenuItem.Text = "Amministrazione";
+            // 
+            // manageUserToolStripMenuItem
+            // 
+            manageUserToolStripMenuItem.Name = "manageUserToolStripMenuItem";
+            manageUserToolStripMenuItem.Size = new Size(180, 22);
+            manageUserToolStripMenuItem.Text = "Gestione utenti...";
+            // 
+            // visualizzaLogToolStripMenuItem
+            // 
+            visualizzaLogToolStripMenuItem.Name = "visualizzaLogToolStripMenuItem";
+            visualizzaLogToolStripMenuItem.Size = new Size(180, 22);
+            visualizzaLogToolStripMenuItem.Text = "Visualizza Log...";
+            // 
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
@@ -411,25 +430,6 @@ namespace DicomModifier
             buttonResetQueue.TabIndex = 7;
             buttonResetQueue.Text = "Pulisci";
             buttonResetQueue.UseVisualStyleBackColor = false;
-            // 
-            // adminToolStripMenuItem
-            // 
-            adminToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { gestioneUtentiToolStripMenuItem, visualizzaLogToolStripMenuItem });
-            adminToolStripMenuItem.Name = "adminToolStripMenuItem";
-            adminToolStripMenuItem.Size = new Size(233, 22);
-            adminToolStripMenuItem.Text = "Amministrazione";
-            // 
-            // gestioneUtentiToolStripMenuItem
-            // 
-            gestioneUtentiToolStripMenuItem.Name = "gestioneUtentiToolStripMenuItem";
-            gestioneUtentiToolStripMenuItem.Size = new Size(180, 22);
-            gestioneUtentiToolStripMenuItem.Text = "Gestione utenti...";
-            // 
-            // visualizzaLogToolStripMenuItem
-            // 
-            visualizzaLogToolStripMenuItem.Name = "visualizzaLogToolStripMenuItem";
-            visualizzaLogToolStripMenuItem.Size = new Size(180, 22);
-            visualizzaLogToolStripMenuItem.Text = "Visualizza Log...";
             // 
             // MainForm
             // 
@@ -496,7 +496,7 @@ namespace DicomModifier
         public ToolStripDropDownButton toolStripDropDownButtonUser;
         public ToolStripMenuItem logoutToolStripMenuItemLogout;
         public ToolStripMenuItem accountToolStripMenuItem;
-        private ToolStripMenuItem gestioneUtentiToolStripMenuItem;
+        private ToolStripMenuItem manageUserToolStripMenuItem;
         private ToolStripMenuItem visualizzaLogToolStripMenuItem;
         public ToolStripMenuItem adminToolStripMenuItem;
     }
