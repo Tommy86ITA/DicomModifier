@@ -1,11 +1,12 @@
-﻿using DicomModifier.Models;
+﻿// Interfaces/ChangePasswordForm.cs
+
+using DicomModifier.Models;
 using DicomModifier.Services;
 
 namespace DicomModifier.Views
 {
     public partial class ChangePasswordForm : Form
     {
-        private readonly AuthenticationService _authService;
         private readonly User _user;
         private readonly bool _requireCurrentPassword;
 
@@ -16,11 +17,10 @@ namespace DicomModifier.Views
         }
 
         // Costruttore principale
-        public ChangePasswordForm(AuthenticationService authService, User user, bool requireCurrentPassword = false)
+        public ChangePasswordForm(AuthenticationService _1authService, User user, bool requireCurrentPassword = false)
         {
             InitializeComponent();
             InitializeEvents();
-            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _user = user ?? throw new ArgumentNullException(nameof(user));
             _requireCurrentPassword = requireCurrentPassword;
             LoadForm();
@@ -30,10 +30,17 @@ namespace DicomModifier.Views
         {
             buttonChangePassword.Click += ButtonChangePassword_Click;
             buttonCancel.Click += ButtonCancel_Click;
+            textBoxNewPassword.TextChanged += TextBoxNewPassword_TextChanged;
+        }
+
+        private void TextBoxNewPassword_TextChanged(object? sender, EventArgs e)
+        {
+            UpdatePasswordValidationIndicators();
         }
 
         private void LoadForm()
         {
+            UpdatePasswordValidationIndicators();
             if (!_requireCurrentPassword)
             {
                 textBoxCurrentPassword.Visible = false;
@@ -56,21 +63,34 @@ namespace DicomModifier.Views
             string newPassword = textBoxNewPassword.Text;
             string confirmPassword = textBoxConfirmNewPassword.Text;
 
-            if (string.IsNullOrWhiteSpace(newPassword))
+            if (!PasswordValidation.ValidatePassword(newPassword, out string errorMessage))
             {
-                MessageBox.Show("La nuova password non può essere vuota.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(errorMessage, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (newPassword != confirmPassword)
             {
-                MessageBox.Show("Le nuove password non coincidono.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Le nuove password non coincidono.", "Modifica password", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             _user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            AuthenticationService.UpdatePassword(_user.Username, _user.PasswordHash);
+            MessageBox.Show("Password aggiornata con successo.", "Modifica password", MessageBoxButtons.OK, MessageBoxIcon.Information);
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+
+        private void UpdatePasswordValidationIndicators()
+        {
+            string password = textBoxNewPassword.Text;
+            labelLength.ForeColor = password.Length >= 8 ? Color.Green : Color.Red;
+            labelUpperCase.ForeColor = password.Any(char.IsUpper) ? Color.Green : Color.Red;
+            labelLowerCase.ForeColor = password.Any(char.IsLower) ? Color.Green : Color.Red;
+            labelDigit.ForeColor = password.Any(char.IsDigit) ? Color.Green : Color.Red;
+            labelSpecialChar.ForeColor = password.Any(ch => !char.IsLetterOrDigit(ch)) ? Color.Green : Color.Red;
         }
 
         private void ButtonCancel_Click(object? sender, EventArgs e)

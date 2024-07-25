@@ -44,7 +44,7 @@ namespace DicomModifier.Views
 
         private void ButtonSave_Click(object? sender, EventArgs e)
         {
-            if (!_isEdit && string.IsNullOrWhiteSpace(textBoxUsername.Text))
+            if (string.IsNullOrWhiteSpace(textBoxUsername.Text))
             {
                 MessageBox.Show("Il nome utente non può essere vuoto.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -65,6 +65,13 @@ namespace DicomModifier.Views
 
             if (!_isEdit && !UserValidation.IsUsernameUnique(textBoxUsername.Text, AuthenticationService.GetUsers()))
             {
+                MessageBox.Show("Il nome utente esiste già.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var users = AuthenticationService.GetUsers();
+            if (!UserValidation.CanUpdateUserRole(_user, users, selectedRole))
+            {
                 return;
             }
 
@@ -72,14 +79,19 @@ namespace DicomModifier.Views
             _user.Role = selectedRole;
             _user.IsEnabled = true; // Sempre abilitato di default
 
-            if (!UserValidation.CanUpdateUserRole(_user, AuthenticationService.GetUsers(), selectedRole))
+            if (_isEdit)
             {
-                return;
+                if (!UserValidation.CanUpdateCurrentUserRole(_authService.CurrentUser, selectedRole, users))
+                {
+                    return;
+                }
             }
 
             DialogResult = DialogResult.OK;
             Close();
         }
+
+
 
         private void ButtonCancel_Click(object? sender, EventArgs e)
         {

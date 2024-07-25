@@ -8,7 +8,7 @@ namespace DicomModifier.Services
     {
         public static bool CanUpdateUserRole(User user, List<User> users, string newRole)
         {
-            if (newRole != "Administrator" && !users.Any(u => u.Role == "Administrator" && u.IsEnabled))
+            if (newRole != "Administrator" && users.Count(u => u.Role == "Administrator" && u.IsEnabled) == 1 && user.Role == "Administrator")
             {
                 MessageBox.Show("Deve esserci almeno un amministratore abilitato.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;

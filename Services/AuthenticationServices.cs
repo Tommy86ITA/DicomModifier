@@ -1,6 +1,8 @@
 ﻿using DicomModifier.Models;
 using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DicomModifier.Services
 {
@@ -31,15 +33,28 @@ namespace DicomModifier.Services
 
                 if (isEnabled && BCrypt.Net.BCrypt.Verify(password, passwordHash))
                 {
-                    CurrentUser = new User(username, passwordHash, role, isEnabled);
+                    CurrentUser = new User
+                    {
+                        Username = username,
+                        PasswordHash = passwordHash,
+                        Role = role,
+                        IsEnabled = isEnabled
+                    };
+                    //DatabaseHelper.LogAudit(username, "Login successful");
                     return true;
                 }
             }
+            //DatabaseHelper.LogAudit(username, "Login failed");
             return false;
         }
 
         public bool ChangePassword(string currentPassword, string newPassword)
         {
+            if (!PasswordValidation.ValidatePassword(newPassword, out string errorMessage))
+            {
+                throw new InvalidOperationException(errorMessage);
+            }
+
             if (BCrypt.Net.BCrypt.Verify(currentPassword, CurrentUser.PasswordHash))
             {
                 var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
@@ -53,6 +68,7 @@ namespace DicomModifier.Services
                     command.ExecuteNonQuery();
                 }
                 CurrentUser.PasswordHash = newPasswordHash;
+                //DatabaseHelper.LogAudit(CurrentUser.Username, "Password changed");
                 return true;
             }
             return false;
@@ -88,8 +104,8 @@ namespace DicomModifier.Services
             var command = connection.CreateCommand();
             command.CommandText = "DELETE FROM Users WHERE Username = $username";
             command.Parameters.AddWithValue("$username", username);
-            command.ExecuteNonQuery();
-            return true;
+            var rowsAffected = command.ExecuteNonQuery();
+            return rowsAffected > 0;
         }
 
         public static bool UpdateRole(string username, string role)
@@ -100,8 +116,8 @@ namespace DicomModifier.Services
             command.CommandText = "UPDATE Users SET Role = $role WHERE Username = $username";
             command.Parameters.AddWithValue("$role", role);
             command.Parameters.AddWithValue("$username", username);
-            command.ExecuteNonQuery();
-            return true;
+            var rowsAffected = command.ExecuteNonQuery();
+            return rowsAffected > 0;
         }
 
         public static bool VerifyPassword(string username, string password)
@@ -129,8 +145,8 @@ namespace DicomModifier.Services
             command.CommandText = "UPDATE Users SET PasswordHash = $newPasswordHash WHERE Username = $username";
             command.Parameters.AddWithValue("$newPasswordHash", newPasswordHash);
             command.Parameters.AddWithValue("$username", username);
-            command.ExecuteNonQuery();
-            return true;
+            var rowsAffected = command.ExecuteNonQuery();
+            return rowsAffected > 0;
         }
 
         public static bool ToggleEnableUser(string username, bool isEnabled)
@@ -141,8 +157,8 @@ namespace DicomModifier.Services
             command.CommandText = "UPDATE Users SET IsEnabled = $isEnabled WHERE Username = $username";
             command.Parameters.AddWithValue("$isEnabled", isEnabled ? 1 : 0);
             command.Parameters.AddWithValue("$username", username);
-            command.ExecuteNonQuery();
-            return true;
+            var rowsAffected = command.ExecuteNonQuery();
+            return rowsAffected > 0;
         }
 
         public static List<User> GetUsers()

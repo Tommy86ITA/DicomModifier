@@ -39,6 +39,12 @@ namespace DicomModifier.Views
             textBoxCurrentPassword = new TextBox();
             buttonCancel = new Button();
             buttonChangePassword = new Button();
+            labelSpecialChar = new Label();
+            labelDigit = new Label();
+            labelLowerCase = new Label();
+            labelUpperCase = new Label();
+            labelLength = new Label();
+            label1 = new Label();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
@@ -114,7 +120,7 @@ namespace DicomModifier.Views
             buttonCancel.FlatStyle = FlatStyle.Flat;
             buttonCancel.Font = new Font("Segoe UI", 10F);
             buttonCancel.ForeColor = Color.White;
-            buttonCancel.Location = new Point(211, 210);
+            buttonCancel.Location = new Point(211, 351);
             buttonCancel.Margin = new Padding(2, 1, 2, 1);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(129, 31);
@@ -128,7 +134,7 @@ namespace DicomModifier.Views
             buttonChangePassword.FlatStyle = FlatStyle.Flat;
             buttonChangePassword.Font = new Font("Segoe UI", 10F);
             buttonChangePassword.ForeColor = Color.White;
-            buttonChangePassword.Location = new Point(30, 210);
+            buttonChangePassword.Location = new Point(30, 351);
             buttonChangePassword.Margin = new Padding(2, 1, 2, 1);
             buttonChangePassword.Name = "buttonChangePassword";
             buttonChangePassword.Size = new Size(129, 31);
@@ -136,12 +142,72 @@ namespace DicomModifier.Views
             buttonChangePassword.Text = "Salva Password";
             buttonChangePassword.UseVisualStyleBackColor = false;
             // 
+            // labelSpecialChar
+            // 
+            labelSpecialChar.AutoSize = true;
+            labelSpecialChar.Location = new Point(94, 310);
+            labelSpecialChar.Name = "labelSpecialChar";
+            labelSpecialChar.Size = new Size(160, 15);
+            labelSpecialChar.TabIndex = 8;
+            labelSpecialChar.Text = "Almeno un carattere speciale";
+            // 
+            // labelDigit
+            // 
+            labelDigit.AutoSize = true;
+            labelDigit.Location = new Point(94, 287);
+            labelDigit.Name = "labelDigit";
+            labelDigit.Size = new Size(111, 15);
+            labelDigit.TabIndex = 9;
+            labelDigit.Text = "Almeno un numero";
+            // 
+            // labelLowerCase
+            // 
+            labelLowerCase.AutoSize = true;
+            labelLowerCase.Location = new Point(94, 264);
+            labelLowerCase.Name = "labelLowerCase";
+            labelLowerCase.Size = new Size(174, 15);
+            labelLowerCase.TabIndex = 7;
+            labelLowerCase.Text = "Almeno un carattere minuscolo";
+            // 
+            // labelUpperCase
+            // 
+            labelUpperCase.AutoSize = true;
+            labelUpperCase.Location = new Point(94, 241);
+            labelUpperCase.Name = "labelUpperCase";
+            labelUpperCase.Size = new Size(186, 15);
+            labelUpperCase.TabIndex = 6;
+            labelUpperCase.Text = "Almeno un carattere MAIUSCOLO";
+            // 
+            // labelLength
+            // 
+            labelLength.AutoSize = true;
+            labelLength.Location = new Point(94, 218);
+            labelLength.Name = "labelLength";
+            labelLength.Size = new Size(104, 15);
+            labelLength.TabIndex = 5;
+            labelLength.Text = "Almeno 8 caratteri";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 193);
+            label1.Name = "label1";
+            label1.Size = new Size(159, 15);
+            label1.TabIndex = 4;
+            label1.Text = "La password deve contenere:";
+            // 
             // ChangePasswordForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(374, 260);
+            ClientSize = new Size(374, 397);
+            Controls.Add(labelDigit);
+            Controls.Add(labelSpecialChar);
+            Controls.Add(labelLowerCase);
+            Controls.Add(labelUpperCase);
+            Controls.Add(labelLength);
+            Controls.Add(label1);
             Controls.Add(buttonCancel);
             Controls.Add(buttonChangePassword);
             Controls.Add(groupBox1);
@@ -155,6 +221,7 @@ namespace DicomModifier.Views
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -168,5 +235,11 @@ namespace DicomModifier.Views
         public Button buttonChangePassword;
         private Label labelConfirmNewPassword;
         private TextBox textBoxConfirmNewPassword;
+        private Label labelSpecialChar;
+        private Label labelDigit;
+        private Label labelLowerCase;
+        private Label labelUpperCase;
+        private Label labelLength;
+        private Label label1;
     }
 }

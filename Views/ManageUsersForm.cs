@@ -1,8 +1,5 @@
 ﻿// Interfaces/ManageUsersForm.cs
 
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
 using DicomModifier.Services;
 using DicomModifier.Models;
 
@@ -44,7 +41,7 @@ namespace DicomModifier.Views
         private void ButtonAddUser_Click(object? sender, EventArgs e)
         {
             var newUser = new User();
-            using var createEditUserForm = new CreateEditUserForm(newUser);
+            using var createEditUserForm = new CreateEditUserForm(newUser, false, _authService);
             if (createEditUserForm.ShowDialog() == DialogResult.OK)
             {
                 var createdUser = createEditUserForm.GetUser();
@@ -52,14 +49,26 @@ namespace DicomModifier.Views
                 {
                     _users.Add(createdUser);
                     LoadUsers();
-                    MessageBox.Show("User added successfully.");
+                    MessageBox.Show("Utente creato correttamente.", "Creazione utente", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Apri la schermata di modifica della password
+                    using var changePasswordForm = new ChangePasswordForm(_authService, createdUser, false);
+                    if (changePasswordForm.ShowDialog() != DialogResult.OK)
+                    {
+                        // Se l'utente esce senza salvare la password, annulla la creazione dell'utente
+                        AuthenticationService.RemoveUser(createdUser.Username);
+                        _users.RemoveAll(u => u.Username == createdUser.Username);
+                        LoadUsers();
+                        MessageBox.Show("La creazione dell'utente è stata annullata perché non è stata impostata la password.", "Creazione utente", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Failed to add user.");
+                    MessageBox.Show("Impossibile creare l'utente.", "Creazione utente", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
+
 
         private void ButtonEditUser_Click(object? sender, EventArgs e)
         {
@@ -96,15 +105,16 @@ namespace DicomModifier.Views
                     if (AuthenticationService.UpdateRole(updatedUser.Username, updatedUser.Role) && AuthenticationService.ToggleEnableUser(updatedUser.Username, updatedUser.IsEnabled))
                     {
                         LoadUsers();
-                        MessageBox.Show("Utente aggiornato con successo.");
+                        MessageBox.Show("Utente aggiornato con successo.", "Modifica utente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
-                        MessageBox.Show("Errore nell'aggiornamento dell'utente.");
+                        MessageBox.Show("Impossibile aggiornare l'utente.", "Modifica utente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
         }
+
 
         private void ButtonDeleteUser_Click(object? sender, EventArgs e)
         {
@@ -135,11 +145,11 @@ namespace DicomModifier.Views
                 {
                     _users.RemoveAll(u => u.Username == username);
                     LoadUsers();
-                    MessageBox.Show("Utente eliminato con successo.");
+                    MessageBox.Show("Utente eliminato con successo.", "Eliminazione utente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show("Errore nell'eliminazione dell'utente.");
+                    MessageBox.Show("Errore nell'eliminazione dell'utente.", "Eliminazione utente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
@@ -174,7 +184,7 @@ namespace DicomModifier.Views
                 {
                     var updatedUser = changePasswordForm.GetUser();
                     AuthenticationService.UpdatePassword(updatedUser.Username, updatedUser.PasswordHash);
-                    MessageBox.Show("Password aggiornata con successo.");
+                    MessageBox.Show("Password aggiornata con successo.", "Modifica password", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             else
@@ -184,12 +194,10 @@ namespace DicomModifier.Views
                 {
                     var updatedUser = changePasswordForm.GetUser();
                     AuthenticationService.UpdatePassword(updatedUser.Username, updatedUser.PasswordHash);
-                    MessageBox.Show("Password aggiornata con successo.");
+                    MessageBox.Show("Password aggiornata con successo.", "Modifica password", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
-
-
 
         private void ButtonClose_Click(object? sender, EventArgs e)
         {
