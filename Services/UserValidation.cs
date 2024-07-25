@@ -46,5 +46,18 @@ namespace DicomModifier.Services
             }
             return true;
         }
+
+        public static bool CanDisableUser(User user, List<User> users, bool isEnabled)
+        {
+            if (user.Role == "Administrator" && !isEnabled)
+            {
+                var adminCount = users.Count(u => u.Role == "Administrator" && u.IsEnabled);
+                if (adminCount <= 1)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

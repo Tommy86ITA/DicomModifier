@@ -31,7 +31,12 @@ namespace DicomModifier.Services
                 var role = reader.GetString(1);
                 var isEnabled = reader.GetInt32(2) == 1;
 
-                if (isEnabled && BCrypt.Net.BCrypt.Verify(password, passwordHash))
+                if (!isEnabled)
+                {
+                    throw new InvalidOperationException("L'utente non è abilitato. Contattare un amministratore.");
+                }
+
+                if (BCrypt.Net.BCrypt.Verify(password, passwordHash))
                 {
                     CurrentUser = new User
                     {
@@ -40,13 +45,12 @@ namespace DicomModifier.Services
                         Role = role,
                         IsEnabled = isEnabled
                     };
-                    //DatabaseHelper.LogAudit(username, "Login successful");
                     return true;
                 }
             }
-            //DatabaseHelper.LogAudit(username, "Login failed");
             return false;
         }
+
 
         public bool ChangePassword(string currentPassword, string newPassword)
         {

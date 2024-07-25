@@ -36,8 +36,11 @@ namespace DicomModifier.Views
             comboBoxRole = new ComboBox();
             buttonCancel = new Button();
             buttonSave = new Button();
+            groupBoxEnableUser = new GroupBox();
+            checkBoxEnableUser = new CheckBox();
             groupBoxUserName.SuspendLayout();
             groupBoxRole.SuspendLayout();
+            groupBoxEnableUser.SuspendLayout();
             SuspendLayout();
             // 
             // groupBoxUserName
@@ -87,7 +90,7 @@ namespace DicomModifier.Views
             buttonCancel.FlatStyle = FlatStyle.Flat;
             buttonCancel.Font = new Font("Segoe UI", 10F);
             buttonCancel.ForeColor = Color.White;
-            buttonCancel.Location = new Point(158, 217);
+            buttonCancel.Location = new Point(157, 323);
             buttonCancel.Margin = new Padding(2, 1, 2, 1);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(129, 31);
@@ -101,7 +104,7 @@ namespace DicomModifier.Views
             buttonSave.FlatStyle = FlatStyle.Flat;
             buttonSave.Font = new Font("Segoe UI", 10F);
             buttonSave.ForeColor = Color.White;
-            buttonSave.Location = new Point(11, 217);
+            buttonSave.Location = new Point(10, 323);
             buttonSave.Margin = new Padding(2, 1, 2, 1);
             buttonSave.Name = "buttonSave";
             buttonSave.Size = new Size(129, 31);
@@ -109,11 +112,34 @@ namespace DicomModifier.Views
             buttonSave.Text = "Salva";
             buttonSave.UseVisualStyleBackColor = false;
             // 
+            // groupBoxEnableUser
+            // 
+            groupBoxEnableUser.Controls.Add(checkBoxEnableUser);
+            groupBoxEnableUser.Location = new Point(10, 204);
+            groupBoxEnableUser.Name = "groupBoxEnableUser";
+            groupBoxEnableUser.Size = new Size(276, 90);
+            groupBoxEnableUser.TabIndex = 6;
+            groupBoxEnableUser.TabStop = false;
+            groupBoxEnableUser.Text = "Abilitazione";
+            // 
+            // checkBoxEnableUser
+            // 
+            checkBoxEnableUser.AutoSize = true;
+            checkBoxEnableUser.Checked = true;
+            checkBoxEnableUser.CheckState = CheckState.Checked;
+            checkBoxEnableUser.Location = new Point(90, 39);
+            checkBoxEnableUser.Name = "checkBoxEnableUser";
+            checkBoxEnableUser.Size = new Size(97, 19);
+            checkBoxEnableUser.TabIndex = 0;
+            checkBoxEnableUser.Text = "Abilita utente";
+            checkBoxEnableUser.UseVisualStyleBackColor = true;
+            // 
             // CreateEditUserForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(298, 267);
+            ClientSize = new Size(298, 364);
+            Controls.Add(groupBoxEnableUser);
             Controls.Add(buttonCancel);
             Controls.Add(buttonSave);
             Controls.Add(groupBoxRole);
@@ -128,6 +154,8 @@ namespace DicomModifier.Views
             groupBoxUserName.ResumeLayout(false);
             groupBoxUserName.PerformLayout();
             groupBoxRole.ResumeLayout(false);
+            groupBoxEnableUser.ResumeLayout(false);
+            groupBoxEnableUser.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -139,5 +167,7 @@ namespace DicomModifier.Views
         private ComboBox comboBoxRole;
         public Button buttonCancel;
         public Button buttonSave;
+        private GroupBox groupBoxEnableUser;
+        private CheckBox checkBoxEnableUser;
     }
 }

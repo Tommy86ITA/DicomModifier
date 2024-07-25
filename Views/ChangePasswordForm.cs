@@ -17,7 +17,7 @@ namespace DicomModifier.Views
         }
 
         // Costruttore principale
-        public ChangePasswordForm(AuthenticationService _1authService, User user, bool requireCurrentPassword = false)
+        public ChangePasswordForm(AuthenticationService authService, User user, bool requireCurrentPassword = false)
         {
             InitializeComponent();
             InitializeEvents();

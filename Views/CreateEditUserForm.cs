@@ -1,6 +1,4 @@
-﻿// Interfaces/CreateEditUserForm.cs
-
-using DicomModifier.Models;
+﻿using DicomModifier.Models;
 using DicomModifier.Services;
 
 namespace DicomModifier.Views
@@ -35,6 +33,11 @@ namespace DicomModifier.Views
                 textBoxUsername.Text = _user.Username;
                 textBoxUsername.Enabled = false; // Non consentire la modifica del nome utente
                 comboBoxRole.SelectedItem = _user.Role;
+                checkBoxEnableUser.Checked = _user.IsEnabled; // Carica lo stato di abilitazione
+                if (_user.Username == _authService.CurrentUser.Username)
+                {
+                    checkBoxEnableUser.Enabled = false; // Disabilita il checkbox se l'utente corrente coincide con l'utente loggato
+                }
             }
             else
             {
@@ -77,7 +80,7 @@ namespace DicomModifier.Views
 
             _user.Username = textBoxUsername.Text;
             _user.Role = selectedRole;
-            _user.IsEnabled = true; // Sempre abilitato di default
+            _user.IsEnabled = checkBoxEnableUser.Checked; // Imposta lo stato di abilitazione
 
             if (_isEdit)
             {
@@ -85,13 +88,17 @@ namespace DicomModifier.Views
                 {
                     return;
                 }
+
+                if (!UserValidation.CanDisableUser(_user, users, _user.IsEnabled))
+                {
+                    MessageBox.Show("Ci deve essere almeno un utente Administrator abilitato.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
 
             DialogResult = DialogResult.OK;
             Close();
         }
-
-
 
         private void ButtonCancel_Click(object? sender, EventArgs e)
         {

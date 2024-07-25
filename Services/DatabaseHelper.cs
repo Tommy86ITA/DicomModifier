@@ -1,6 +1,6 @@
-﻿// Interfaces/DatabaseHelper.cs
-
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
+using System;
+using System.IO;
 
 namespace DicomModifier.Services
 {
@@ -10,34 +10,55 @@ namespace DicomModifier.Services
 
         public static void InitializeDatabase()
         {
-            using var connection = new SqliteConnection($"Data Source={_databasePath}");
-            connection.Open();
-
-            var command = connection.CreateCommand();
-
-            // Se il database non esiste, crearlo
             if (!File.Exists(_databasePath))
             {
-                command.CommandText = @"
-                    CREATE TABLE Users (
-                        Username TEXT PRIMARY KEY,
-                        PasswordHash TEXT NOT NULL,
-                        Role TEXT NOT NULL,
-                        IsEnabled INTEGER NOT NULL
-                    )";
-                command.ExecuteNonQuery();
-                Console.WriteLine("Database created successfully.");
+                CreateDatabase();
             }
             else
             {
                 Console.WriteLine("Database already exists.");
             }
 
-            // Verifica se la tabella Users esiste
+            using var connection = GetConnection();
+            connection.Open();
+
+            EnsureTablesExist(connection);
+            EnsureAdminUserExists(connection);
+        }
+
+        private static void CreateDatabase()
+        {
+            using var connection = GetConnection();
+            connection.Open();
+            using var command = connection.CreateCommand();
+
+            command.CommandText = @"
+                CREATE TABLE Users (
+                    Username TEXT PRIMARY KEY,
+                    PasswordHash TEXT NOT NULL,
+                    Role TEXT NOT NULL,
+                    IsEnabled INTEGER NOT NULL
+                )";
+            command.ExecuteNonQuery();
+
+            command.CommandText = @"
+                CREATE TABLE AuditLog (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Username TEXT NOT NULL,
+                    Action TEXT NOT NULL,
+                    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                )";
+            command.ExecuteNonQuery();
+
+            Console.WriteLine("Database and tables created successfully.");
+        }
+
+        private static void EnsureTablesExist(SqliteConnection connection)
+        {
+            using var command = connection.CreateCommand();
+
             command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='Users'";
             var result = command.ExecuteScalar();
-
-            // Se la tabella Users non esiste, crearlo
             if (result == null)
             {
                 command.CommandText = @"
@@ -51,11 +72,29 @@ namespace DicomModifier.Services
                 Console.WriteLine("Table 'Users' created successfully.");
             }
 
-            // Verifica se l'utente admin esiste
+            command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='AuditLog'";
+            result = command.ExecuteScalar();
+            if (result == null)
+            {
+                command.CommandText = @"
+                    CREATE TABLE AuditLog (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Username TEXT NOT NULL,
+                        Action TEXT NOT NULL,
+                        Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )";
+                command.ExecuteNonQuery();
+                Console.WriteLine("Table 'AuditLog' created successfully.");
+            }
+        }
+
+        private static void EnsureAdminUserExists(SqliteConnection connection)
+        {
+            using var command = connection.CreateCommand();
+
             command.CommandText = "SELECT COUNT(*) FROM Users WHERE Username = 'admin'";
             long adminCount = (long)(command.ExecuteScalar() ?? 0); // Usa l'operatore null-coalescing
 
-            // Se l'utente admin non esiste, crearlo
             if (adminCount == 0)
             {
                 command.CommandText = @"
@@ -74,6 +113,20 @@ namespace DicomModifier.Services
         public static SqliteConnection GetConnection()
         {
             return new SqliteConnection($"Data Source={_databasePath}");
+        }
+
+        public static void LogAudit(string username, string action)
+        {
+            using var connection = GetConnection();
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+                INSERT INTO AuditLog (Username, Action)
+                VALUES ($username, $action)";
+            command.Parameters.AddWithValue("$username", username);
+            command.Parameters.AddWithValue("$action", action);
+            command.ExecuteNonQuery();
         }
     }
 }
