@@ -82,7 +82,6 @@ namespace DicomModifier.Views
             Close();
         }
 
-
         private void UpdatePasswordValidationIndicators()
         {
             string password = textBoxNewPassword.Text;

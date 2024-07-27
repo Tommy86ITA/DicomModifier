@@ -14,6 +14,7 @@
     <UserSecretsId>b7e7640f-0945-4eab-8271-8e9591ab20c7</UserSecretsId>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +29,7 @@
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

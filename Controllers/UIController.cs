@@ -86,6 +86,22 @@ namespace DicomModifier.Controllers
             }
         }
 
+        public static void UpdateUserManagementButtonsState(DataGridView dataGridView, Button buttonEdit, Button buttonDelete, Button buttonChangePassword)
+        {
+            bool isRowSelected = dataGridView.SelectedRows.Count > 0;
+
+            void UpdateButtonState(Button button, Color enabledColor)
+            {
+                button.Enabled = isRowSelected;
+                button.BackColor = isRowSelected ? enabledColor : Color.LightGray;
+            }
+
+            UpdateButtonState(buttonEdit, Color.DodgerBlue);
+            UpdateButtonState(buttonDelete, Color.LightCoral);
+            UpdateButtonState(buttonChangePassword, Color.DodgerBlue);
+        }
+
+
         // Apply styles to a DataGridView
         private static void StyleDataGridView(DataGridView dataGridView)
         {
@@ -243,7 +259,7 @@ namespace DicomModifier.Controllers
                     _mainForm.settingsToolStripMenuItem.Visible = false;
                     _mainForm.adminToolStripMenuItem.Visible = false;
                 }
-                else if (role == "Admin")
+                else if (role == "Administrator")
                 {
                     // Abilita tutte le funzionalità
                     _mainForm.settingsToolStripMenuItem.Visible = true;

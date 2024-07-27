@@ -1,4 +1,6 @@
-﻿using DicomModifier.Models;
+﻿// Interfaces/CreateEditUserForm.cs
+
+using DicomModifier.Models;
 using DicomModifier.Services;
 
 namespace DicomModifier.Views
@@ -84,14 +86,16 @@ namespace DicomModifier.Views
 
             if (_isEdit)
             {
-                if (!UserValidation.CanUpdateCurrentUserRole(_authService.CurrentUser, selectedRole, users))
+                if (_authService.CurrentUser.Username == _user.Username)
                 {
-                    return;
+                    if (!UserValidation.CanUpdateCurrentUserRole(_authService.CurrentUser, selectedRole, users))
+                    {
+                        return;
+                    }
                 }
 
                 if (!UserValidation.CanDisableUser(_user, users, _user.IsEnabled))
                 {
-                    MessageBox.Show("Ci deve essere almeno un utente Administrator abilitato.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }

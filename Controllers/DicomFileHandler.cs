@@ -3,10 +3,11 @@
 using FellowOakDicom;
 using FellowOakDicom.Media;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace DicomModifier.Controllers
 {
-    public class DicomFileHandler
+    public partial class DicomFileHandler
     {
         private readonly Queue<string> dicomQueue;
         private string? dicomDirBasePath;
@@ -210,5 +211,99 @@ namespace DicomModifier.Controllers
             GC.Collect(); // Suggerimento per forzare la garbage collection dopo aver resettato la coda
             GC.WaitForPendingFinalizers(); // Attende il completamento della garbage collection
         }
+
+        public static bool CheckIfRemovableDrive(string filePath)
+        {
+            string driveLetter = Path.GetPathRoot(filePath)!;
+
+            Debug.WriteLine($"Checking if drive {driveLetter} is removable.");
+
+            DriveInfo driveInfo = new(driveLetter);
+            bool isRemovable = driveInfo.DriveType == DriveType.Removable || driveInfo.DriveType == DriveType.CDRom;
+
+            Debug.WriteLine($"Drive {driveLetter} is removable: {isRemovable}");
+
+            return isRemovable;
+        }
+
+        public static void EjectDrive(string driveLetter)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(driveLetter))
+                {
+                    MessageBox.Show("Drive letter is null or empty.");
+                    return;
+                }
+
+                // Assicurati che driveLetter sia nel formato corretto
+                if (driveLetter.EndsWith(":\\"))
+                {
+                    driveLetter = driveLetter.TrimEnd('\\');
+                }
+                //else if (!driveLetter.EndsWith(":"))
+                //{
+                //    driveLetter += ":";
+                //}
+
+                Debug.WriteLine($"Attempting to eject drive: {driveLetter}");
+
+                // Apri il handle al volume
+                string volume = @"\\.\" + driveLetter;
+                IntPtr handle = CreateFile(volume, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
+
+                if (handle.ToInt64() == INVALID_HANDLE_VALUE)
+                {
+                    throw new IOException("Unable to open volume " + driveLetter);
+                }
+
+                // Esegui il comando di espulsione
+                int dummy = 0;
+                DeviceIoControl(handle, IOCTL_STORAGE_EJECT_MEDIA, IntPtr.Zero, 0, IntPtr.Zero, 0, ref dummy, IntPtr.Zero);
+
+                // Chiudi il handle
+                CloseHandle(handle);
+
+                MessageBox.Show($"L'importazione è stata completata.\nRicordati di restituire il CD/DVD al Paziente!", "Impostazione completata", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Errore durante l'espulsione del drive: {ex.Message}");
+            }
+        }
+
+        private const uint GENERIC_READ = 0x80000000;
+        private const uint GENERIC_WRITE = 0x40000000;
+        private const uint FILE_SHARE_READ = 0x00000001;
+        private const uint FILE_SHARE_WRITE = 0x00000002;
+        private const uint OPEN_EXISTING = 3;
+        private const int INVALID_HANDLE_VALUE = -1;
+        private const uint IOCTL_STORAGE_EJECT_MEDIA = 0x2D4808;
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr CreateFile(
+            string lpFileName,
+            uint dwDesiredAccess,
+            uint dwShareMode,
+            IntPtr lpSecurityAttributes,
+            uint dwCreationDisposition,
+            uint dwFlagsAndAttributes,
+            IntPtr hTemplateFile);
+
+        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool DeviceIoControl(
+            IntPtr hDevice,
+            uint dwIoControlCode,
+            IntPtr lpInBuffer,
+            uint nInBufferSize,
+            IntPtr lpOutBuffer,
+            uint nOutBufferSize,
+            ref int lpBytesReturned,
+            IntPtr lpOverlapped);
+
+        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool CloseHandle(IntPtr hObject);
     }
 }

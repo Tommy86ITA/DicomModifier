@@ -1,8 +1,7 @@
-﻿using DicomModifier.Models;
+﻿// Interfaces/AuthenticationServices.cs
+
+using DicomModifier.Models;
 using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace DicomModifier.Services
 {
@@ -50,7 +49,6 @@ namespace DicomModifier.Services
             }
             return false;
         }
-
 
         public bool ChangePassword(string currentPassword, string newPassword)
         {

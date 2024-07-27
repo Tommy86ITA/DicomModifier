@@ -1,7 +1,8 @@
 ﻿// Interfaces/ManageUsersForm.cs
 
-using DicomModifier.Services;
+using DicomModifier.Controllers;
 using DicomModifier.Models;
+using DicomModifier.Services;
 
 namespace DicomModifier.Views
 {
@@ -17,6 +18,7 @@ namespace DicomModifier.Views
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _users = [];
             LoadUsers();
+            UIController.UpdateUserManagementButtonsState(dataGridViewUsers, buttonEditUser, buttonDeleteUser, buttonChangePassword);
         }
 
         private void InitializeEvents()
@@ -26,6 +28,12 @@ namespace DicomModifier.Views
             buttonDeleteUser.Click += ButtonDeleteUser_Click;
             buttonChangePassword.Click += ButtonChangePassword_Click;
             buttonClose.Click += ButtonClose_Click;
+            dataGridViewUsers.SelectionChanged += DataGridViewUsers_SelectionChanged;
+        }
+
+        private void DataGridViewUsers_SelectionChanged(object? sender, EventArgs e)
+        {
+            UIController.UpdateUserManagementButtonsState(dataGridViewUsers, buttonEditUser, buttonDeleteUser, buttonChangePassword);
         }
 
         private void LoadUsers()
@@ -69,7 +77,6 @@ namespace DicomModifier.Views
             }
         }
 
-
         private void ButtonEditUser_Click(object? sender, EventArgs e)
         {
             if (dataGridViewUsers.SelectedRows.Count == 0)
@@ -95,8 +102,16 @@ namespace DicomModifier.Views
                 {
                     var updatedUser = createEditUserForm.GetUser();
                     var users = AuthenticationService.GetUsers();
-                    if (!UserValidation.CanUpdateUserRole(updatedUser, users, updatedUser.Role) ||
-                        !UserValidation.CanUpdateCurrentUserRole(_authService.CurrentUser, updatedUser.Role, users))
+                    if (_authService.CurrentUser.Username == updatedUser.Username)
+                    {
+                        if (!UserValidation.CanUpdateCurrentUserRole(_authService.CurrentUser, updatedUser.Role, users))
+                        {
+                            LoadUsers(); // Ripristina lo stato originale
+                            return;
+                        }
+                    }
+
+                    if (!UserValidation.CanUpdateUserRole(updatedUser, users, updatedUser.Role))
                     {
                         LoadUsers(); // Ripristina lo stato originale
                         return;
@@ -114,7 +129,6 @@ namespace DicomModifier.Views
                 }
             }
         }
-
 
         private void ButtonDeleteUser_Click(object? sender, EventArgs e)
         {

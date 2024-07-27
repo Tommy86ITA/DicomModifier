@@ -54,6 +54,7 @@ namespace DicomModifier.Services
                 var adminCount = users.Count(u => u.Role == "Administrator" && u.IsEnabled);
                 if (adminCount <= 1)
                 {
+                    MessageBox.Show("Ci deve essere almeno un utente Administrator abilitato.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }

@@ -2,7 +2,6 @@
 
 using DicomModifier.Models;
 using FellowOakDicom;
-using System.Diagnostics;
 
 namespace DicomModifier.Controllers
 {
@@ -52,13 +51,14 @@ namespace DicomModifier.Controllers
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private async void MainForm_OnSelectFileAsync(object? sender, EventArgs e)
         {
-            Logger.Log("Inizio importazione file DICOM.");
             using OpenFileDialog openFileDialog = new();
             openFileDialog.Filter = "DICOM files (*.dcm)|*.dcm|All files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                string filePath = openFileDialog.FileName;
+                bool isRemovableDrive = DicomFileHandler.CheckIfRemovableDrive(filePath);
                 _uiController.UpdateStatus("Importazione in corso...");
                 _uiController.UpdateProgressBar(0, 1);
                 await _dicomManager.AddDicomFileAsync(openFileDialog.FileName);
@@ -71,8 +71,9 @@ namespace DicomModifier.Controllers
                 _uiController.UpdateControlStates();
                 _uiController.UpdateStatus("Importazione completata.");
                 _uiController.UpdateProgressBar(1, 1);
+                int fileCount = await LoadDicomFilesToGridAsync();
+                FinalizeImport(fileCount, isRemovableDrive, filePath);
             }
-            Logger.Log("Importazione file DICOM completata.");
         }
 
         /// <summary>
@@ -86,14 +87,15 @@ namespace DicomModifier.Controllers
             using FolderBrowserDialog folderBrowserDialog = new();
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
+                string folderPath = folderBrowserDialog.SelectedPath;
+                bool isRemovableDrive = DicomFileHandler.CheckIfRemovableDrive(folderPath);
                 _uiController.DisableControls();
-                Debug.WriteLine($"Selected folder: {folderBrowserDialog.SelectedPath}");
                 _uiController.UpdateStatus("Importazione in corso...");
                 List<string> files = GetFilesFromFolder(folderBrowserDialog.SelectedPath);
                 InitializeProgress(files.Count);
                 await ProcessFilesAsync(files);
                 int fileCount = await LoadDicomFilesToGridAsync();
-                FinalizeImport(fileCount);
+                FinalizeImport(fileCount, isRemovableDrive, folderPath);
             }
             Logger.Log("Importazione cartella DICOM completata.");
         }
@@ -109,11 +111,13 @@ namespace DicomModifier.Controllers
             using OpenFileDialog openFileDialog = new();
             if (ConfigureOpenFileDialog(openFileDialog))
             {
+                string dicomDirPath = openFileDialog.FileName;
+                bool isRemovableDrive = DicomFileHandler.CheckIfRemovableDrive(dicomDirPath);
                 _uiController.DisableControls();
                 _uiController.UpdateStatus("Importazione in corso...");
                 await ImportDicomDirAsync(openFileDialog.FileName);
                 int fileCount = await LoadDicomFilesToGridAsync();
-                FinalizeImport(fileCount);
+                FinalizeImport(fileCount, isRemovableDrive, dicomDirPath);
             }
             Logger.Log("Importazione DICOMDIR completata.");
         }
@@ -378,12 +382,17 @@ namespace DicomModifier.Controllers
         /// Finalizes the import process and configures the controls states.
         /// </summary>
         /// <param name="fileCount">The file count.</param>
-        private void FinalizeImport(int fileCount)
+        private void FinalizeImport(int fileCount, bool isRemovableDrive, string sourcePath)
         {
             _uiController.UpdateControlStates();
             _uiController.UpdateStatus("Importazione completata.");
             _uiController.UpdateProgressBar(fileCount, fileCount);
             _uiController.EnableControls();
+
+            if (isRemovableDrive)
+            {
+                DicomFileHandler.EjectDrive(Path.GetPathRoot(sourcePath)!);
+            }
         }
 
         /// <summary>

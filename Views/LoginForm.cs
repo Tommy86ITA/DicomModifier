@@ -45,7 +45,6 @@ namespace DicomModifier.Views
             }
         }
 
-
         private void ButtonQuit_Click(object? sender, EventArgs e)
         {
             Application.Exit();
