@@ -7,14 +7,17 @@ namespace DicomModifier.Services
 {
     public class AuthenticationService
     {
+        // Property to hold the current user
         public User CurrentUser { get; private set; }
 
+        // Constructor to initialize the database and the current user
         public AuthenticationService()
         {
             DatabaseHelper.InitializeDatabase();
-            CurrentUser = new User(); // Inizializzazione predefinita
+            CurrentUser = new User(); // Default initialization
         }
 
+        // Method to authenticate a user
         public bool Authenticate(string username, string password)
         {
             using var connection = DatabaseHelper.GetConnection();
@@ -30,11 +33,13 @@ namespace DicomModifier.Services
                 var role = reader.GetString(1);
                 var isEnabled = reader.GetInt32(2) == 1;
 
+                // Check if the user is enabled
                 if (!isEnabled)
                 {
                     throw new InvalidOperationException("L'utente non è abilitato. Contattare un amministratore.");
                 }
 
+                // Verify the password
                 if (BCrypt.Net.BCrypt.Verify(password, passwordHash))
                 {
                     CurrentUser = new User
@@ -50,32 +55,7 @@ namespace DicomModifier.Services
             return false;
         }
 
-        public bool ChangePassword(string currentPassword, string newPassword)
-        {
-            if (!PasswordValidation.ValidatePassword(newPassword, out string errorMessage))
-            {
-                throw new InvalidOperationException(errorMessage);
-            }
-
-            if (BCrypt.Net.BCrypt.Verify(currentPassword, CurrentUser.PasswordHash))
-            {
-                var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-                using (var connection = DatabaseHelper.GetConnection())
-                {
-                    connection.Open();
-                    var command = connection.CreateCommand();
-                    command.CommandText = "UPDATE Users SET PasswordHash = $newPasswordHash WHERE Username = $username";
-                    command.Parameters.AddWithValue("$newPasswordHash", newPasswordHash);
-                    command.Parameters.AddWithValue("$username", CurrentUser.Username);
-                    command.ExecuteNonQuery();
-                }
-                CurrentUser.PasswordHash = newPasswordHash;
-                //DatabaseHelper.LogAudit(CurrentUser.Username, "Password changed");
-                return true;
-            }
-            return false;
-        }
-
+        // Method to add a new user
         public static bool AddUser(string username, string password, string role)
         {
             using var connection = DatabaseHelper.GetConnection();
@@ -93,13 +73,14 @@ namespace DicomModifier.Services
             }
             catch (SqliteException)
             {
-                return false; // Username già esistente
+                return false; // Username already exists
             }
         }
 
+        // Method to remove a user
         public static bool RemoveUser(string username)
         {
-            if (username == "admin") return false; // Evita la rimozione dell'utente admin predefinito
+            if (username == "admin") return false; // Prevent removal of the default admin user
 
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
@@ -110,6 +91,7 @@ namespace DicomModifier.Services
             return rowsAffected > 0;
         }
 
+        // Method to update a user's role
         public static bool UpdateRole(string username, string role)
         {
             using var connection = DatabaseHelper.GetConnection();
@@ -122,6 +104,7 @@ namespace DicomModifier.Services
             return rowsAffected > 0;
         }
 
+        // Method to verify a user's password
         public static bool VerifyPassword(string username, string password)
         {
             using var connection = DatabaseHelper.GetConnection();
@@ -139,6 +122,7 @@ namespace DicomModifier.Services
             return false;
         }
 
+        // Method to update a user's password
         public static bool UpdatePassword(string username, string newPasswordHash)
         {
             using var connection = DatabaseHelper.GetConnection();
@@ -151,6 +135,7 @@ namespace DicomModifier.Services
             return rowsAffected > 0;
         }
 
+        // Method to enable or disable a user
         public static bool ToggleEnableUser(string username, bool isEnabled)
         {
             using var connection = DatabaseHelper.GetConnection();
@@ -163,6 +148,7 @@ namespace DicomModifier.Services
             return rowsAffected > 0;
         }
 
+        // Method to get a list of all users
         public static List<User> GetUsers()
         {
             var users = new List<User>();

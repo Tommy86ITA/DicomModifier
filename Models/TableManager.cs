@@ -5,9 +5,6 @@ using FellowOakDicom;
 
 namespace DicomModifier.Models
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TableManager"/> class.
-    /// </summary>
     public class TableManager
     {
         private readonly DataGridView _dataGridView;
@@ -21,10 +18,6 @@ namespace DicomModifier.Models
             _dataGridView.SelectionChanged += DataGridView_SelectionChanged;
         }
 
-        /// <summary>
-        /// Adds the DICOM files to grid.
-        /// </summary>
-        /// <param name="dataset">The dataset.</param>
         public void AddDicomToGrid(DicomDataset dataset)
         {
             string patientID = dataset.GetSingleValueOrDefault(DicomTag.PatientID, "Unknown");
@@ -73,7 +66,6 @@ namespace DicomModifier.Models
                 _dataGridView.Rows.Add(newRow);
             }
 
-            // Update control states after adding a row
             var mainForm = _dataGridView.FindForm() as MainForm;
             _uiController.UpdateControlStates();
         }

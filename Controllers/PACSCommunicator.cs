@@ -8,20 +8,11 @@ using System.Diagnostics;
 
 namespace DicomModifier.Controllers
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PACSCommunicator"/> class.
-    /// </summary>
-    /// <param name="settings">The settings.</param>
-    /// <param name="uiController">The UI controller.</param>
     public class PACSCommunicator(PACSSettings settings, UIController uiController)
     {
         private readonly PACSSettings _settings = settings;
         private readonly UIController _uiController = uiController;
 
-        /// <summary>
-        /// Sends the C-ECHO
-        /// </summary>
-        /// <returns></returns>
         public async Task<bool> SendCEcho()
         {
             try
@@ -54,12 +45,6 @@ namespace DicomModifier.Controllers
             }
         }
 
-        /// <summary>
-        /// Sends the DICOM files to the PACS
-        /// </summary>
-        /// <param name="filePaths">The file paths.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
         public async Task<bool> SendFiles(List<string> filePaths, CancellationToken cancellationToken)
         {
             try

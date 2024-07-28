@@ -9,6 +9,10 @@ namespace DicomModifier.Views
     {
         private readonly AuthenticationService authService;
 
+        /// <summary>
+        /// Costruttore per il form di login. Inizializza i componenti e imposta la versione.
+        /// </summary>
+        /// <param name="authService">Servizio di autenticazione iniettato.</param>
         public LoginForm(AuthenticationService authService)
         {
             InitializeComponent();
@@ -22,6 +26,10 @@ namespace DicomModifier.Views
             buttonQuit.Click += ButtonQuit_Click;
         }
 
+        /// <summary>
+        /// Gestore dell'evento per il pulsante di login.
+        /// Verifica le credenziali dell'utente e chiude il form se l'autenticazione ha successo.
+        /// </summary>
         private void ButtonLogin_Click(object? sender, EventArgs e)
         {
             string username = textBoxUsername.Text;
@@ -45,6 +53,10 @@ namespace DicomModifier.Views
             }
         }
 
+        /// <summary>
+        /// Gestore dell'evento per il pulsante di uscita.
+        /// Chiude l'applicazione.
+        /// </summary>
         private void ButtonQuit_Click(object? sender, EventArgs e)
         {
             Application.Exit();

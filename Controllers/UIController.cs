@@ -101,7 +101,6 @@ namespace DicomModifier.Controllers
             UpdateButtonState(buttonChangePassword, Color.DodgerBlue);
         }
 
-
         // Apply styles to a DataGridView
         private static void StyleDataGridView(DataGridView dataGridView)
         {
