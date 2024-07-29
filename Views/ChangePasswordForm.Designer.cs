@@ -31,6 +31,7 @@ namespace DicomModifier.Views
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            labelUser = new Label();
             labelConfirmNewPassword = new Label();
             textBoxConfirmNewPassword = new TextBox();
             labelNewPassword = new Label();
@@ -50,6 +51,7 @@ namespace DicomModifier.Views
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(labelUser);
             groupBox1.Controls.Add(labelConfirmNewPassword);
             groupBox1.Controls.Add(textBoxConfirmNewPassword);
             groupBox1.Controls.Add(labelNewPassword);
@@ -62,6 +64,18 @@ namespace DicomModifier.Views
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Modifica Password";
+            // 
+            // labelUser
+            // 
+            labelUser.AutoSize = true;
+            labelUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            labelUser.Location = new Point(55, 32);
+            labelUser.Name = "labelUser";
+            labelUser.Size = new Size(241, 15);
+            labelUser.TabIndex = 6;
+            labelUser.Text = "Stai modificando la password dell'utente:\"";
+            labelUser.TextAlign = ContentAlignment.MiddleCenter;
+            labelUser.Visible = false;
             // 
             // labelConfirmNewPassword
             // 
@@ -241,5 +255,6 @@ namespace DicomModifier.Views
         private Label labelUpperCase;
         private Label labelLength;
         private Label label1;
+        private Label labelUser;
     }
 }

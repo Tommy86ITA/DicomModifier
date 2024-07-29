@@ -69,7 +69,7 @@ namespace DicomModifier
             aboutToolStripMenuItem = new ToolStripMenuItem();
             adminToolStripMenuItem = new ToolStripMenuItem();
             manageUserToolStripMenuItem = new ToolStripMenuItem();
-            visualizzaLogToolStripMenuItem = new ToolStripMenuItem();
+            auditLogToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             buttonResetQueue = new Button();
             groupSelectFiles.SuspendLayout();
@@ -393,7 +393,7 @@ namespace DicomModifier
             // 
             // adminToolStripMenuItem
             // 
-            adminToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { manageUserToolStripMenuItem, visualizzaLogToolStripMenuItem });
+            adminToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { manageUserToolStripMenuItem, auditLogToolStripMenuItem });
             adminToolStripMenuItem.Name = "adminToolStripMenuItem";
             adminToolStripMenuItem.Size = new Size(233, 22);
             adminToolStripMenuItem.Text = "Amministrazione";
@@ -404,11 +404,11 @@ namespace DicomModifier
             manageUserToolStripMenuItem.Size = new Size(180, 22);
             manageUserToolStripMenuItem.Text = "Gestione utenti...";
             // 
-            // visualizzaLogToolStripMenuItem
+            // auditLogToolStripMenuItem
             // 
-            visualizzaLogToolStripMenuItem.Name = "visualizzaLogToolStripMenuItem";
-            visualizzaLogToolStripMenuItem.Size = new Size(180, 22);
-            visualizzaLogToolStripMenuItem.Text = "Visualizza Log...";
+            auditLogToolStripMenuItem.Name = "auditLogToolStripMenuItem";
+            auditLogToolStripMenuItem.Size = new Size(180, 22);
+            auditLogToolStripMenuItem.Text = "Visualizza Log...";
             // 
             // settingsToolStripMenuItem
             // 
@@ -497,7 +497,7 @@ namespace DicomModifier
         public ToolStripMenuItem logoutToolStripMenuItemLogout;
         public ToolStripMenuItem accountToolStripMenuItem;
         private ToolStripMenuItem manageUserToolStripMenuItem;
-        private ToolStripMenuItem visualizzaLogToolStripMenuItem;
+        private ToolStripMenuItem auditLogToolStripMenuItem;
         public ToolStripMenuItem adminToolStripMenuItem;
     }
 }

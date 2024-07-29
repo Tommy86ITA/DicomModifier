@@ -2,6 +2,7 @@
 
 using DicomModifier.Controllers;
 using DicomModifier.Models;
+using DicomModifier.Services;
 using System.ComponentModel;
 
 namespace DicomModifier
@@ -13,7 +14,7 @@ namespace DicomModifier
         private readonly UIController _uiController;
         private readonly ToolTip toolTip;
 
-        public SettingsForm(PACSSettings settings, SettingsController settingsController, UIController uiController)
+        public SettingsForm(PACSSettings settings, SettingsController settingsController, UIController uiController, AuthenticationService _authService)
         {
             InitializeComponent();
             InitializeEvents();
@@ -25,6 +26,13 @@ namespace DicomModifier
             ApplyStyles();
             toolTip = new ToolTip();
             InitializeTooltips();
+            _authService = new AuthenticationService();
+
+            if (_authService.CurrentUser.Role == "Technician")
+            {
+                groupBoxParameters.Enabled = false;
+            }
+
             ValidateFields(); // iniziale validazione dei campi
         }
 

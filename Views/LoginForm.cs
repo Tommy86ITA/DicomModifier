@@ -39,17 +39,20 @@ namespace DicomModifier.Views
                 if (authService.Authenticate(username, password))
                 {
                     MessageBox.Show("Accesso consentito, credenziali verificate!", "Accesso consentito!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DatabaseHelper.LogActivity(username, "Login effettuato");
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
                 else
                 {
                     MessageBox.Show("Accesso negato. Verifica che le credenziali siano corrette.", "Accesso negato", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DatabaseHelper.LogActivity(username, "Accesso negato - Credenziali errate");
                 }
             }
             catch (InvalidOperationException ex)
             {
                 MessageBox.Show(ex.Message, "Accesso negato", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DatabaseHelper.LogActivity(username, $"Accesso negato - Errore {ex}");
             }
         }
 

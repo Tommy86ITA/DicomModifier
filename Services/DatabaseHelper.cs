@@ -52,6 +52,7 @@ namespace DicomModifier.Services
                     Action TEXT NOT NULL,
                     Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
                 )";
+            LogActivity("System", "Creato log di audit");
             command.ExecuteNonQuery(); // Execute the command
 
             Console.WriteLine("Database and tables created successfully."); // Log the successful creation of the database and tables
@@ -93,6 +94,7 @@ namespace DicomModifier.Services
                         Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
                     )";
                 command.ExecuteNonQuery(); // Execute the command
+                LogActivity("System", "Creato log di audit"); // Log the audit log creation activity
                 Console.WriteLine("Table 'AuditLog' created successfully."); // Log the successful creation of the AuditLog table
             }
         }
@@ -115,6 +117,7 @@ namespace DicomModifier.Services
                 command.Parameters.AddWithValue("$passwordHash", BCrypt.Net.BCrypt.HashPassword("admin123")); // Hash the default admin password
                 command.ExecuteNonQuery(); // Execute the command
                 Console.WriteLine("Admin user created successfully."); // Log the successful creation of the admin user
+                LogActivity("System", "Creato utente di default"); // Log the admin user creation activity
             }
             else
             {
@@ -129,18 +132,20 @@ namespace DicomModifier.Services
         }
 
         // Logs an action to the AuditLog table
-        public static void LogAudit(string username, string action)
+        public static void LogActivity(string username, string action)
         {
-            using var connection = GetConnection(); // Get a connection to the database
-            connection.Open(); // Open the connection
+            using var connection = GetConnection();
+            connection.Open();
 
-            using var command = connection.CreateCommand(); // Create a command to execute SQL queries
+            using var command = connection.CreateCommand();
             command.CommandText = @"
-                INSERT INTO AuditLog (Username, Action)
-                VALUES ($username, $action)";
-            command.Parameters.AddWithValue("$username", username); // Add the username parameter
-            command.Parameters.AddWithValue("$action", action); // Add the action parameter
-            command.ExecuteNonQuery(); // Execute the command
+        INSERT INTO AuditLog (Timestamp, Username, Action)
+        VALUES (@timestamp, @username, @action)";
+            command.Parameters.AddWithValue("@timestamp", DateTime.UtcNow.ToString("o"));
+            command.Parameters.AddWithValue("@username", username);
+            command.Parameters.AddWithValue("@action", action);
+
+            command.ExecuteNonQuery();
         }
     }
 }

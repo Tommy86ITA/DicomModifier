@@ -255,13 +255,11 @@ namespace DicomModifier.Controllers
                 // Nascondi o disabilita i controlli per i Technician
                 if (role == "Technician")
                 {
-                    _mainForm.settingsToolStripMenuItem.Visible = false;
                     _mainForm.adminToolStripMenuItem.Visible = false;
                 }
                 else if (role == "Administrator")
                 {
                     // Abilita tutte le funzionalità
-                    _mainForm.settingsToolStripMenuItem.Visible = true;
                     _mainForm.adminToolStripMenuItem.Visible = true;
                 }
             });

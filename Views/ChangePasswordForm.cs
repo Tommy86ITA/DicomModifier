@@ -45,6 +45,8 @@ namespace DicomModifier.Views
             {
                 textBoxCurrentPassword.Visible = false;
                 labelCurrentPassword.Visible = false;
+                labelUser.Visible = true;
+                labelUser.Text = $"Stai modificando la password dell'utente: \n{_user.Username}";
             }
         }
 

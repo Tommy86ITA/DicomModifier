@@ -31,7 +31,7 @@ namespace DicomModifier
         private readonly UIController _uiController;
         private readonly ToolTip toolTip;
         private PACSSettings _settings;
-        private readonly AuthenticationService authService;
+        private readonly AuthenticationService _authService;
 
         public bool isSending = false;
 
@@ -40,7 +40,7 @@ namespace DicomModifier
         public MainForm(AuthenticationService authService)
         {
             _uiController = new UIController(this);
-            this.authService = authService;
+            this._authService = authService;
             InitializeComponent();
             _uiController.ApplyStyles();
 
@@ -79,17 +79,24 @@ namespace DicomModifier
             esciToolStripMenuItem.Click += EsciToolStripMenuItem_Click;
             helpToolStripMenuItem.Click += HelpToolStripMenuItem_Click;
             accountToolStripMenuItem.Click += AccountOptionsToolStripMenuItem_Click;
+            auditLogToolStripMenuItem.Click += AuditLogToolStripMenuItem_Click;
 
-            logoutToolStripMenuItemLogout.Click += ToolStripMenuItemLogout_Click;
+            logoutToolStripMenuItemLogout.Click += LogoutToolStripMenuItemLogout_Click;
 
             manageUserToolStripMenuItem.Click += ManageUserToolStripMenuItem_Click;
 
             this.FormClosing += MainForm_FormClosing;
         }
 
+        private void AuditLogToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            using AuditLogForm auditLogForm = new();
+            auditLogForm.ShowDialog();
+        }
+
         private void ManageUserToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            using ManageUsersForm manageUsersForm = new(authService);  // Passa authService qui
+            using ManageUsersForm manageUsersForm = new(_authService);  // Passa authService qui
             manageUsersForm.ShowDialog();
         }
 
@@ -122,7 +129,7 @@ namespace DicomModifier
 
         private void SettingsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            using SettingsForm settingsForm = new(_settings, _settingsController, _uiController);
+            using SettingsForm settingsForm = new(_settings, _settingsController, _uiController, _authService);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
                 _settings = settingsForm.GetSettings();
@@ -130,17 +137,17 @@ namespace DicomModifier
             }
         }
 
-        private void ToolStripMenuItemLogout_Click(object? sender, EventArgs e)
+        private void LogoutToolStripMenuItemLogout_Click(object? sender, EventArgs e)
         {
             this.Hide();
             ClearTempFolder();
-            using LoginForm loginForm = new(authService);
+            using LoginForm loginForm = new(_authService);
             if (loginForm.ShowDialog() == DialogResult.OK)
             {
                 this.Show();
                 // Riaggiorna l'interfaccia utente in base al nuovo login
-                _uiController.UpdateUIBasedOnRole(authService.CurrentUser.Role);
-                logoutToolStripMenuItemLogout.Text = $"Utente: {authService.CurrentUser.Username};  Ruolo: {authService.CurrentUser.Role}";
+                _uiController.UpdateUIBasedOnRole(_authService.CurrentUser.Role);
+                logoutToolStripMenuItemLogout.Text = $"Utente: {_authService.CurrentUser.Username};  Ruolo: {_authService.CurrentUser.Role}";
             }
             else
             {
@@ -150,7 +157,7 @@ namespace DicomModifier
 
         private void AccountOptionsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            using ChangePasswordForm changePasswordForm = new(authService);
+            using ChangePasswordForm changePasswordForm = new(_authService);
             changePasswordForm.ShowDialog();
         }
 

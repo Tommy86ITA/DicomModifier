@@ -33,7 +33,7 @@ namespace DicomModifier
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
-            groupBox1 = new GroupBox();
+            groupBoxParameters = new GroupBox();
             labelLocalAE = new Label();
             textBoxLocalAETitle = new TextBox();
             textBoxTimeout = new TextBox();
@@ -47,30 +47,30 @@ namespace DicomModifier
             buttonEchoTest = new Button();
             buttonCancel = new Button();
             buttonSave = new Button();
-            groupBoxLocalAE = new GroupBox();
+            groupBoxCECHO = new GroupBox();
             panelEchoStatus = new Panel();
-            groupBox1.SuspendLayout();
-            groupBoxLocalAE.SuspendLayout();
+            groupBoxParameters.SuspendLayout();
+            groupBoxCECHO.SuspendLayout();
             SuspendLayout();
             // 
-            // groupBox1
+            // groupBoxParameters
             // 
-            groupBox1.Controls.Add(labelLocalAE);
-            groupBox1.Controls.Add(textBoxLocalAETitle);
-            groupBox1.Controls.Add(textBoxTimeout);
-            groupBox1.Controls.Add(labelServerTimeout);
-            groupBox1.Controls.Add(textBoxServerPort);
-            groupBox1.Controls.Add(labelServerPort);
-            groupBox1.Controls.Add(textBoxServerIP);
-            groupBox1.Controls.Add(labelServerIP);
-            groupBox1.Controls.Add(textBoxAETitle);
-            groupBox1.Controls.Add(labelServerAE);
-            groupBox1.Location = new Point(12, 9);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(359, 240);
-            groupBox1.TabIndex = 0;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Parametri Server PACS";
+            groupBoxParameters.Controls.Add(labelLocalAE);
+            groupBoxParameters.Controls.Add(textBoxLocalAETitle);
+            groupBoxParameters.Controls.Add(textBoxTimeout);
+            groupBoxParameters.Controls.Add(labelServerTimeout);
+            groupBoxParameters.Controls.Add(textBoxServerPort);
+            groupBoxParameters.Controls.Add(labelServerPort);
+            groupBoxParameters.Controls.Add(textBoxServerIP);
+            groupBoxParameters.Controls.Add(labelServerIP);
+            groupBoxParameters.Controls.Add(textBoxAETitle);
+            groupBoxParameters.Controls.Add(labelServerAE);
+            groupBoxParameters.Location = new Point(12, 9);
+            groupBoxParameters.Name = "groupBoxParameters";
+            groupBoxParameters.Size = new Size(359, 240);
+            groupBoxParameters.TabIndex = 0;
+            groupBoxParameters.TabStop = false;
+            groupBoxParameters.Text = "Parametri Server PACS";
             // 
             // labelLocalAE
             // 
@@ -189,16 +189,16 @@ namespace DicomModifier
             buttonSave.Text = "Salva";
             buttonSave.UseVisualStyleBackColor = true;
             // 
-            // groupBoxLocalAE
+            // groupBoxCECHO
             // 
-            groupBoxLocalAE.Controls.Add(panelEchoStatus);
-            groupBoxLocalAE.Controls.Add(buttonEchoTest);
-            groupBoxLocalAE.Location = new Point(12, 255);
-            groupBoxLocalAE.Name = "groupBoxLocalAE";
-            groupBoxLocalAE.Size = new Size(359, 82);
-            groupBoxLocalAE.TabIndex = 1;
-            groupBoxLocalAE.TabStop = false;
-            groupBoxLocalAE.Text = "Test C-ECHO";
+            groupBoxCECHO.Controls.Add(panelEchoStatus);
+            groupBoxCECHO.Controls.Add(buttonEchoTest);
+            groupBoxCECHO.Location = new Point(12, 255);
+            groupBoxCECHO.Name = "groupBoxCECHO";
+            groupBoxCECHO.Size = new Size(359, 82);
+            groupBoxCECHO.TabIndex = 1;
+            groupBoxCECHO.TabStop = false;
+            groupBoxCECHO.Text = "Test C-ECHO";
             // 
             // panelEchoStatus
             // 
@@ -217,8 +217,8 @@ namespace DicomModifier
             ClientSize = new Size(383, 413);
             Controls.Add(buttonCancel);
             Controls.Add(buttonSave);
-            Controls.Add(groupBoxLocalAE);
-            Controls.Add(groupBox1);
+            Controls.Add(groupBoxCECHO);
+            Controls.Add(groupBoxParameters);
             HelpButton = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -228,15 +228,15 @@ namespace DicomModifier
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Impostazioni";
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
-            groupBoxLocalAE.ResumeLayout(false);
+            groupBoxParameters.ResumeLayout(false);
+            groupBoxParameters.PerformLayout();
+            groupBoxCECHO.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
-        private GroupBox groupBox1;
+        private GroupBox groupBoxParameters;
         private Button buttonCancel;
         private Button buttonSave;
         private Button buttonEchoTest;
@@ -250,7 +250,7 @@ namespace DicomModifier
         private Label labelServerAE;
         private TextBox textBoxLocalAETitle;
         private Label labelLocalAE;
-        private GroupBox groupBoxLocalAE;
+        private GroupBox groupBoxCECHO;
         private Panel panelEchoStatus;
     }
 }
