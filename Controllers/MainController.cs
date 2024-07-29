@@ -66,7 +66,6 @@ namespace DicomModifier.Controllers
 
         private async void MainForm_OnSelectFolderAsync(object? sender, EventArgs e)
         {
-            Logger.Log("Inizio importazione cartella DICOM.");
             using FolderBrowserDialog folderBrowserDialog = new();
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
@@ -80,12 +79,10 @@ namespace DicomModifier.Controllers
                 int fileCount = await LoadDicomFilesToGridAsync();
                 FinalizeImport(fileCount, isRemovableDrive, folderPath);
             }
-            Logger.Log("Importazione cartella DICOM completata.");
         }
 
         private async void MainForm_OnSelectDicomDirAsync(object? sender, EventArgs e)
         {
-            Logger.Log("Inizio importazione DICOMDIR.");
             using OpenFileDialog openFileDialog = new();
             if (ConfigureOpenFileDialog(openFileDialog))
             {
@@ -97,7 +94,6 @@ namespace DicomModifier.Controllers
                 int fileCount = await LoadDicomFilesToGridAsync();
                 FinalizeImport(fileCount, isRemovableDrive, dicomDirPath);
             }
-            Logger.Log("Importazione DICOMDIR completata.");
         }
 
         private async void MainForm_OnUpdatePatientIDAsync(object? sender, EventArgs e)

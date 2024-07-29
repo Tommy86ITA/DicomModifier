@@ -39,20 +39,21 @@ namespace DicomModifier.Views
                 if (authService.Authenticate(username, password))
                 {
                     MessageBox.Show("Accesso consentito, credenziali verificate!", "Accesso consentito!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    DatabaseHelper.LogActivity(username, "Login effettuato");
+                    LogManager.LogActivity(username, "Login effettuato",LogManager.EventSeverity.Informational);
+                    LogManager.LogActivity(username, LogManager.EventType.UserLoggedIn.ToString(), LogManager.EventSeverity.Informational);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
                 else
                 {
                     MessageBox.Show("Accesso negato. Verifica che le credenziali siano corrette.", "Accesso negato", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    DatabaseHelper.LogActivity(username, "Accesso negato - Credenziali errate");
+                    LogManager.LogActivity(username, "Accesso negato - Credenziali errate", LogManager.EventSeverity.Warning);
                 }
             }
             catch (InvalidOperationException ex)
             {
-                MessageBox.Show(ex.Message, "Accesso negato", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                DatabaseHelper.LogActivity(username, $"Accesso negato - Errore {ex}");
+                MessageBox.Show($"Accesso negato {ex.Message}", "Accesso negato", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogManager.LogActivity(username, $"Accesso negato - Errore {ex}", LogManager.EventSeverity.Error);
             }
         }
 
@@ -62,6 +63,7 @@ namespace DicomModifier.Views
         /// </summary>
         private void ButtonQuit_Click(object? sender, EventArgs e)
         {
+            LogManager.LogActivity("System", "Chiusura applicazione", LogManager.EventSeverity.Informational);
             Application.Exit();
         }
     }

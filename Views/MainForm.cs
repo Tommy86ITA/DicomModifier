@@ -168,17 +168,11 @@ namespace DicomModifier
 
         private void CloseApplication()
         {
-            Debug.WriteLine("CloseApplication method called.");
-
             if (isSending && !confirmClose)
             {
-                Debug.WriteLine("Transfers are in progress and confirmation is not given.");
-
                 DialogResult result = MessageBox.Show("Ci sono trasferimenti in corso. Vuoi davvero chiudere il programma?", "Trasferimenti in corso", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
                 {
-                    Debug.WriteLine("User confirmed to close the application.");
-
                     confirmClose = true;
                     MainController mainController = (MainController)this.Tag!;
                     _uiController.DisableControls();
@@ -186,17 +180,14 @@ namespace DicomModifier
                     mainController.CancelSending();
 
                     Task.Delay(1000).Wait(); // Attendere per assicurarsi che i file vengano rilasciati
+                    LogManager.LogActivity(_authService.CurrentUser.Username, "Chiusura applicazione con trasferimenti in corso", LogManager.EventSeverity.Informational);
                     Application.Exit(); // Richiama la chiusura dell'applicazione
-                }
-                else
-                {
-                    Debug.WriteLine("User canceled the close operation.");
                 }
             }
             else
             {
-                Debug.WriteLine("No transfers in progress or confirmation already given.");
                 ClearTempFolder();
+                LogManager.LogActivity(_authService.CurrentUser.Username, "Chiusura applicazione", LogManager.EventSeverity.Informational);
                 Application.Exit();
             }
         }
@@ -233,19 +224,16 @@ namespace DicomModifier
 
         private void ButtonDicomFile_Click(object? sender, EventArgs e)
         {
-            Debug.WriteLine("ButtonDicomFile_Click called");
             OnSelectFile?.Invoke(this, EventArgs.Empty);
         }
 
         private void ButtonFolder_Click(object? sender, EventArgs e)
         {
-            Debug.WriteLine("ButtonFolder_Click called");
             OnSelectFolder?.Invoke(this, EventArgs.Empty);
         }
 
         private void ButtonDicomDir_Click(object? sender, EventArgs e)
         {
-            Debug.WriteLine("ButtonDicomDir_Click called");
             OnSelectDicomDir?.Invoke(this, EventArgs.Empty);
         }
 

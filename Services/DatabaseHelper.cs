@@ -4,20 +4,19 @@ using Microsoft.Data.Sqlite;
 
 namespace DicomModifier.Services
 {
-    public static class DatabaseHelper
+    public class DatabaseHelper
     {
+        //private static readonly string databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DicomImport", "UserDatabase.db");
         private const string _databasePath = "UserDatabase.db"; // Path to the SQLite database file
 
         // Initializes the database by creating it if it doesn't exist and ensuring necessary tables and admin user are present
         public static void InitializeDatabase()
         {
-            if (!File.Exists(_databasePath))
+
+            if (!File.Exists(_databasePath)) // Create a new database if it doesn't exist
             {
-                CreateDatabase(); // Create a new database if it doesn't exist
-            }
-            else
-            {
-                Console.WriteLine("Database already exists."); // Log that the database already exists
+                CreateUsersTable(); 
+                CreateAuditLogTable();
             }
 
             using var connection = GetConnection(); // Get a connection to the database
@@ -28,7 +27,7 @@ namespace DicomModifier.Services
         }
 
         // Creates the database and the necessary tables
-        private static void CreateDatabase()
+        private static void CreateUsersTable()
         {
             using var connection = GetConnection(); // Get a connection to the database
             connection.Open(); // Open the connection
@@ -43,59 +42,44 @@ namespace DicomModifier.Services
                     IsEnabled INTEGER NOT NULL
                 )";
             command.ExecuteNonQuery(); // Execute the command
+        }
 
-            // Create the AuditLog table
+        // Create the AuditLog table
+        public static void CreateAuditLogTable()
+        {  
+            using var connection = GetConnection();
+            connection.Open(); // Open the connection
+            using var command = connection.CreateCommand(); // Create a command to execute SQL queries
+
             command.CommandText = @"
                 CREATE TABLE AuditLog (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Username TEXT NOT NULL,
                     Action TEXT NOT NULL,
-                    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    Severity TEXT NOT NULL
                 )";
-            LogActivity("System", "Creato log di audit");
             command.ExecuteNonQuery(); // Execute the command
-
-            Console.WriteLine("Database and tables created successfully."); // Log the successful creation of the database and tables
+            LogManager.LogActivity("System", "Creato log di audit", LogManager.EventSeverity.Informational);
         }
 
         // Ensures the required tables exist in the database
-        private static void EnsureTablesExist(SqliteConnection connection)
+        public static void EnsureTablesExist(SqliteConnection connection)
         {
-            using var command = connection.CreateCommand(); // Create a command to execute SQL queries
+            using var command = connection.CreateCommand();
 
-            // Check if the Users table exists
             command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='Users'";
-            var result = command.ExecuteScalar(); // Execute the command and get the result
+            var result = command.ExecuteScalar();
             if (result == null)
             {
-                // Create the Users table if it doesn't exist
-                command.CommandText = @"
-                    CREATE TABLE Users (
-                        Username TEXT PRIMARY KEY,
-                        PasswordHash TEXT NOT NULL,
-                        Role TEXT NOT NULL,
-                        IsEnabled INTEGER NOT NULL
-                    )";
-                command.ExecuteNonQuery(); // Execute the command
-                Console.WriteLine("Table 'Users' created successfully."); // Log the successful creation of the Users table
+                CreateUsersTable();
             }
 
-            // Check if the AuditLog table exists
             command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='AuditLog'";
-            result = command.ExecuteScalar(); // Execute the command and get the result
+            result = command.ExecuteScalar();
             if (result == null)
             {
-                // Create the AuditLog table if it doesn't exist
-                command.CommandText = @"
-                    CREATE TABLE AuditLog (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Username TEXT NOT NULL,
-                        Action TEXT NOT NULL,
-                        Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-                    )";
-                command.ExecuteNonQuery(); // Execute the command
-                LogActivity("System", "Creato log di audit"); // Log the audit log creation activity
-                Console.WriteLine("Table 'AuditLog' created successfully."); // Log the successful creation of the AuditLog table
+                CreateAuditLogTable();
             }
         }
 
@@ -117,11 +101,7 @@ namespace DicomModifier.Services
                 command.Parameters.AddWithValue("$passwordHash", BCrypt.Net.BCrypt.HashPassword("admin123")); // Hash the default admin password
                 command.ExecuteNonQuery(); // Execute the command
                 Console.WriteLine("Admin user created successfully."); // Log the successful creation of the admin user
-                LogActivity("System", "Creato utente di default"); // Log the admin user creation activity
-            }
-            else
-            {
-                Console.WriteLine("Admin user already exists."); // Log that the admin user already exists
+                LogManager.LogActivity("System", "Creato utente di default",LogManager.EventSeverity.Informational); // Log the admin user creation activity
             }
         }
 
@@ -129,23 +109,6 @@ namespace DicomModifier.Services
         public static SqliteConnection GetConnection()
         {
             return new SqliteConnection($"Data Source={_databasePath}"); // Return a new SQLite connection
-        }
-
-        // Logs an action to the AuditLog table
-        public static void LogActivity(string username, string action)
-        {
-            using var connection = GetConnection();
-            connection.Open();
-
-            using var command = connection.CreateCommand();
-            command.CommandText = @"
-        INSERT INTO AuditLog (Timestamp, Username, Action)
-        VALUES (@timestamp, @username, @action)";
-            command.Parameters.AddWithValue("@timestamp", DateTime.UtcNow.ToString("o"));
-            command.Parameters.AddWithValue("@username", username);
-            command.Parameters.AddWithValue("@action", action);
-
-            command.ExecuteNonQuery();
         }
     }
 }
