@@ -79,6 +79,7 @@
 //    }
 //}
 
+using DicomModifier.Models;
 using DicomModifier.Services;
 using Microsoft.Data.Sqlite;
 using System.Data;
@@ -103,7 +104,7 @@ namespace DicomModifier.Views
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
 
-            string query = "SELECT Timestamp, Username, Action, Severity FROM AuditLog ORDER BY Timestamp DESC";
+            const string query = "SELECT Timestamp, Username, EventType, EventSeverity, Message FROM AuditLog ORDER BY Timestamp DESC";
             using var command = new SqliteCommand(query, connection);
             using var reader = command.ExecuteReader();
 
@@ -114,8 +115,9 @@ namespace DicomModifier.Views
 
             dataGridViewAuditLog.Columns["Timestamp"].HeaderText = "Timestamp";
             dataGridViewAuditLog.Columns["Username"].HeaderText = "Username";
-            dataGridViewAuditLog.Columns["Action"].HeaderText = "Evento";
-            dataGridViewAuditLog.Columns["Severity"].HeaderText = "Livello evento";
+            dataGridViewAuditLog.Columns["EventType"].HeaderText = "Evento";
+            dataGridViewAuditLog.Columns["Message"].HeaderText = "Messaggio";
+            dataGridViewAuditLog.Columns["EventSeverity"].HeaderText = "Livello evento";
 
             dataGridViewAuditLog.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
@@ -123,7 +125,6 @@ namespace DicomModifier.Views
             {
                 column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
-
         }
 
         // Aggiorna l'event handler per il cell formatting
@@ -138,18 +139,18 @@ namespace DicomModifier.Views
                 }
             }
 
-            if (dataGridViewAuditLog.Columns[e.ColumnIndex].Name == "Severity" && e.Value != null)
+            if (dataGridViewAuditLog.Columns[e.ColumnIndex].Name == "EventSeverity" && e.Value != null)
             {
                 string eventType = e.Value.ToString()!;
-                if (eventType == LogManager.EventSeverity.Error.ToString())
+                if (eventType == nameof(EventMapping.EventSeverity.Error))
                 {
                     e.CellStyle!.BackColor = Color.LightCoral;
                 }
-                else if (eventType == LogManager.EventSeverity.Warning.ToString())
+                else if (eventType == nameof(EventMapping.EventSeverity.Warning))
                 {
                     e.CellStyle!.BackColor = Color.Khaki;
                 }
-                else if (eventType == LogManager.EventSeverity.Informational.ToString())
+                else if (eventType == nameof(EventMapping.EventSeverity.Informational))
                 {
                     e.CellStyle!.BackColor = Color.LightGreen;
                 }
@@ -157,4 +158,3 @@ namespace DicomModifier.Views
         }
     }
 }
-

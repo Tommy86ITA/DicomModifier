@@ -1,60 +1,29 @@
-﻿using System;
+﻿// Interfaces/LogManager.cs
+
+using System;
 using Microsoft.Data.Sqlite;
+using DicomModifier.Models;
 
 namespace DicomModifier.Services
 {
-    public class LogManager
+    public class LogManager()
     {
-        private readonly string _connectionString;
+        //private readonly string _connectionString = connectionString;
 
-        public enum EventType
+        public static void LogActivity(string username, EventMapping.EventType eventType, string? message = null)
         {
-            UserLoggedIn,
-            UserLoginFailed,
-            UserCreated,
-            UserDeleted,
-            PasswordChanged
-        }
+            string eventMessage = message ?? eventType.ToString();
 
-        public enum EventSeverity
-        {
-            Informational,
-            Warning,
-            Error
-        }
-
-        public LogManager(string connectionString)
-        {
-            _connectionString = connectionString;
-            EnsureAuditLogTableExists();
-        }
-
-        public static void LogActivity(string username, string action, EventSeverity severity)
-        {
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText = @"
-                        INSERT INTO AuditLog (Timestamp, Username, Action, Severity)
-                        VALUES (@timestamp, @username, @action, @severity)";
-            command.Parameters.AddWithValue("@timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            command.Parameters.AddWithValue("@username", username);
-            command.Parameters.AddWithValue("@action", action);
-            command.Parameters.AddWithValue("@severity", severity.ToString());
+            var command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO AuditLog (Username, EventType, Timestamp, Eventseverity, Message) VALUES ($username, $eventType, $timestamp, $eventseverity, $message)";
+            command.Parameters.AddWithValue("$username", username);
+            command.Parameters.AddWithValue("$eventType", eventType.ToString());
+            command.Parameters.AddWithValue("$timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            command.Parameters.AddWithValue("$eventseverity", EventMapping.GetSeverity(eventType).ToString());
+            command.Parameters.AddWithValue("$message", eventMessage);
             command.ExecuteNonQuery();
-        }
-
-        public void EnsureAuditLogTableExists()
-        {
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='AuditLog'";
-            var result = command.ExecuteScalar();
-            if (result == null)
-            {
-                DatabaseHelper.CreateAuditLogTable();
-            }
         }
     }
 }

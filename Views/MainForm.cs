@@ -180,14 +180,12 @@ namespace DicomModifier
                     mainController.CancelSending();
 
                     Task.Delay(1000).Wait(); // Attendere per assicurarsi che i file vengano rilasciati
-                    LogManager.LogActivity(_authService.CurrentUser.Username, "Chiusura applicazione con trasferimenti in corso", LogManager.EventSeverity.Informational);
                     Application.Exit(); // Richiama la chiusura dell'applicazione
                 }
             }
             else
             {
                 ClearTempFolder();
-                LogManager.LogActivity(_authService.CurrentUser.Username, "Chiusura applicazione", LogManager.EventSeverity.Informational);
                 Application.Exit();
             }
         }

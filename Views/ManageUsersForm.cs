@@ -9,6 +9,7 @@ namespace DicomModifier.Views
     public partial class ManageUsersForm : Form
     {
         private readonly AuthenticationService _authService;
+        private readonly DatabaseHelper _databaseHelper;
         private List<User> _users;
 
         public ManageUsersForm(AuthenticationService authService)
@@ -16,6 +17,7 @@ namespace DicomModifier.Views
             InitializeComponent();
             InitializeEvents();
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _databaseHelper = new DatabaseHelper();
             _users = [];
             LoadUsers();
             UIController.UpdateUserManagementButtonsState(dataGridViewUsers, buttonEditUser, buttonDeleteUser, buttonChangePassword);
@@ -158,6 +160,7 @@ namespace DicomModifier.Views
                 if (AuthenticationService.RemoveUser(username))
                 {
                     _users.RemoveAll(u => u.Username == username);
+                    _databaseHelper.LogAudit(_authService.CurrentUser.Username, EventMapping.EventType.UserDeleted, $"{user}");
                     LoadUsers();
                     MessageBox.Show("Utente eliminato con successo.", "Eliminazione utente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }

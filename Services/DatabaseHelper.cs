@@ -1,21 +1,28 @@
 ﻿// Interfaces/DatabaseHelper.cs
 
+using DicomModifier.Models;
 using Microsoft.Data.Sqlite;
 
 namespace DicomModifier.Services
 {
     public class DatabaseHelper
     {
-        //private static readonly string databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DicomImport", "UserDatabase.db");
-        private const string _databasePath = "UserDatabase.db"; // Path to the SQLite database file
+        //private static readonly string _databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DicomImport", "UserDatabase.db");
+        //private static readonly string _connectionString = $"Data Source={_databasePath}";
+        private const string _databasePath = "DCMImp.db";
+        //private static readonly string _connectionString = $"Data Source={_databasePath}";
+
+        public DatabaseHelper()
+        {
+            InitializeDatabase();
+        }
 
         // Initializes the database by creating it if it doesn't exist and ensuring necessary tables and admin user are present
-        public static void InitializeDatabase()
+        public void InitializeDatabase()
         {
-
             if (!File.Exists(_databasePath)) // Create a new database if it doesn't exist
             {
-                CreateUsersTable(); 
+                CreateUsersTable();
                 CreateAuditLogTable();
             }
 
@@ -45,26 +52,26 @@ namespace DicomModifier.Services
         }
 
         // Create the AuditLog table
-        public static void CreateAuditLogTable()
-        {  
+        public void CreateAuditLogTable()
+        {
             using var connection = GetConnection();
             connection.Open(); // Open the connection
             using var command = connection.CreateCommand(); // Create a command to execute SQL queries
 
             command.CommandText = @"
                 CREATE TABLE AuditLog (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Timestamp TEXT NOT NULL,
                     Username TEXT NOT NULL,
-                    Action TEXT NOT NULL,
-                    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    Severity TEXT NOT NULL
+                    EventType TEXT NOT NULL,
+                    EventSeverity TEXT NOT NULL,
+                    Message TEXT NULLABLE
                 )";
             command.ExecuteNonQuery(); // Execute the command
-            LogManager.LogActivity("System", "Creato log di audit", LogManager.EventSeverity.Informational);
+            LogAudit("System", EventMapping.EventType.AuditDBCreated);
         }
 
         // Ensures the required tables exist in the database
-        public static void EnsureTablesExist(SqliteConnection connection)
+        public void EnsureTablesExist(SqliteConnection connection)
         {
             using var command = connection.CreateCommand();
 
@@ -84,7 +91,7 @@ namespace DicomModifier.Services
         }
 
         // Ensures the admin user exists in the Users table
-        private static void EnsureAdminUserExists(SqliteConnection connection)
+        private void EnsureAdminUserExists(SqliteConnection connection)
         {
             using var command = connection.CreateCommand(); // Create a command to execute SQL queries
 
@@ -101,8 +108,13 @@ namespace DicomModifier.Services
                 command.Parameters.AddWithValue("$passwordHash", BCrypt.Net.BCrypt.HashPassword("admin123")); // Hash the default admin password
                 command.ExecuteNonQuery(); // Execute the command
                 Console.WriteLine("Admin user created successfully."); // Log the successful creation of the admin user
-                LogManager.LogActivity("System", "Creato utente di default",LogManager.EventSeverity.Informational); // Log the admin user creation activity
+                LogAudit("System", EventMapping.EventType.DefaultAdminCreated); // Log the admin user creation activity
             }
+        }
+
+        public void LogAudit(string username, EventMapping.EventType eventType, string? message=null)
+        {
+            LogManager.LogActivity(username, eventType, message);
         }
 
         // Gets a connection to the SQLite database

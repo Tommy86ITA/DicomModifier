@@ -1,6 +1,7 @@
 ﻿// Interfaces/LoginForm.cs
 
 using DicomModifier.Services;
+using DicomModifier.Models;
 using System.Reflection;
 
 namespace DicomModifier.Views
@@ -8,6 +9,7 @@ namespace DicomModifier.Views
     public partial class LoginForm : Form
     {
         private readonly AuthenticationService authService;
+        private readonly DatabaseHelper _databaseHelper;
 
         /// <summary>
         /// Costruttore per il form di login. Inizializza i componenti e imposta la versione.
@@ -17,6 +19,7 @@ namespace DicomModifier.Views
         {
             InitializeComponent();
             this.authService = authService;
+            _databaseHelper = new DatabaseHelper();
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             var versionString = version != null ? version.ToString() : "Versione non disponibile";
             labelVersion.Text = $"v. {versionString} - Copyright (c) 2024 Thomas Amaranto";
@@ -39,21 +42,20 @@ namespace DicomModifier.Views
                 if (authService.Authenticate(username, password))
                 {
                     MessageBox.Show("Accesso consentito, credenziali verificate!", "Accesso consentito!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LogManager.LogActivity(username, "Login effettuato",LogManager.EventSeverity.Informational);
-                    LogManager.LogActivity(username, LogManager.EventType.UserLoggedIn.ToString(), LogManager.EventSeverity.Informational);
+                    _databaseHelper.LogAudit(username, EventMapping.EventType.LoginSuccessful);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
                 else
                 {
                     MessageBox.Show("Accesso negato. Verifica che le credenziali siano corrette.", "Accesso negato", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    LogManager.LogActivity(username, "Accesso negato - Credenziali errate", LogManager.EventSeverity.Warning);
+                    _databaseHelper.LogAudit(username, EventMapping.EventType.LoginFailed_InvalidCredentials);
                 }
             }
             catch (InvalidOperationException ex)
             {
                 MessageBox.Show($"Accesso negato {ex.Message}", "Accesso negato", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LogManager.LogActivity(username, $"Accesso negato - Errore {ex}", LogManager.EventSeverity.Error);
+                _databaseHelper.LogAudit(username, EventMapping.EventType.LoginFailed_SystemError);
             }
         }
 
@@ -63,7 +65,6 @@ namespace DicomModifier.Views
         /// </summary>
         private void ButtonQuit_Click(object? sender, EventArgs e)
         {
-            LogManager.LogActivity("System", "Chiusura applicazione", LogManager.EventSeverity.Informational);
             Application.Exit();
         }
     }
