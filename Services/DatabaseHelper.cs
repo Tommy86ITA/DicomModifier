@@ -10,6 +10,7 @@ namespace DicomModifier.Services
         //private static readonly string _databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DicomImport", "UserDatabase.db");
         //private static readonly string _connectionString = $"Data Source={_databasePath}";
         private const string _databasePath = "DCMImp.db";
+
         //private static readonly string _connectionString = $"Data Source={_databasePath}";
 
         public DatabaseHelper()
@@ -112,7 +113,7 @@ namespace DicomModifier.Services
             }
         }
 
-        public void LogAudit(string username, EventMapping.EventType eventType, string? message=null)
+        public void LogAudit(string username, EventMapping.EventType eventType, string? message = null)
         {
             LogManager.LogActivity(username, eventType, message);
         }

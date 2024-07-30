@@ -13,6 +13,7 @@ namespace DicomModifier
         private readonly SettingsController _settingsController;
         private readonly UIController _uiController;
         private readonly ToolTip toolTip;
+        private readonly AuthenticationService _authenticationService;
 
         public SettingsForm(PACSSettings settings, SettingsController settingsController, UIController uiController, AuthenticationService _authService)
         {
@@ -22,11 +23,11 @@ namespace DicomModifier
             _settings = settings;
             _settingsController = settingsController;
             _uiController = uiController;
+            _authenticationService = _authService;
             LoadSettings(_settings);
             ApplyStyles();
             toolTip = new ToolTip();
             InitializeTooltips();
-            _authService = new AuthenticationService();
 
             if (_authService.CurrentUser.Role == "Technician")
             {
@@ -284,8 +285,16 @@ namespace DicomModifier
         private bool ValidateFields()
         {
             bool isValid = AreTextFieldsValid() && IsServerPortValid() && IsTimeoutValid() && IsServerIPValid();
-            buttonEchoTest.Enabled = isValid;
-            buttonSave.Enabled = isValid;
+            if (_authenticationService.CurrentUser.Role == "Technician")
+            {
+                buttonSave.Enabled = !isValid;
+            }
+            else
+            {
+                buttonSave.Enabled = isValid;
+                buttonSave.Enabled = isValid;
+            }
+            //buttonSave.Enabled = isValid;
             return isValid;
         }
 
@@ -296,7 +305,7 @@ namespace DicomModifier
                    !string.IsNullOrEmpty(textBoxServerPort.Text) &&
                    !string.IsNullOrEmpty(textBoxTimeout.Text) &&
                    !string.IsNullOrEmpty(textBoxLocalAETitle.Text);
-        }
+         }
 
         private bool IsServerPortValid()
         {

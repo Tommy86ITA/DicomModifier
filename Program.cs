@@ -5,6 +5,7 @@ using DicomModifier.Services;
 using DicomModifier.Views;
 using System.Reflection; // For working with assembly metadata.
 using System.Runtime.InteropServices; // For interoperability services.
+using OfficeOpenXml;
 
 namespace DicomModifier
 {
@@ -16,6 +17,7 @@ namespace DicomModifier
         static Program()
         {
             // Get the GUID attribute from the assembly.
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), true);
             if (attributes.Length > 0 && attributes[0] is GuidAttribute guidAttribute)
             {

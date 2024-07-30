@@ -14,9 +14,13 @@ namespace DicomModifier.Models
             LoginFailed_UserDisabled,
             LoginFailed_SystemError,
 
+            Logout,
+
             PasswordChanged,
 
             UserCreated,
+            UserCreationAborted,
+            UserUpdated,
             UserDeleted,
 
             UserDisabled,
@@ -42,9 +46,14 @@ namespace DicomModifier.Models
         { EventType.LoginFailed_UserDisabled, EventSeverity.Warning },
         { EventType.LoginFailed_SystemError, EventSeverity.Error },
 
+        { EventType.Logout, EventSeverity.Informational },
+
         { EventType.PasswordChanged, EventSeverity.Informational },
+
         { EventType.UserCreated, EventSeverity.Informational },
+        { EventType.UserCreationAborted, EventSeverity.Informational },
         { EventType.UserDeleted, EventSeverity.Warning },
+        { EventType.UserUpdated, EventSeverity.Informational },
         { EventType.UserDisabled, EventSeverity.Warning },
         { EventType.UserEnabled, EventSeverity.Warning },
     };

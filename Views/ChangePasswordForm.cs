@@ -9,6 +9,8 @@ namespace DicomModifier.Views
     {
         private readonly User _user;
         private readonly bool _requireCurrentPassword;
+        private readonly DatabaseHelper _databaseHelper;
+        private readonly AuthenticationService _authService;
 
         // Costruttore per l'utente corrente
         public ChangePasswordForm(AuthenticationService authService)
@@ -21,8 +23,10 @@ namespace DicomModifier.Views
         {
             InitializeComponent();
             InitializeEvents();
+            _databaseHelper = new DatabaseHelper();
             _user = user ?? throw new ArgumentNullException(nameof(user));
             _requireCurrentPassword = requireCurrentPassword;
+            _authService = authService;
             LoadForm();
         }
 
@@ -80,6 +84,7 @@ namespace DicomModifier.Views
             _user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
             AuthenticationService.UpdatePassword(_user.Username, _user.PasswordHash);
             MessageBox.Show("Password aggiornata con successo.", "Modifica password", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _databaseHelper.LogAudit(_authService.CurrentUser.Username, EventMapping.EventType.PasswordChanged, $"Modifica la password per l'utente {_user.Username}");
             DialogResult = DialogResult.OK;
             Close();
         }

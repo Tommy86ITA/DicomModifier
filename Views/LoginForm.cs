@@ -1,7 +1,7 @@
 ﻿// Interfaces/LoginForm.cs
 
-using DicomModifier.Services;
 using DicomModifier.Models;
+using DicomModifier.Services;
 using System.Reflection;
 
 namespace DicomModifier.Views
@@ -55,7 +55,7 @@ namespace DicomModifier.Views
             catch (InvalidOperationException ex)
             {
                 MessageBox.Show($"Accesso negato {ex.Message}", "Accesso negato", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _databaseHelper.LogAudit(username, EventMapping.EventType.LoginFailed_SystemError);
+                _databaseHelper.LogAudit(username, EventMapping.EventType.LoginFailed_UserDisabled, null);
             }
         }
 

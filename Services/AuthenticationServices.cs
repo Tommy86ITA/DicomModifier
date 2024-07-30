@@ -9,6 +9,7 @@ namespace DicomModifier.Services
     {
         // Property to hold the current user
         public User CurrentUser { get; private set; }
+
         private readonly DatabaseHelper _databaseHelper;
 
         // Constructor to initialize the database and the current user

@@ -180,6 +180,7 @@ namespace DicomModifier
                     mainController.CancelSending();
 
                     Task.Delay(1000).Wait(); // Attendere per assicurarsi che i file vengano rilasciati
+                    LogManager.LogActivity(_authService.CurrentUser.Username, EventMapping.EventType.Logout, $"User {_authService.CurrentUser.Username} logged out");
                     Application.Exit(); // Richiama la chiusura dell'applicazione
                 }
             }

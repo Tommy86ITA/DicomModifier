@@ -98,20 +98,58 @@ namespace DicomModifier.Views
             dataGridViewAuditLog.CellFormatting += DataGridViewAuditLog_CellFormatting;
         }
 
+        private void InitializeEvents()
+        {
+            buttonClose.Click += ButtonClose_Click;
+            buttonExport.Click += ButtonExport_Click;
+        }
+
+        private void ButtonExport_Click(object? sender, EventArgs e)
+        {
+
+                // Recupera i log attuali
+                var logs = LoadAuditLogs();
+
+                // Percorso del file di destinazione
+                string filePath = "AuditLogs.xlsx";
+
+                // Esporta i log in Excel
+                LogExporter.ExportLogsToExcel(filePath, logs);
+
+                MessageBox.Show("File di log esportato in " + filePath, "Esportazione log", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+
+        private void ButtonClose_Click(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         // Method to load audit logs into the DataGridView and format the columns
-        private void LoadAuditLogs()
+        private List<LogEntry> LoadAuditLogs()
         {
             using var connection = DatabaseHelper.GetConnection();
             connection.Open();
 
-            const string query = "SELECT Timestamp, Username, EventType, EventSeverity, Message FROM AuditLog ORDER BY Timestamp DESC";
+            const string query = "SELECT Timestamp, Username, EventType, Message, EventSeverity FROM AuditLog ORDER BY Timestamp DESC";
             using var command = new SqliteCommand(query, connection);
             using var reader = command.ExecuteReader();
 
-            var dataTable = new DataTable();
-            dataTable.Load(reader);
+            var logs = new List<LogEntry>();
+            while (reader.Read())
+            {
+                var log = new LogEntry
+                {
+                    Timestamp = reader.GetDateTime(0),
+                    Username = reader.GetString(1),
+                    EventType = reader.GetString(2),
+                    Message = reader.GetString(3),
+                    EventSeverity = reader.GetString(4)
+                };
+                logs.Add(log);
+            }
 
-            dataGridViewAuditLog.DataSource = dataTable;
+            dataGridViewAuditLog.DataSource = logs;
 
             dataGridViewAuditLog.Columns["Timestamp"].HeaderText = "Timestamp";
             dataGridViewAuditLog.Columns["Username"].HeaderText = "Username";
@@ -125,7 +163,10 @@ namespace DicomModifier.Views
             {
                 column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
+
+            return logs;
         }
+
 
         // Aggiorna l'event handler per il cell formatting
         private void DataGridViewAuditLog_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)

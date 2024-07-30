@@ -1,7 +1,5 @@
 ﻿// Interfaces/LogManager.cs
 
-using System;
-using Microsoft.Data.Sqlite;
 using DicomModifier.Models;
 
 namespace DicomModifier.Services

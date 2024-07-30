@@ -31,6 +31,8 @@ namespace DicomModifier.Views
         private void InitializeComponent()
         {
             dataGridViewAuditLog = new DataGridView();
+            buttonClose = new Button();
+            buttonExport = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridViewAuditLog).BeginInit();
             SuspendLayout();
             // 
@@ -39,14 +41,44 @@ namespace DicomModifier.Views
             dataGridViewAuditLog.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewAuditLog.Location = new Point(12, 12);
             dataGridViewAuditLog.Name = "dataGridViewAuditLog";
-            dataGridViewAuditLog.Size = new Size(776, 426);
+            dataGridViewAuditLog.Size = new Size(1142, 426);
             dataGridViewAuditLog.TabIndex = 0;
+            // 
+            // buttonClose
+            // 
+            buttonClose.BackColor = SystemColors.Highlight;
+            buttonClose.FlatStyle = FlatStyle.Flat;
+            buttonClose.Font = new Font("Segoe UI", 10F);
+            buttonClose.ForeColor = Color.White;
+            buttonClose.Location = new Point(651, 449);
+            buttonClose.Margin = new Padding(2, 1, 2, 1);
+            buttonClose.Name = "buttonClose";
+            buttonClose.Size = new Size(129, 31);
+            buttonClose.TabIndex = 7;
+            buttonClose.Text = "Chiudi";
+            buttonClose.UseVisualStyleBackColor = false;
+            // 
+            // buttonExport
+            // 
+            buttonExport.BackColor = SystemColors.Highlight;
+            buttonExport.FlatStyle = FlatStyle.Flat;
+            buttonExport.Font = new Font("Segoe UI", 10F);
+            buttonExport.ForeColor = Color.White;
+            buttonExport.Location = new Point(386, 449);
+            buttonExport.Margin = new Padding(2, 1, 2, 1);
+            buttonExport.Name = "buttonExport";
+            buttonExport.Size = new Size(129, 31);
+            buttonExport.TabIndex = 6;
+            buttonExport.Text = "Esporta in *.xslx";
+            buttonExport.UseVisualStyleBackColor = false;
             // 
             // AuditLogForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1166, 490);
+            Controls.Add(buttonClose);
+            Controls.Add(buttonExport);
             Controls.Add(dataGridViewAuditLog);
             Name = "AuditLogForm";
             Text = "AuditLogForm";
@@ -57,5 +89,7 @@ namespace DicomModifier.Views
         #endregion
 
         private DataGridView dataGridViewAuditLog;
+        public Button buttonClose;
+        public Button buttonExport;
     }
 }

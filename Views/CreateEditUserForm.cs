@@ -98,6 +98,12 @@ namespace DicomModifier.Views
                 {
                     return;
                 }
+
+                LogManager.LogActivity(_authService.CurrentUser.Username, EventMapping.EventType.UserUpdated, $"{_user} account modified");
+            }
+            else
+            {
+                LogManager.LogActivity(_authService.CurrentUser.Username, EventMapping.EventType.UserCreated, $"{_user} account created");
             }
 
             DialogResult = DialogResult.OK;
