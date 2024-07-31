@@ -1,11 +1,9 @@
 ﻿using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
-using System.IO;
+using DicomModifier.Models;
 
 namespace DicomModifier.Services
 {
-    public class LogExporter
+    public static class LogExporter
     {
         public static void ExportLogsToExcel(string filePath, List<LogEntry> logs)
         {
@@ -25,9 +23,9 @@ namespace DicomModifier.Services
                 var log = logs[i];
                 worksheet.Cells[i + 2, 1].Value = log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss");
                 worksheet.Cells[i + 2, 2].Value = log.Username;
-                worksheet.Cells[i + 2, 3].Value = log.Event;
-                worksheet.Cells[i + 2, 4].Value = log.Severity.ToString();
-                worksheet.Cells[i + 2, 5].Value = log.Message.ToString();
+                worksheet.Cells[i + 2, 3].Value = log.EventType;
+                worksheet.Cells[i + 2, 4].Value = log.EventSeverity.ToString();
+                worksheet.Cells[i + 2, 5].Value = log.Message;
             }
 
             // AutoFit columns
@@ -39,15 +37,6 @@ namespace DicomModifier.Services
         }
     }
 
-    public class LogEntry
-    {
-        public DateTime Timestamp { get; set; }
-        public string Username { get; set; }
-        public string EventType { get; set; }
-        public EventSeverity EventSeverity { get; set; }
-        public Message? Message { get; set; }
-    }
-
     public enum EventSeverity
     {
         Informational,
@@ -55,4 +44,3 @@ namespace DicomModifier.Services
         Error
     }
 }
-

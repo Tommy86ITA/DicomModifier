@@ -161,7 +161,7 @@ namespace DicomModifier.Views
                 if (AuthenticationService.RemoveUser(username))
                 {
                     _users.RemoveAll(u => u.Username == username);
-                    _databaseHelper.LogAudit(_authService.CurrentUser.Username, EventMapping.EventType.UserDeleted, $"Account {user} has been deleted");
+                    _databaseHelper.LogAudit(_authService.CurrentUser.Username, EventMapping.EventType.UserDeleted, $"Account {username} has been deleted");
                     LoadUsers();
                     MessageBox.Show("Utente eliminato con successo.", "Eliminazione utente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }

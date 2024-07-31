@@ -99,11 +99,11 @@ namespace DicomModifier.Views
                     return;
                 }
 
-                LogManager.LogActivity(_authService.CurrentUser.Username, EventMapping.EventType.UserUpdated, $"{_user} account modified");
+                LogManager.LogActivity(_authService.CurrentUser.Username, EventMapping.EventType.UserUpdated, $"Account {_user.Username} has been modified");
             }
             else
             {
-                LogManager.LogActivity(_authService.CurrentUser.Username, EventMapping.EventType.UserCreated, $"{_user} account created");
+                LogManager.LogActivity(_authService.CurrentUser.Username, EventMapping.EventType.UserCreated, $"Account {_user.Username} has been created");
             }
 
             DialogResult = DialogResult.OK;

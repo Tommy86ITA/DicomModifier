@@ -80,7 +80,12 @@ namespace DicomModifier.Views
             Controls.Add(buttonClose);
             Controls.Add(buttonExport);
             Controls.Add(dataGridViewAuditLog);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "AuditLogForm";
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "AuditLogForm";
             ((System.ComponentModel.ISupportInitialize)dataGridViewAuditLog).EndInit();
             ResumeLayout(false);
