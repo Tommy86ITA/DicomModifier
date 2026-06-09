@@ -9,7 +9,9 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.db
 Config.json
+DBpsw.json
 *.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)

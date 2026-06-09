@@ -3,10 +3,11 @@
 using FellowOakDicom;
 using FellowOakDicom.Media;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
-namespace DicomImport.Controllers
+namespace DicomModifier.Controllers
 {
-    public class DicomFileHandler
+    public partial class DicomFileHandler
     {
         private readonly Queue<string> dicomQueue;
         private string? dicomDirBasePath;
@@ -210,5 +211,16 @@ namespace DicomImport.Controllers
             GC.Collect(); // Suggerimento per forzare la garbage collection dopo aver resettato la coda
             GC.WaitForPendingFinalizers(); // Attende il completamento della garbage collection
         }
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr CreateFile(
+            string lpFileName,
+            uint dwDesiredAccess,
+            uint dwShareMode,
+            IntPtr lpSecurityAttributes,
+            uint dwCreationDisposition,
+            uint dwFlagsAndAttributes,
+            IntPtr hTemplateFile);
+
     }
 }

@@ -1,31 +1,27 @@
 ﻿// Interfaces/MainController.cs
 
-using DicomImport.Models;
-using DicomModifier;
+using DicomModifier.Models;
+using DicomModifier.Services;
 using FellowOakDicom;
 using System.Diagnostics;
 
-namespace DicomImport.Controllers
+namespace DicomModifier.Controllers
 {
     public class MainController
     {
         private readonly MainForm _mainForm;
         private readonly DicomFileHandler _dicomManager;
         private readonly PACSCommunicator _communicator;
+        private readonly PACSSettings _settings;
         private readonly string _tempDirectory;
         private readonly UIController _uiController;
         private CancellationTokenSource _cancellationTokenSource;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainController"/> class.
-        /// </summary>
-        /// <param name="mainForm">The main form.</param>
-        /// <param name="dicomManager">The dicom manager.</param>
-        /// <param name="settings">The settings.</param>
         public MainController(MainForm mainForm, DicomFileHandler dicomManager, PACSSettings settings)
         {
             _mainForm = mainForm;
             _dicomManager = dicomManager;
+            _settings = settings;
             _uiController = new UIController(_mainForm);
             _communicator = new PACSCommunicator(settings, _uiController);
             _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomImport");
@@ -45,85 +41,55 @@ namespace DicomImport.Controllers
         }
 
         #region Event Handlers
-
-        /// <summary>
-        /// Imports selected file asynchronous.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private async void MainForm_OnSelectFileAsync(object? sender, EventArgs e)
         {
-            Logger.Log("Inizio importazione file DICOM.");
             using OpenFileDialog openFileDialog = new();
             openFileDialog.Filter = "DICOM files (*.dcm)|*.dcm|All files (*.*)|*.*";
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                string filePath = openFileDialog.FileName;
+                _uiController.DisableControls();
                 _uiController.UpdateStatus("Importazione in corso...");
                 _uiController.UpdateProgressBar(0, 1);
-                await _dicomManager.AddDicomFileAsync(openFileDialog.FileName);
-                DicomFile? dicomFile = await _dicomManager.GetNextDicomFileAsync();
-                if (dicomFile != null)
-                {
-                    _mainForm.TableManager.AddDicomToGrid(dicomFile.Dataset);
-                }
-                _uiController.EnableControls();
-                _uiController.UpdateControlStates();
-                _uiController.UpdateStatus("Importazione completata.");
-                _uiController.UpdateProgressBar(1, 1);
+
+                await _dicomManager.AddDicomFileAsync(filePath);
+                int fileCount = await LoadDicomFilesToGridAsync();
+                FinalizeImport(fileCount, filePath);
             }
-            Logger.Log("Importazione file DICOM completata.");
         }
 
-        /// <summary>
-        /// Imports selected folder(s) asynchronous.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private async void MainForm_OnSelectFolderAsync(object? sender, EventArgs e)
         {
-            Logger.Log("Inizio importazione cartella DICOM.");
             using FolderBrowserDialog folderBrowserDialog = new();
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
+                string folderPath = folderBrowserDialog.SelectedPath;
                 _uiController.DisableControls();
-                Debug.WriteLine($"Selected folder: {folderBrowserDialog.SelectedPath}");
                 _uiController.UpdateStatus("Importazione in corso...");
-                List<string> files = GetFilesFromFolder(folderBrowserDialog.SelectedPath);
+                List<string> files = GetFilesFromFolder(folderPath);
                 InitializeProgress(files.Count);
                 await ProcessFilesAsync(files);
                 int fileCount = await LoadDicomFilesToGridAsync();
-                FinalizeImport(fileCount);
+                FinalizeImport(fileCount, folderPath);
             }
-            Logger.Log("Importazione cartella DICOM completata.");
         }
 
-        /// <summary>
-        /// Manages the DICOMDIR import asynchronous.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private async void MainForm_OnSelectDicomDirAsync(object? sender, EventArgs e)
         {
-            Logger.Log("Inizio importazione DICOMDIR.");
             using OpenFileDialog openFileDialog = new();
             if (ConfigureOpenFileDialog(openFileDialog))
             {
+                string dicomDirPath = openFileDialog.FileName;
                 _uiController.DisableControls();
                 _uiController.UpdateStatus("Importazione in corso...");
-                await ImportDicomDirAsync(openFileDialog.FileName);
+                await ImportDicomDirAsync(dicomDirPath);
                 int fileCount = await LoadDicomFilesToGridAsync();
-                FinalizeImport(fileCount);
+                FinalizeImport(fileCount, dicomDirPath);
             }
-            Logger.Log("Importazione DICOMDIR completata.");
         }
 
-        /// <summary>
-        /// Updates the Patient ID asynchronous.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private async void MainForm_OnUpdatePatientIDAsync(object? sender, EventArgs e)
         {
             string newPatientID = _mainForm.GetNewPatientID();
@@ -223,11 +189,6 @@ namespace DicomImport.Controllers
             });
         }
 
-        /// <summary>
-        /// Sends the file(s) to PACS asynchronous.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private async void MainForm_OnSend(object? sender, EventArgs e)
         {
             try
@@ -282,11 +243,6 @@ namespace DicomImport.Controllers
             }
         }
 
-        /// <summary>
-        /// Resets the DICOM files queue.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void MainForm_OnResetQueue(object? sender, EventArgs e)
         {
             _dicomManager.ResetQueue();
@@ -300,9 +256,6 @@ namespace DicomImport.Controllers
             _uiController.UpdateStatus("Pronto");
         }
 
-        /// <summary>
-        /// Cancels the sending using a cancellation token.
-        /// </summary>
         public void CancelSending()
         {
             _cancellationTokenSource?.Cancel();
@@ -312,54 +265,34 @@ namespace DicomImport.Controllers
 
         #region Private Methods
 
-        /// <summary>
-        /// Gets the files from folder.
-        /// </summary>
-        /// <param name="folderPath">The folder path.</param>
-        /// <returns></returns>
         private static List<string> GetFilesFromFolder(string folderPath)
         {
             return [.. Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories)];
         }
 
-        /// <summary>
-        /// Initializes the progress bar and the file counter.
-        /// </summary>
-        /// <param name="fileCount">The file count.</param>
         private void InitializeProgress(int fileCount)
         {
-            _uiController.UpdateProgressBar(0, fileCount);
+            int maximum = Math.Max(fileCount, 1);
+            _uiController.UpdateProgressBar(0, maximum);
             _uiController.UpdateFileCount(0, fileCount, "File importati");
         }
 
-        /// <summary>
-        /// Processes the files asynchronous.
-        /// </summary>
-        /// <param name="files">The files.</param>
         private async Task ProcessFilesAsync(List<string> files)
         {
             int processedFiles = 0;
             foreach (string? file in files)
             {
                 await _dicomManager.AddDicomFileAsync(file);
-                _uiController.UpdateProgressBar(++processedFiles, files.Count);
+                _uiController.UpdateProgressBar(++processedFiles, Math.Max(files.Count, 1));
                 _uiController.UpdateFileCount(processedFiles, files.Count, "File importati");
             }
         }
 
-        /// <summary>
-        /// Imports the DICOMDIR asynchronous.
-        /// </summary>
-        /// <param name="dicomDirPath">The dicom dir path.</param>
         private async Task ImportDicomDirAsync(string dicomDirPath)
         {
             await _dicomManager.AddDicomDirAsync(dicomDirPath);
         }
 
-        /// <summary>
-        /// Loads the DICOM files to grid asynchronous.
-        /// </summary>
-        /// <returns></returns>
         private async Task<int> LoadDicomFilesToGridAsync()
         {
             int fileCount = 0;
@@ -375,23 +308,44 @@ namespace DicomImport.Controllers
             return fileCount;
         }
 
-        /// <summary>
-        /// Finalizes the import process and configures the controls states.
-        /// </summary>
-        /// <param name="fileCount">The file count.</param>
-        private void FinalizeImport(int fileCount)
+        private void FinalizeImport(int fileCount, string sourcePath)
         {
             _uiController.UpdateControlStates();
             _uiController.UpdateStatus("Importazione completata.");
-            _uiController.UpdateProgressBar(fileCount, fileCount);
+            _uiController.UpdateProgressBar(fileCount, Math.Max(fileCount, 1));
             _uiController.EnableControls();
+
+            TryAutoEjectOpticalMedia(sourcePath);
         }
 
-        /// <summary>
-        /// Validates the selected rows.
-        /// </summary>
-        /// <param name="selectedRows">The selected rows.</param>
-        /// <returns></returns>
+        private void TryAutoEjectOpticalMedia(string sourcePath)
+        {
+            if (!_settings.AutoEjectOpticalMedia)
+            {
+                Debug.WriteLine("Automatic optical media eject is disabled.");
+                return;
+            }
+
+            if (OpticalMediaService.GetOpticalDriveRoot(sourcePath) is null)
+            {
+                Debug.WriteLine($"Import source is not optical media: {sourcePath}");
+                return;
+            }
+
+            if (OpticalMediaService.TryEject(sourcePath, out string? errorMessage))
+            {
+                _uiController.UpdateStatus("Importazione completata. CD/DVD espulso.");
+                return;
+            }
+
+            _uiController.UpdateStatus("Importazione completata. Espulsione CD/DVD non riuscita.");
+            MessageBox.Show(
+                $"Importazione completata, ma non è stato possibile espellere automaticamente il CD/DVD.\n\nDettagli: {errorMessage}",
+                "Espulsione CD/DVD non riuscita",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+        }
+
         private bool ValidateSelectedRows(List<DataGridViewRow> selectedRows)
         {
             if (selectedRows.Count == 0)
@@ -404,10 +358,6 @@ namespace DicomImport.Controllers
             return true;
         }
 
-        /// <summary>
-        /// Gets the file paths.
-        /// </summary>
-        /// <returns></returns>
         private List<string> GetFilePaths()
         {
             string modifiedFolder = _dicomManager.ModifiedFolder;
@@ -416,11 +366,6 @@ namespace DicomImport.Controllers
                 : [.. Directory.GetFiles(_tempDirectory)];
         }
 
-        /// <summary>
-        /// Validates the file paths.
-        /// </summary>
-        /// <param name="filePaths">The file paths.</param>
-        /// <returns></returns>
         private bool ValidateFilePaths(List<string> filePaths)
         {
             if (filePaths.Count == 0)
@@ -433,11 +378,6 @@ namespace DicomImport.Controllers
             return true;
         }
 
-        /// <summary>
-        /// Gets the DICOM files.
-        /// </summary>
-        /// <param name="filePaths">The file paths.</param>
-        /// <returns></returns>
         private static List<string> GetDicomFiles(List<string> filePaths)
         {
             List<string> dicomFiles = [];
@@ -456,11 +396,6 @@ namespace DicomImport.Controllers
             return dicomFiles;
         }
 
-        /// <summary>
-        /// Validates the DICOM files.
-        /// </summary>
-        /// <param name="dicomFiles">The dicom files.</param>
-        /// <returns></returns>
         private bool ValidateDicomFiles(List<string> dicomFiles)
         {
             if (dicomFiles.Count == 0)
@@ -473,10 +408,6 @@ namespace DicomImport.Controllers
             return true;
         }
 
-        /// <summary>
-        /// Sends the DICOM files.
-        /// </summary>
-        /// <param name="dicomFiles">The dicom files.</param>
         private async Task SendDicomFiles(List<string> dicomFiles)
         {
             _mainForm.UpdateProgressBar(0, dicomFiles.Count);
@@ -499,10 +430,6 @@ namespace DicomImport.Controllers
             }
         }
 
-        /// <summary>
-        /// Handles the aggregate exception.
-        /// </summary>
-        /// <param name="ex">The ex.</param>
         private static void HandleAggregateException(AggregateException ex)
         {
             foreach (Exception innerException in ex.InnerExceptions)
@@ -511,11 +438,6 @@ namespace DicomImport.Controllers
             }
         }
 
-        /// <summary>
-        /// Configures the open file dialog.
-        /// </summary>
-        /// <param name="openFileDialog">The open file dialog.</param>
-        /// <returns></returns>
         private static bool ConfigureOpenFileDialog(OpenFileDialog openFileDialog)
         {
             openFileDialog.Filter = "DICOMDIR files (DICOMDIR)|DICOMDIR|All files (*.*)|*.*";
@@ -543,10 +465,8 @@ namespace DicomImport.Controllers
                     return false;
                 }
             }
-
             return true;
         }
-
         #endregion Private Methods
     }
 }

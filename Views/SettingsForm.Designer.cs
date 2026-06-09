@@ -33,7 +33,7 @@ namespace DicomModifier
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
-            groupBox1 = new GroupBox();
+            groupBoxParameters = new GroupBox();
             labelLocalAE = new Label();
             textBoxLocalAETitle = new TextBox();
             textBoxTimeout = new TextBox();
@@ -47,30 +47,33 @@ namespace DicomModifier
             buttonEchoTest = new Button();
             buttonCancel = new Button();
             buttonSave = new Button();
-            groupBoxLocalAE = new GroupBox();
+            groupBoxCECHO = new GroupBox();
             panelEchoStatus = new Panel();
-            groupBox1.SuspendLayout();
-            groupBoxLocalAE.SuspendLayout();
+            groupBoxEjectSetting = new GroupBox();
+            checkBoxAutoEjectOpticalMedia = new CheckBox();
+            groupBoxParameters.SuspendLayout();
+            groupBoxCECHO.SuspendLayout();
+            groupBoxEjectSetting.SuspendLayout();
             SuspendLayout();
             // 
-            // groupBox1
+            // groupBoxParameters
             // 
-            groupBox1.Controls.Add(labelLocalAE);
-            groupBox1.Controls.Add(textBoxLocalAETitle);
-            groupBox1.Controls.Add(textBoxTimeout);
-            groupBox1.Controls.Add(labelServerTimeout);
-            groupBox1.Controls.Add(textBoxServerPort);
-            groupBox1.Controls.Add(labelServerPort);
-            groupBox1.Controls.Add(textBoxServerIP);
-            groupBox1.Controls.Add(labelServerIP);
-            groupBox1.Controls.Add(textBoxAETitle);
-            groupBox1.Controls.Add(labelServerAE);
-            groupBox1.Location = new Point(12, 9);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(359, 240);
-            groupBox1.TabIndex = 0;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Parametri Server PACS";
+            groupBoxParameters.Controls.Add(labelLocalAE);
+            groupBoxParameters.Controls.Add(textBoxLocalAETitle);
+            groupBoxParameters.Controls.Add(textBoxTimeout);
+            groupBoxParameters.Controls.Add(labelServerTimeout);
+            groupBoxParameters.Controls.Add(textBoxServerPort);
+            groupBoxParameters.Controls.Add(labelServerPort);
+            groupBoxParameters.Controls.Add(textBoxServerIP);
+            groupBoxParameters.Controls.Add(labelServerIP);
+            groupBoxParameters.Controls.Add(textBoxAETitle);
+            groupBoxParameters.Controls.Add(labelServerAE);
+            groupBoxParameters.Location = new Point(12, 9);
+            groupBoxParameters.Name = "groupBoxParameters";
+            groupBoxParameters.Size = new Size(396, 240);
+            groupBoxParameters.TabIndex = 0;
+            groupBoxParameters.TabStop = false;
+            groupBoxParameters.Text = "Parametri Server PACS";
             // 
             // labelLocalAE
             // 
@@ -83,7 +86,7 @@ namespace DicomModifier
             // 
             // textBoxLocalAETitle
             // 
-            textBoxLocalAETitle.Location = new Point(157, 38);
+            textBoxLocalAETitle.Location = new Point(198, 38);
             textBoxLocalAETitle.Name = "textBoxLocalAETitle";
             textBoxLocalAETitle.PlaceholderText = "Inserire AE Title Locale";
             textBoxLocalAETitle.Size = new Size(163, 23);
@@ -92,7 +95,7 @@ namespace DicomModifier
             // 
             // textBoxTimeout
             // 
-            textBoxTimeout.Location = new Point(191, 190);
+            textBoxTimeout.Location = new Point(232, 190);
             textBoxTimeout.Name = "textBoxTimeout";
             textBoxTimeout.Size = new Size(129, 23);
             textBoxTimeout.TabIndex = 7;
@@ -109,7 +112,7 @@ namespace DicomModifier
             // 
             // textBoxServerPort
             // 
-            textBoxServerPort.Location = new Point(191, 152);
+            textBoxServerPort.Location = new Point(232, 152);
             textBoxServerPort.Name = "textBoxServerPort";
             textBoxServerPort.Size = new Size(129, 23);
             textBoxServerPort.TabIndex = 5;
@@ -127,7 +130,7 @@ namespace DicomModifier
             // 
             // textBoxServerIP
             // 
-            textBoxServerIP.Location = new Point(191, 114);
+            textBoxServerIP.Location = new Point(232, 114);
             textBoxServerIP.Name = "textBoxServerIP";
             textBoxServerIP.Size = new Size(129, 23);
             textBoxServerIP.TabIndex = 3;
@@ -144,7 +147,7 @@ namespace DicomModifier
             // 
             // textBoxAETitle
             // 
-            textBoxAETitle.Location = new Point(157, 76);
+            textBoxAETitle.Location = new Point(198, 76);
             textBoxAETitle.Name = "textBoxAETitle";
             textBoxAETitle.PlaceholderText = "Inserire AE Title Server PACS";
             textBoxAETitle.Size = new Size(163, 23);
@@ -171,7 +174,7 @@ namespace DicomModifier
             // 
             // buttonCancel
             // 
-            buttonCancel.Location = new Point(203, 362);
+            buttonCancel.Location = new Point(203, 436);
             buttonCancel.Margin = new Padding(2, 1, 2, 1);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(129, 31);
@@ -181,7 +184,7 @@ namespace DicomModifier
             // 
             // buttonSave
             // 
-            buttonSave.Location = new Point(51, 362);
+            buttonSave.Location = new Point(51, 436);
             buttonSave.Margin = new Padding(2, 1, 2, 1);
             buttonSave.Name = "buttonSave";
             buttonSave.Size = new Size(129, 31);
@@ -189,36 +192,57 @@ namespace DicomModifier
             buttonSave.Text = "Salva";
             buttonSave.UseVisualStyleBackColor = true;
             // 
-            // groupBoxLocalAE
+            // groupBoxCECHO
             // 
-            groupBoxLocalAE.Controls.Add(panelEchoStatus);
-            groupBoxLocalAE.Controls.Add(buttonEchoTest);
-            groupBoxLocalAE.Location = new Point(12, 255);
-            groupBoxLocalAE.Name = "groupBoxLocalAE";
-            groupBoxLocalAE.Size = new Size(359, 82);
-            groupBoxLocalAE.TabIndex = 1;
-            groupBoxLocalAE.TabStop = false;
-            groupBoxLocalAE.Text = "Test C-ECHO";
+            groupBoxCECHO.Controls.Add(panelEchoStatus);
+            groupBoxCECHO.Controls.Add(buttonEchoTest);
+            groupBoxCECHO.Location = new Point(12, 255);
+            groupBoxCECHO.Name = "groupBoxCECHO";
+            groupBoxCECHO.Size = new Size(396, 82);
+            groupBoxCECHO.TabIndex = 1;
+            groupBoxCECHO.TabStop = false;
+            groupBoxCECHO.Text = "Test C-ECHO";
             // 
             // panelEchoStatus
             // 
             panelEchoStatus.BackColor = Color.White;
             panelEchoStatus.BorderStyle = BorderStyle.FixedSingle;
-            panelEchoStatus.Location = new Point(228, 37);
+            panelEchoStatus.Location = new Point(264, 37);
             panelEchoStatus.Margin = new Padding(2);
             panelEchoStatus.Name = "panelEchoStatus";
             panelEchoStatus.Size = new Size(56, 20);
             panelEchoStatus.TabIndex = 9;
             // 
+            // groupBoxEjectSetting
+            // 
+            groupBoxEjectSetting.Controls.Add(checkBoxAutoEjectOpticalMedia);
+            groupBoxEjectSetting.Location = new Point(12, 344);
+            groupBoxEjectSetting.Name = "groupBoxEjectSetting";
+            groupBoxEjectSetting.Size = new Size(396, 72);
+            groupBoxEjectSetting.TabIndex = 4;
+            groupBoxEjectSetting.TabStop = false;
+            groupBoxEjectSetting.Text = "Esplusione automatica";
+            // 
+            // checkBoxAutoEjectOpticalMedia
+            // 
+            checkBoxAutoEjectOpticalMedia.AutoSize = true;
+            checkBoxAutoEjectOpticalMedia.Location = new Point(39, 27);
+            checkBoxAutoEjectOpticalMedia.Name = "checkBoxAutoEjectOpticalMedia";
+            checkBoxAutoEjectOpticalMedia.Size = new Size(322, 19);
+            checkBoxAutoEjectOpticalMedia.TabIndex = 0;
+            checkBoxAutoEjectOpticalMedia.Text = "Espelli automaticamente il CD/DVD dopo l'importazione";
+            checkBoxAutoEjectOpticalMedia.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(383, 413);
+            ClientSize = new Size(420, 477);
+            Controls.Add(groupBoxEjectSetting);
             Controls.Add(buttonCancel);
             Controls.Add(buttonSave);
-            Controls.Add(groupBoxLocalAE);
-            Controls.Add(groupBox1);
+            Controls.Add(groupBoxCECHO);
+            Controls.Add(groupBoxParameters);
             HelpButton = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -228,15 +252,17 @@ namespace DicomModifier
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Impostazioni";
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
-            groupBoxLocalAE.ResumeLayout(false);
+            groupBoxParameters.ResumeLayout(false);
+            groupBoxParameters.PerformLayout();
+            groupBoxCECHO.ResumeLayout(false);
+            groupBoxEjectSetting.ResumeLayout(false);
+            groupBoxEjectSetting.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private GroupBox groupBox1;
+        private GroupBox groupBoxParameters;
         private Button buttonCancel;
         private Button buttonSave;
         private Button buttonEchoTest;
@@ -250,7 +276,9 @@ namespace DicomModifier
         private Label labelServerAE;
         private TextBox textBoxLocalAETitle;
         private Label labelLocalAE;
-        private GroupBox groupBoxLocalAE;
+        private GroupBox groupBoxCECHO;
         private Panel panelEchoStatus;
+        private GroupBox groupBoxEjectSetting;
+        private CheckBox checkBoxAutoEjectOpticalMedia;
     }
 }

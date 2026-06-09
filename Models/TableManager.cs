@@ -1,14 +1,10 @@
 ﻿// Interfaces/TableManager.cs
 
-using DicomImport.Controllers;
-using DicomModifier;
+using DicomModifier.Controllers;
 using FellowOakDicom;
 
-namespace DicomImport.Models
+namespace DicomModifier.Models
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TableManager"/> class.
-    /// </summary>
     public class TableManager
     {
         private readonly DataGridView _dataGridView;
@@ -22,10 +18,6 @@ namespace DicomImport.Models
             _dataGridView.SelectionChanged += DataGridView_SelectionChanged;
         }
 
-        /// <summary>
-        /// Adds the DICOM files to grid.
-        /// </summary>
-        /// <param name="dataset">The dataset.</param>
         public void AddDicomToGrid(DicomDataset dataset)
         {
             string patientID = dataset.GetSingleValueOrDefault(DicomTag.PatientID, "Unknown");
@@ -74,7 +66,6 @@ namespace DicomImport.Models
                 _dataGridView.Rows.Add(newRow);
             }
 
-            // Update control states after adding a row
             var mainForm = _dataGridView.FindForm() as MainForm;
             _uiController.UpdateControlStates();
         }

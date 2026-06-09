@@ -60,11 +60,16 @@ namespace DicomModifier
             toolStripStatusLabel = new ToolStripStatusLabel();
             toolStripStatusLabelFileCount = new ToolStripStatusLabel();
             toolStripProgressBar = new ToolStripProgressBar();
-            toolStripStatusLabelDev = new ToolStripStatusLabel();
+            toolStripDropDownButtonUser = new ToolStripDropDownButton();
+            logoutToolStripMenuItemLogout = new ToolStripMenuItem();
+            accountToolStripMenuItem = new ToolStripMenuItem();
             toolStripDropDownButton = new ToolStripDropDownButton();
             esciToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
+            adminToolStripMenuItem = new ToolStripMenuItem();
+            manageUserToolStripMenuItem = new ToolStripMenuItem();
+            auditLogToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             buttonResetQueue = new Button();
             groupSelectFiles.SuspendLayout();
@@ -90,7 +95,7 @@ namespace DicomModifier
             // 
             // buttonFolder
             // 
-            buttonFolder.BackColor = SystemColors.Highlight;
+            buttonFolder.BackColor = Color.DodgerBlue;
             buttonFolder.FlatStyle = FlatStyle.Flat;
             buttonFolder.Font = new System.Drawing.Font("Segoe UI", 10F);
             buttonFolder.ForeColor = Color.White;
@@ -104,7 +109,7 @@ namespace DicomModifier
             // 
             // buttonDicomDir
             // 
-            buttonDicomDir.BackColor = SystemColors.Highlight;
+            buttonDicomDir.BackColor = Color.DodgerBlue;
             buttonDicomDir.FlatStyle = FlatStyle.Flat;
             buttonDicomDir.Font = new System.Drawing.Font("Segoe UI", 10F);
             buttonDicomDir.ForeColor = Color.White;
@@ -118,7 +123,7 @@ namespace DicomModifier
             // 
             // buttonDicomFile
             // 
-            buttonDicomFile.BackColor = SystemColors.Highlight;
+            buttonDicomFile.BackColor = Color.DodgerBlue;
             buttonDicomFile.FlatStyle = FlatStyle.Flat;
             buttonDicomFile.Font = new System.Drawing.Font("Segoe UI", 10F);
             buttonDicomFile.ForeColor = Color.White;
@@ -246,7 +251,7 @@ namespace DicomModifier
             buttonUpdateID.BackColor = Color.LightCoral;
             buttonUpdateID.FlatStyle = FlatStyle.Flat;
             buttonUpdateID.Font = new System.Drawing.Font("Segoe UI", 10F);
-            buttonUpdateID.ForeColor = Color.Black;
+            buttonUpdateID.ForeColor = Color.White;
             buttonUpdateID.Location = new Point(172, 30);
             buttonUpdateID.Margin = new Padding(2, 1, 2, 1);
             buttonUpdateID.Name = "buttonUpdateID";
@@ -271,7 +276,7 @@ namespace DicomModifier
             buttonSend.BackColor = Color.LightCoral;
             buttonSend.FlatStyle = FlatStyle.Flat;
             buttonSend.Font = new System.Drawing.Font("Segoe UI", 10F);
-            buttonSend.ForeColor = Color.Black;
+            buttonSend.ForeColor = Color.White;
             buttonSend.Location = new Point(90, 29);
             buttonSend.Margin = new Padding(2, 1, 2, 1);
             buttonSend.Name = "buttonSend";
@@ -295,7 +300,7 @@ namespace DicomModifier
             // statusStrip
             // 
             statusStrip.ImageScalingSize = new Size(32, 32);
-            statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel, toolStripStatusLabelFileCount, toolStripProgressBar, toolStripStatusLabelDev, toolStripDropDownButton });
+            statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel, toolStripStatusLabelFileCount, toolStripProgressBar, toolStripDropDownButtonUser, toolStripDropDownButton });
             statusStrip.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             statusStrip.Location = new Point(0, 419);
             statusStrip.Name = "statusStrip";
@@ -329,18 +334,38 @@ namespace DicomModifier
             toolStripProgressBar.Size = new Size(500, 32);
             toolStripProgressBar.Style = ProgressBarStyle.Continuous;
             // 
-            // toolStripStatusLabelDev
+            // toolStripDropDownButtonUser
             // 
-            toolStripStatusLabelDev.AutoSize = false;
-            toolStripStatusLabelDev.Name = "toolStripStatusLabelDev";
-            toolStripStatusLabelDev.Size = new Size(350, 32);
+            toolStripDropDownButtonUser.AutoSize = false;
+            toolStripDropDownButtonUser.DropDownItems.AddRange(new ToolStripItem[] { logoutToolStripMenuItemLogout, accountToolStripMenuItem });
+            toolStripDropDownButtonUser.Image = Properties.Resources.User_Icon;
+            toolStripDropDownButtonUser.ImageAlign = ContentAlignment.MiddleLeft;
+            toolStripDropDownButtonUser.ImageTransparentColor = Color.Magenta;
+            toolStripDropDownButtonUser.Margin = new Padding(5, 2, 5, 0);
+            toolStripDropDownButtonUser.Name = "toolStripDropDownButtonUser";
+            toolStripDropDownButtonUser.Size = new Size(360, 36);
+            toolStripDropDownButtonUser.Text = "User";
+            toolStripDropDownButtonUser.TextAlign = ContentAlignment.MiddleRight;
+            toolStripDropDownButtonUser.ToolTipText = "Mostra l'utente attuale e le opzioni collegate";
+            // 
+            // logoutToolStripMenuItemLogout
+            // 
+            logoutToolStripMenuItemLogout.Name = "logoutToolStripMenuItemLogout";
+            logoutToolStripMenuItemLogout.Size = new Size(170, 22);
+            logoutToolStripMenuItemLogout.Text = "Logout";
+            // 
+            // accountToolStripMenuItem
+            // 
+            accountToolStripMenuItem.Name = "accountToolStripMenuItem";
+            accountToolStripMenuItem.Size = new Size(170, 22);
+            accountToolStripMenuItem.Text = "Opzioni account...";
             // 
             // toolStripDropDownButton
             // 
             toolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, helpToolStripMenuItem, aboutToolStripMenuItem, settingsToolStripMenuItem });
+            toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, helpToolStripMenuItem, aboutToolStripMenuItem, adminToolStripMenuItem, settingsToolStripMenuItem });
             toolStripDropDownButton.Image = Properties.Resources.settings_icon;
-            toolStripDropDownButton.ImageTransparentColor = Color.Magenta;
+            toolStripDropDownButton.ImageTransparentColor = Color.DodgerBlue;
             toolStripDropDownButton.Name = "toolStripDropDownButton";
             toolStripDropDownButton.Size = new Size(45, 36);
             toolStripDropDownButton.Text = "toolStripDropDownButton1";
@@ -348,30 +373,49 @@ namespace DicomModifier
             // esciToolStripMenuItem
             // 
             esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-            esciToolStripMenuItem.Size = new Size(180, 22);
+            esciToolStripMenuItem.Size = new Size(233, 22);
             esciToolStripMenuItem.Text = "Esci";
             esciToolStripMenuItem.ToolTipText = "Chiude l'applicazione";
             // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(180, 22);
+            helpToolStripMenuItem.Size = new Size(233, 22);
             helpToolStripMenuItem.Text = "Help";
             helpToolStripMenuItem.ToolTipText = "Apre il file PDF della guida";
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(180, 22);
+            aboutToolStripMenuItem.Size = new Size(233, 22);
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.ToolTipText = "Informazioni sul programma";
+            // 
+            // adminToolStripMenuItem
+            // 
+            adminToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { manageUserToolStripMenuItem, auditLogToolStripMenuItem });
+            adminToolStripMenuItem.Name = "adminToolStripMenuItem";
+            adminToolStripMenuItem.Size = new Size(233, 22);
+            adminToolStripMenuItem.Text = "Amministrazione";
+            // 
+            // manageUserToolStripMenuItem
+            // 
+            manageUserToolStripMenuItem.Name = "manageUserToolStripMenuItem";
+            manageUserToolStripMenuItem.Size = new Size(180, 22);
+            manageUserToolStripMenuItem.Text = "Gestione utenti...";
+            // 
+            // auditLogToolStripMenuItem
+            // 
+            auditLogToolStripMenuItem.Name = "auditLogToolStripMenuItem";
+            auditLogToolStripMenuItem.Size = new Size(180, 22);
+            auditLogToolStripMenuItem.Text = "Visualizza Log...";
             // 
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(180, 22);
-            settingsToolStripMenuItem.Text = "Impostazioni...";
-            settingsToolStripMenuItem.ToolTipText = "Apri la finestra delle impostazioni.";
+            settingsToolStripMenuItem.Size = new Size(233, 22);
+            settingsToolStripMenuItem.Text = "Impostazioni di connessione...";
+            settingsToolStripMenuItem.ToolTipText = "Apre la finestra delle impostazioni.";
             // 
             // buttonResetQueue
             // 
@@ -436,7 +480,6 @@ namespace DicomModifier
         public ToolStripMenuItem esciToolStripMenuItem;
         public ToolStripMenuItem aboutToolStripMenuItem;
         public ToolStripMenuItem settingsToolStripMenuItem;
-        public ToolStripStatusLabel toolStripStatusLabelDev;
         public Button buttonResetQueue;
         public Button buttonUpdateID;
         private DataGridViewTextBoxColumn PatientNameColumn;
@@ -450,5 +493,11 @@ namespace DicomModifier
         private DataGridViewTextBoxColumn StudyInstanceUIDColumn;
         private DataGridViewTextBoxColumn FilePathColumn;
         private ToolStripMenuItem helpToolStripMenuItem;
+        public ToolStripDropDownButton toolStripDropDownButtonUser;
+        public ToolStripMenuItem logoutToolStripMenuItemLogout;
+        public ToolStripMenuItem accountToolStripMenuItem;
+        private ToolStripMenuItem manageUserToolStripMenuItem;
+        private ToolStripMenuItem auditLogToolStripMenuItem;
+        public ToolStripMenuItem adminToolStripMenuItem;
     }
 }
