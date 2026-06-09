@@ -12,14 +12,14 @@
 
 ## Requisiti di sistema
 - Sistema operativo: Windows 10 o successivo
-- .NET Framework 8.0
+- .NET Framework 10.0
 - Spazio su disco: minimo 100 MB
 - RAM: minimo 4 GB
 
 ## Installazione
 1. Scaricare l'installer di DICOM Import & Edit.
 2. Eseguire il file `DCMImpSetup.exe` e seguire le istruzioni sullo schermo.
-3. L'installer verificherà la presenza di .NET Framework 8.0 e, se necessario, lo scaricherà e lo installerà automaticamente.
+3. L'installer verificherà la presenza di .NET Framework 10.0 e, se necessario, lo scaricherà e lo installerà automaticamente.
 4. Una volta completata l'installazione, avviare DICOM Import & Edit dal menu Start o dall'icona sul desktop.
 
 ## Utilizzo

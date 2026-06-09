@@ -1,7 +1,7 @@
 ; ============================================================
 ;  DicomModifier - Inno Setup Script
 ;  Distribuzione: framework-dependent, win-x64
-;  Richiede: .NET 8 Desktop Runtime (x64)
+;  Richiede: .NET 10 Desktop Runtime (x64)
 ;
 ;  Per compilare:
 ;    iscc.exe Installer\DicomModifier.iss
@@ -19,6 +19,12 @@
 AppId={{A3F7B2C1-4D5E-4F6A-9B0C-D1E2F3A4B5C6}
 AppName={#AppName}
 AppVersion={#AppVersion}
+VersionInfoVersion={#AppVersion}
+VersionInfoCompany={#AppPublisher}
+VersionInfoDescription={#AppName} Setup
+VersionInfoProductName={#AppName}
+VersionInfoProductVersion={#AppVersion}
+VersionInfoCopyright=Copyright (c) Thomas Amaranto
 AppPublisherURL={#AppURL}
 AppSupportURL={#AppURL}
 AppUpdatesURL={#AppURL}
@@ -53,9 +59,6 @@ Name: "desktopicon"; Description: "Crea un'icona sul desktop"; GroupDescription:
 ; Config.json e DBpsw.json vengono esclusi perché creati/gestiti dall'app.
 Source: "{#PublishDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "Config.json,DBpsw.json"
 
-; Guida utente
-Source: "..\Help\UserGuide.pdf"; DestDir: "{app}\Help"; Flags: ignoreversion
-
 [Icons]
 ; Menu Start
 Name: "{group}\{#AppName}"; FileName: "{app}\{#AppExeName}"; IconFilename: "{app}\{#AppExeName}"
@@ -70,23 +73,23 @@ Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#AppName}}"; F
 
 [Code]
 // ---------------------------------------------------------------
-//  Controlla la presenza di .NET 8 Desktop Runtime (x64).
+//  Controlla la presenza di .NET 10 Desktop Runtime (x64).
 //  Se non è installato, chiede all'utente se aprire la pagina
 //  di download Microsoft.
 // ---------------------------------------------------------------
-function IsDotNet8Installed(): Boolean;
+function IsDotNet10Installed(): Boolean;
 var
   key: string;
   versionName: string;
 begin
   key := 'SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App';
 
-  // Controlla la chiave specifica del Desktop Runtime 8.x.
-  Result := RegQueryStringValue(HKLM, key, '8.0.0', versionName);
+  // Controlla la chiave specifica del Desktop Runtime 10.x.
+  Result := RegQueryStringValue(HKLM, key, '10.0.0', versionName);
 
   // Fallback: controlla la presenza della cartella runtime.
   if not Result then
-    Result := DirExists(ExpandConstant('{pf64}\dotnet\shared\Microsoft.WindowsDesktop.App\8.0.0'));
+    Result := DirExists(ExpandConstant('{pf64}\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.0'));
 
   // Fallback più permissivo: cartella Microsoft.WindowsDesktop.App presente.
   if not Result then
@@ -99,11 +102,11 @@ var
 begin
   Result := True;
 
-  if not IsDotNet8Installed() then
+  if not IsDotNet10Installed() then
   begin
     answer := MsgBox(
-      '.NET 8 Desktop Runtime (x64) non è installato sul PC.' + #13#10 +
-      '{#AppName} richiede .NET 8 per funzionare.' + #13#10#13#10 +
+      '.NET 10 Desktop Runtime (x64) non è installato sul PC.' + #13#10 +
+      '{#AppName} richiede .NET 10 per funzionare.' + #13#10#13#10 +
       'Vuoi aprire la pagina di download Microsoft adesso?' + #13#10 +
       '(Installa il runtime e poi rilancia questo setup.)',
       mbConfirmation,
@@ -112,7 +115,7 @@ begin
     if answer = IDYES then
       ShellExec(
         'open',
-        'https://dotnet.microsoft.com/download/dotnet/8.0/runtime?initial-os=windows',
+        'https://dotnet.microsoft.com/download/dotnet/10.0/runtime?initial-os=windows',
         '',
         '',
         SW_SHOWNORMAL,
