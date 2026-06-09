@@ -2,6 +2,7 @@
 
 using DicomModifier.Controllers;
 using DicomModifier.Models;
+using DicomModifier.Services;
 using System.ComponentModel;
 
 namespace DicomModifier
@@ -9,17 +10,15 @@ namespace DicomModifier
     public partial class SettingsForm : Form
     {
         private readonly PACSSettings _settings;
-        private readonly SettingsController _settingsController;
         private readonly UIController _uiController;
         private readonly ToolTip toolTip;
 
-        public SettingsForm(PACSSettings settings, SettingsController settingsController, UIController uiController)
+        public SettingsForm(PACSSettings settings, UIController uiController)
         {
             InitializeComponent();
             InitializeEvents();
             this.HelpButtonClicked += this.SettingsForm_HelpButtonClicked;
             _settings = settings;
-            _settingsController = settingsController;
             _uiController = uiController;
             LoadSettings(_settings);
             ApplyStyles();
@@ -150,7 +149,6 @@ namespace DicomModifier
             _settings.Timeout = textBoxTimeout.Text;
             _settings.LocalAETitle = textBoxLocalAETitle.Text;
             _settings.AutoEjectOpticalMedia = checkBoxAutoEjectOpticalMedia.Checked;
-            _settingsController.SaveSettings(_settings);
 
             DialogResult = DialogResult.OK;
             this.Close();
@@ -169,8 +167,8 @@ namespace DicomModifier
             this.Enabled = false;
 
             PACSSettings testSettings = GetSettings();
-            PACSCommunicator communicator = new(testSettings, _uiController);
-            bool success = await communicator.SendCEcho();
+            PacsService pacsService = new(testSettings);
+            bool success = await pacsService.SendCEcho();
 
             if (success)
             {
