@@ -86,21 +86,6 @@ namespace DicomModifier.Controllers
             }
         }
 
-        public static void UpdateUserManagementButtonsState(DataGridView dataGridView, Button buttonEdit, Button buttonDelete, Button buttonChangePassword)
-        {
-            bool isRowSelected = dataGridView.SelectedRows.Count > 0;
-
-            void UpdateButtonState(Button button, Color enabledColor)
-            {
-                button.Enabled = isRowSelected;
-                button.BackColor = isRowSelected ? enabledColor : Color.LightGray;
-            }
-
-            UpdateButtonState(buttonEdit, Color.DodgerBlue);
-            UpdateButtonState(buttonDelete, Color.LightCoral);
-            UpdateButtonState(buttonChangePassword, Color.DodgerBlue);
-        }
-
         // Apply styles to a DataGridView
         private static void StyleDataGridView(DataGridView dataGridView)
         {
@@ -174,8 +159,6 @@ namespace DicomModifier.Controllers
                 _mainForm.settingsToolStripMenuItem.Enabled = true;
                 _mainForm.dataGridView1.Enabled = true;
                 _mainForm.textBoxNewID.Enabled = true;
-                _mainForm.logoutToolStripMenuItemLogout.Enabled = true;
-                _mainForm.accountToolStripMenuItem.Enabled = true;
                 _mainForm.buttonSend.Enabled = _mainForm.dataGridView1.Rows.Count > 0;
             });
         }
@@ -194,8 +177,6 @@ namespace DicomModifier.Controllers
                 _mainForm.settingsToolStripMenuItem.Enabled = false;
                 _mainForm.dataGridView1.Enabled = false;
                 _mainForm.textBoxNewID.Enabled = false;
-                _mainForm.logoutToolStripMenuItemLogout.Enabled = false;
-                _mainForm.accountToolStripMenuItem.Enabled = false;
             });
         }
 
@@ -246,23 +227,6 @@ namespace DicomModifier.Controllers
             {
                 MessageBox.Show("Il file della guida non è stato trovato.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        public void UpdateUIBasedOnRole(string role)
-        {
-            InvokeIfRequired(() =>
-            {
-                // Nascondi o disabilita i controlli per i Technician
-                if (role == "Technician")
-                {
-                    _mainForm.adminToolStripMenuItem.Visible = false;
-                }
-                else if (role == "Administrator")
-                {
-                    // Abilita tutte le funzionalità
-                    _mainForm.adminToolStripMenuItem.Visible = true;
-                }
-            });
         }
     }
 }

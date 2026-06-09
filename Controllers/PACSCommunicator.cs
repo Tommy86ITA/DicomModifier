@@ -22,7 +22,7 @@ namespace DicomModifier.Controllers
 
                 TaskCompletionSource<bool> tcs = new();
 
-                cEcho.OnResponseReceived += (req, resp) =>
+                cEcho.OnResponseReceived += (_, resp) =>
                 {
                     if (resp.Status == DicomStatus.Success)
                     {
@@ -71,7 +71,7 @@ namespace DicomModifier.Controllers
                     DicomFile dicomFile = await DicomFile.OpenAsync(filePath).ConfigureAwait(false);
                     DicomCStoreRequest cStoreRequest = new(dicomFile);
 
-                    cStoreRequest.OnResponseReceived += (req, resp) => _uiController.UpdateProgress(filePaths.IndexOf(filePath) + 1, filePaths.Count);
+                    cStoreRequest.OnResponseReceived += (_, _) => _uiController.UpdateProgress(filePaths.IndexOf(filePath) + 1, filePaths.Count);
 
                     await client.AddRequestAsync(cStoreRequest).ConfigureAwait(false);
                 }

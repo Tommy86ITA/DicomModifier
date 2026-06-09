@@ -2,7 +2,6 @@
 
 using DicomModifier.Controllers;
 using DicomModifier.Models;
-using DicomModifier.Services;
 using System.ComponentModel;
 
 namespace DicomModifier
@@ -13,9 +12,8 @@ namespace DicomModifier
         private readonly SettingsController _settingsController;
         private readonly UIController _uiController;
         private readonly ToolTip toolTip;
-        private readonly AuthenticationService _authenticationService;
 
-        public SettingsForm(PACSSettings settings, SettingsController settingsController, UIController uiController, AuthenticationService _authService)
+        public SettingsForm(PACSSettings settings, SettingsController settingsController, UIController uiController)
         {
             InitializeComponent();
             InitializeEvents();
@@ -23,16 +21,10 @@ namespace DicomModifier
             _settings = settings;
             _settingsController = settingsController;
             _uiController = uiController;
-            _authenticationService = _authService;
             LoadSettings(_settings);
             ApplyStyles();
             toolTip = new ToolTip();
             InitializeTooltips();
-
-            if (_authService.CurrentUser.Role == "Technician")
-            {
-                groupBoxParameters.Enabled = false;
-            }
 
             ValidateFields(); // iniziale validazione dei campi
         }
@@ -288,16 +280,7 @@ namespace DicomModifier
         private bool ValidateFields()
         {
             bool isValid = AreTextFieldsValid() && IsServerPortValid() && IsTimeoutValid() && IsServerIPValid();
-            if (_authenticationService.CurrentUser.Role == "Technician")
-            {
-                buttonSave.Enabled = !isValid;
-            }
-            else
-            {
-                buttonSave.Enabled = isValid;
-                buttonSave.Enabled = isValid;
-            }
-            //buttonSave.Enabled = isValid;
+            buttonSave.Enabled = isValid;
             return isValid;
         }
 

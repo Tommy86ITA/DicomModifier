@@ -60,16 +60,10 @@ namespace DicomModifier
             toolStripStatusLabel = new ToolStripStatusLabel();
             toolStripStatusLabelFileCount = new ToolStripStatusLabel();
             toolStripProgressBar = new ToolStripProgressBar();
-            toolStripDropDownButtonUser = new ToolStripDropDownButton();
-            logoutToolStripMenuItemLogout = new ToolStripMenuItem();
-            accountToolStripMenuItem = new ToolStripMenuItem();
             toolStripDropDownButton = new ToolStripDropDownButton();
             esciToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
-            adminToolStripMenuItem = new ToolStripMenuItem();
-            manageUserToolStripMenuItem = new ToolStripMenuItem();
-            auditLogToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             buttonResetQueue = new Button();
             groupSelectFiles.SuspendLayout();
@@ -300,7 +294,7 @@ namespace DicomModifier
             // statusStrip
             // 
             statusStrip.ImageScalingSize = new Size(32, 32);
-            statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel, toolStripStatusLabelFileCount, toolStripProgressBar, toolStripDropDownButtonUser, toolStripDropDownButton });
+            statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel, toolStripStatusLabelFileCount, toolStripProgressBar, toolStripDropDownButton });
             statusStrip.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             statusStrip.Location = new Point(0, 419);
             statusStrip.Name = "statusStrip";
@@ -334,36 +328,10 @@ namespace DicomModifier
             toolStripProgressBar.Size = new Size(500, 32);
             toolStripProgressBar.Style = ProgressBarStyle.Continuous;
             // 
-            // toolStripDropDownButtonUser
-            // 
-            toolStripDropDownButtonUser.AutoSize = false;
-            toolStripDropDownButtonUser.DropDownItems.AddRange(new ToolStripItem[] { logoutToolStripMenuItemLogout, accountToolStripMenuItem });
-            toolStripDropDownButtonUser.Image = Properties.Resources.User_Icon;
-            toolStripDropDownButtonUser.ImageAlign = ContentAlignment.MiddleLeft;
-            toolStripDropDownButtonUser.ImageTransparentColor = Color.Magenta;
-            toolStripDropDownButtonUser.Margin = new Padding(5, 2, 5, 0);
-            toolStripDropDownButtonUser.Name = "toolStripDropDownButtonUser";
-            toolStripDropDownButtonUser.Size = new Size(360, 36);
-            toolStripDropDownButtonUser.Text = "User";
-            toolStripDropDownButtonUser.TextAlign = ContentAlignment.MiddleRight;
-            toolStripDropDownButtonUser.ToolTipText = "Mostra l'utente attuale e le opzioni collegate";
-            // 
-            // logoutToolStripMenuItemLogout
-            // 
-            logoutToolStripMenuItemLogout.Name = "logoutToolStripMenuItemLogout";
-            logoutToolStripMenuItemLogout.Size = new Size(170, 22);
-            logoutToolStripMenuItemLogout.Text = "Logout";
-            // 
-            // accountToolStripMenuItem
-            // 
-            accountToolStripMenuItem.Name = "accountToolStripMenuItem";
-            accountToolStripMenuItem.Size = new Size(170, 22);
-            accountToolStripMenuItem.Text = "Opzioni account...";
-            // 
             // toolStripDropDownButton
-            // 
+            //
             toolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, helpToolStripMenuItem, aboutToolStripMenuItem, adminToolStripMenuItem, settingsToolStripMenuItem });
+            toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, helpToolStripMenuItem, aboutToolStripMenuItem, settingsToolStripMenuItem });
             toolStripDropDownButton.Image = Properties.Resources.settings_icon;
             toolStripDropDownButton.ImageTransparentColor = Color.DodgerBlue;
             toolStripDropDownButton.Name = "toolStripDropDownButton";
@@ -391,27 +359,8 @@ namespace DicomModifier
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.ToolTipText = "Informazioni sul programma";
             // 
-            // adminToolStripMenuItem
-            // 
-            adminToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { manageUserToolStripMenuItem, auditLogToolStripMenuItem });
-            adminToolStripMenuItem.Name = "adminToolStripMenuItem";
-            adminToolStripMenuItem.Size = new Size(233, 22);
-            adminToolStripMenuItem.Text = "Amministrazione";
-            // 
-            // manageUserToolStripMenuItem
-            // 
-            manageUserToolStripMenuItem.Name = "manageUserToolStripMenuItem";
-            manageUserToolStripMenuItem.Size = new Size(180, 22);
-            manageUserToolStripMenuItem.Text = "Gestione utenti...";
-            // 
-            // auditLogToolStripMenuItem
-            // 
-            auditLogToolStripMenuItem.Name = "auditLogToolStripMenuItem";
-            auditLogToolStripMenuItem.Size = new Size(180, 22);
-            auditLogToolStripMenuItem.Text = "Visualizza Log...";
-            // 
             // settingsToolStripMenuItem
-            // 
+            //
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             settingsToolStripMenuItem.Size = new Size(233, 22);
             settingsToolStripMenuItem.Text = "Impostazioni di connessione...";
@@ -493,11 +442,5 @@ namespace DicomModifier
         private DataGridViewTextBoxColumn StudyInstanceUIDColumn;
         private DataGridViewTextBoxColumn FilePathColumn;
         private ToolStripMenuItem helpToolStripMenuItem;
-        public ToolStripDropDownButton toolStripDropDownButtonUser;
-        public ToolStripMenuItem logoutToolStripMenuItemLogout;
-        public ToolStripMenuItem accountToolStripMenuItem;
-        private ToolStripMenuItem manageUserToolStripMenuItem;
-        private ToolStripMenuItem auditLogToolStripMenuItem;
-        public ToolStripMenuItem adminToolStripMenuItem;
     }
 }

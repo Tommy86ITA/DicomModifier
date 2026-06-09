@@ -1,8 +1,6 @@
-// Import necessary namespaces for controllers, models, services, and views of the application.
+// Import necessary namespaces for controllers, models, and views of the application.
 using DicomModifier.Controllers;
 using DicomModifier.Models;
-using DicomModifier.Services;
-using DicomModifier.Views;
 using System.Reflection; // For working with assembly metadata.
 using System.Runtime.InteropServices; // For interoperability services.
 using OfficeOpenXml;
@@ -46,21 +44,8 @@ namespace DicomModifier
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Create the authentication service.
-            AuthenticationService authService = new();
-
-            // Show the login form.
-            using (LoginForm loginForm = new(authService))
-            {
-                // Exit the application if login fails.
-                if (loginForm.ShowDialog() != DialogResult.OK)
-                {
-                    return;
-                }
-            }
-
             // Create the main form and controllers.
-            MainForm mainForm = new(authService);
+            MainForm mainForm = new();
             UIController uiController = new(mainForm);
             DicomFileHandler dicomManager = new(uiController);
 
