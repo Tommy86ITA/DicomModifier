@@ -42,20 +42,20 @@ namespace DicomModifier.Views
                 if (authService.Authenticate(username, password))
                 {
                     MessageBox.Show("Accesso consentito, credenziali verificate!", "Accesso consentito!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    _databaseHelper.LogAudit(username, EventMapping.EventType.LoginSuccessful);
+                    DatabaseHelper.LogAudit(username, EventMapping.EventType.LoginSuccessful);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
                 else
                 {
                     MessageBox.Show("Accesso negato. Verifica che le credenziali siano corrette.", "Accesso negato", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    _databaseHelper.LogAudit(username, EventMapping.EventType.LoginFailed_InvalidCredentials);
+                    DatabaseHelper.LogAudit(username, EventMapping.EventType.LoginFailed_InvalidCredentials);
                 }
             }
             catch (InvalidOperationException ex)
             {
                 MessageBox.Show($"Accesso negato {ex.Message}", "Accesso negato", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _databaseHelper.LogAudit(username, EventMapping.EventType.LoginFailed_UserDisabled, null);
+                DatabaseHelper.LogAudit(username, EventMapping.EventType.LoginFailed_UserDisabled, null);
             }
         }
 

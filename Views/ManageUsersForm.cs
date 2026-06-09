@@ -66,7 +66,7 @@ namespace DicomModifier.Views
                     if (changePasswordForm.ShowDialog() != DialogResult.OK)
                     {
                         // Se l'utente esce senza salvare la password, annulla la creazione dell'utente
-                        _databaseHelper.LogAudit(_authService.CurrentUser.Username, EventMapping.EventType.UserCreationAborted, $"Creation of user {createdUser} aborted.");
+                        DatabaseHelper.LogAudit(_authService.CurrentUser.Username, EventMapping.EventType.UserCreationAborted, $"Creation of user {createdUser} aborted.");
                         AuthenticationService.RemoveUser(createdUser.Username);
                         _users.RemoveAll(u => u.Username == createdUser.Username);
                         LoadUsers();
@@ -161,7 +161,7 @@ namespace DicomModifier.Views
                 if (AuthenticationService.RemoveUser(username))
                 {
                     _users.RemoveAll(u => u.Username == username);
-                    _databaseHelper.LogAudit(_authService.CurrentUser.Username, EventMapping.EventType.UserDeleted, $"Account {username} has been deleted");
+                    DatabaseHelper.LogAudit(_authService.CurrentUser.Username, EventMapping.EventType.UserDeleted, $"Account {username} has been deleted");
                     LoadUsers();
                     MessageBox.Show("Utente eliminato con successo.", "Eliminazione utente", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }

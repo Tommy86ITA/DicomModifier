@@ -129,6 +129,7 @@ namespace DicomModifier
             textBoxAETitle.Text = settings.AETitle;
             textBoxTimeout.Text = settings.Timeout;
             textBoxLocalAETitle.Text = settings.LocalAETitle;
+            checkBoxAutoEjectOpticalMedia.Checked = settings.AutoEjectOpticalMedia;
         }
 
         public PACSSettings GetSettings()
@@ -139,7 +140,8 @@ namespace DicomModifier
                 ServerPort = textBoxServerPort.Text,
                 AETitle = textBoxAETitle.Text,
                 Timeout = textBoxTimeout.Text,
-                LocalAETitle = textBoxLocalAETitle.Text
+                LocalAETitle = textBoxLocalAETitle.Text,
+                AutoEjectOpticalMedia = checkBoxAutoEjectOpticalMedia.Checked
             };
         }
 
@@ -155,6 +157,7 @@ namespace DicomModifier
             _settings.AETitle = textBoxAETitle.Text;
             _settings.Timeout = textBoxTimeout.Text;
             _settings.LocalAETitle = textBoxLocalAETitle.Text;
+            _settings.AutoEjectOpticalMedia = checkBoxAutoEjectOpticalMedia.Checked;
             _settingsController.SaveSettings(_settings);
 
             DialogResult = DialogResult.OK;

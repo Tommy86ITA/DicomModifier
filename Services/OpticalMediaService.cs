@@ -22,7 +22,7 @@ namespace DicomModifier.Services
         /// </summary>
         /// <param name="sourcePath">The imported file or folder path.</param>
         /// <returns>The drive root if the source path is on optical media; otherwise, <see langword="null" />.</returns>
-        public string? GetOpticalDriveRoot(string sourcePath)
+        public static string? GetOpticalDriveRoot(string sourcePath)
         {
             if (string.IsNullOrWhiteSpace(sourcePath))
             {
@@ -61,7 +61,7 @@ namespace DicomModifier.Services
         /// <param name="sourcePath">The imported file or folder path.</param>
         /// <param name="errorMessage">The error message returned when the eject operation fails.</param>
         /// <returns><see langword="true" /> if the media was ejected; otherwise, <see langword="false" />.</returns>
-        public bool TryEject(string sourcePath, out string? errorMessage)
+        public static bool TryEject(string sourcePath, out string? errorMessage)
         {
             errorMessage = null;
 
@@ -122,7 +122,7 @@ namespace DicomModifier.Services
         private static string NormalizeVolumePath(string driveRoot)
         {
             string normalizedDrive = driveRoot.TrimEnd('\\');
-            return @"\.\" + normalizedDrive;
+            return @"\\.\" + normalizedDrive;
         }
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]

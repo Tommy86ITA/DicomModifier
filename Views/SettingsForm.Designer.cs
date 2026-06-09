@@ -278,7 +278,6 @@ namespace DicomModifier
         private Label labelLocalAE;
         private GroupBox groupBoxCECHO;
         private Panel panelEchoStatus;
-        private Panel panel1;
         private GroupBox groupBoxEjectSetting;
         private CheckBox checkBoxAutoEjectOpticalMedia;
     }

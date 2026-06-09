@@ -53,7 +53,7 @@ namespace DicomModifier.Services
         }
 
         // Create the AuditLog table
-        public void CreateAuditLogTable()
+        public static void CreateAuditLogTable()
         {
             using var connection = GetConnection();
             connection.Open(); // Open the connection
@@ -72,7 +72,7 @@ namespace DicomModifier.Services
         }
 
         // Ensures the required tables exist in the database
-        public void EnsureTablesExist(SqliteConnection connection)
+        public static void EnsureTablesExist(SqliteConnection connection)
         {
             using var command = connection.CreateCommand();
 
@@ -92,7 +92,7 @@ namespace DicomModifier.Services
         }
 
         // Ensures the admin user exists in the Users table
-        private void EnsureAdminUserExists(SqliteConnection connection)
+        private static void EnsureAdminUserExists(SqliteConnection connection)
         {
             using var command = connection.CreateCommand(); // Create a command to execute SQL queries
 
@@ -113,7 +113,7 @@ namespace DicomModifier.Services
             }
         }
 
-        public void LogAudit(string username, EventMapping.EventType eventType, string? message = null)
+        public static void LogAudit(string username, EventMapping.EventType eventType, string? message = null)
         {
             LogManager.LogActivity(username, eventType, message);
         }

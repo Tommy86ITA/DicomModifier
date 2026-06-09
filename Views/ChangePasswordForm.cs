@@ -84,7 +84,7 @@ namespace DicomModifier.Views
             _user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
             AuthenticationService.UpdatePassword(_user.Username, _user.PasswordHash);
             MessageBox.Show("Password aggiornata con successo.", "Modifica password", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            _databaseHelper.LogAudit(_authService.CurrentUser.Username, EventMapping.EventType.PasswordChanged, $"Modifica la password per l'utente {_user.Username}");
+            DatabaseHelper.LogAudit(_authService.CurrentUser.Username, EventMapping.EventType.PasswordChanged, $"Modifica la password per l'utente {_user.Username}");
             DialogResult = DialogResult.OK;
             Close();
         }
