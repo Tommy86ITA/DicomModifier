@@ -9,6 +9,7 @@ namespace DicomModifier.Models
         public string AETitle { get; set; } = "PACS";
         public string Timeout { get; set; } = "30000";
         public string LocalAETitle { get; set; } = "DICOM_MOD";
+        public bool AutoEjectOpticalMedia { get; set; } = true;
 
         public void ApplyDefaults()
         {
@@ -17,6 +18,7 @@ namespace DicomModifier.Models
             AETitle = "PACS";
             Timeout = "30000";
             LocalAETitle = "DICOM_MOD";
+            AutoEjectOpticalMedia = true;
         }
     }
 }
