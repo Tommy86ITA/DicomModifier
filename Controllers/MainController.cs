@@ -1,7 +1,9 @@
 ﻿// Interfaces/MainController.cs
 
 using DicomModifier.Models;
+using DicomModifier.Services;
 using FellowOakDicom;
+using System.Diagnostics;
 
 namespace DicomModifier.Controllers
 {
@@ -10,6 +12,7 @@ namespace DicomModifier.Controllers
         private readonly MainForm _mainForm;
         private readonly DicomFileHandler _dicomManager;
         private readonly PACSCommunicator _communicator;
+        private readonly PACSSettings _settings;
         private readonly string _tempDirectory;
         private readonly UIController _uiController;
         private CancellationTokenSource _cancellationTokenSource;
@@ -18,6 +21,7 @@ namespace DicomModifier.Controllers
         {
             _mainForm = mainForm;
             _dicomManager = dicomManager;
+            _settings = settings;
             _uiController = new UIController(_mainForm);
             _communicator = new PACSCommunicator(settings, _uiController);
             _tempDirectory = Path.Combine(Path.GetTempPath(), "DicomImport");
@@ -46,21 +50,13 @@ namespace DicomModifier.Controllers
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string filePath = openFileDialog.FileName;
-                bool isRemovableDrive = DicomFileHandler.CheckIfRemovableDrive(filePath);
+                _uiController.DisableControls();
                 _uiController.UpdateStatus("Importazione in corso...");
                 _uiController.UpdateProgressBar(0, 1);
-                await _dicomManager.AddDicomFileAsync(openFileDialog.FileName);
-                DicomFile? dicomFile = await _dicomManager.GetNextDicomFileAsync();
-                if (dicomFile != null)
-                {
-                    _mainForm.TableManager.AddDicomToGrid(dicomFile.Dataset);
-                }
-                _uiController.EnableControls();
-                _uiController.UpdateControlStates();
-                _uiController.UpdateStatus("Importazione completata.");
-                _uiController.UpdateProgressBar(1, 1);
+
+                await _dicomManager.AddDicomFileAsync(filePath);
                 int fileCount = await LoadDicomFilesToGridAsync();
-                FinalizeImport(fileCount, isRemovableDrive, filePath);
+                FinalizeImport(fileCount, filePath);
             }
         }
 
@@ -70,14 +66,13 @@ namespace DicomModifier.Controllers
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 string folderPath = folderBrowserDialog.SelectedPath;
-                bool isRemovableDrive = DicomFileHandler.CheckIfRemovableDrive(folderPath);
                 _uiController.DisableControls();
                 _uiController.UpdateStatus("Importazione in corso...");
-                List<string> files = GetFilesFromFolder(folderBrowserDialog.SelectedPath);
+                List<string> files = GetFilesFromFolder(folderPath);
                 InitializeProgress(files.Count);
                 await ProcessFilesAsync(files);
                 int fileCount = await LoadDicomFilesToGridAsync();
-                FinalizeImport(fileCount, isRemovableDrive, folderPath);
+                FinalizeImport(fileCount, folderPath);
             }
         }
 
@@ -87,12 +82,11 @@ namespace DicomModifier.Controllers
             if (ConfigureOpenFileDialog(openFileDialog))
             {
                 string dicomDirPath = openFileDialog.FileName;
-                bool isRemovableDrive = DicomFileHandler.CheckIfRemovableDrive(dicomDirPath);
                 _uiController.DisableControls();
                 _uiController.UpdateStatus("Importazione in corso...");
-                await ImportDicomDirAsync(openFileDialog.FileName);
+                await ImportDicomDirAsync(dicomDirPath);
                 int fileCount = await LoadDicomFilesToGridAsync();
-                FinalizeImport(fileCount, isRemovableDrive, dicomDirPath);
+                FinalizeImport(fileCount, dicomDirPath);
             }
         }
 
@@ -278,7 +272,8 @@ namespace DicomModifier.Controllers
 
         private void InitializeProgress(int fileCount)
         {
-            _uiController.UpdateProgressBar(0, fileCount);
+            int maximum = Math.Max(fileCount, 1);
+            _uiController.UpdateProgressBar(0, maximum);
             _uiController.UpdateFileCount(0, fileCount, "File importati");
         }
 
@@ -288,7 +283,7 @@ namespace DicomModifier.Controllers
             foreach (string? file in files)
             {
                 await _dicomManager.AddDicomFileAsync(file);
-                _uiController.UpdateProgressBar(++processedFiles, files.Count);
+                _uiController.UpdateProgressBar(++processedFiles, Math.Max(files.Count, 1));
                 _uiController.UpdateFileCount(processedFiles, files.Count, "File importati");
             }
         }
@@ -313,17 +308,42 @@ namespace DicomModifier.Controllers
             return fileCount;
         }
 
-        private void FinalizeImport(int fileCount, bool isRemovableDrive, string sourcePath)
+        private void FinalizeImport(int fileCount, string sourcePath)
         {
             _uiController.UpdateControlStates();
             _uiController.UpdateStatus("Importazione completata.");
-            _uiController.UpdateProgressBar(fileCount, fileCount);
+            _uiController.UpdateProgressBar(fileCount, Math.Max(fileCount, 1));
             _uiController.EnableControls();
 
-            if (isRemovableDrive)
+            TryAutoEjectOpticalMedia(sourcePath);
+        }
+
+        private void TryAutoEjectOpticalMedia(string sourcePath)
+        {
+            if (!_settings.AutoEjectOpticalMedia)
             {
-                DicomFileHandler.EjectDrive(Path.GetPathRoot(sourcePath)!);
+                Debug.WriteLine("Automatic optical media eject is disabled.");
+                return;
             }
+
+            if (OpticalMediaService.GetOpticalDriveRoot(sourcePath) is null)
+            {
+                Debug.WriteLine($"Import source is not optical media: {sourcePath}");
+                return;
+            }
+
+            if (OpticalMediaService.TryEject(sourcePath, out string? errorMessage))
+            {
+                _uiController.UpdateStatus("Importazione completata. CD/DVD espulso.");
+                return;
+            }
+
+            _uiController.UpdateStatus("Importazione completata. Espulsione CD/DVD non riuscita.");
+            MessageBox.Show(
+                $"Importazione completata, ma non è stato possibile espellere automaticamente il CD/DVD.\n\nDettagli: {errorMessage}",
+                "Espulsione CD/DVD non riuscita",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
         }
 
         private bool ValidateSelectedRows(List<DataGridViewRow> selectedRows)
