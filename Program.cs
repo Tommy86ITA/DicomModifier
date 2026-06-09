@@ -15,7 +15,7 @@ namespace DicomModifier
         static Program()
         {
             // Get the GUID attribute from the assembly.
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.License.SetNonCommercialPersonal("DicomModifier");
             var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), true);
             if (attributes.Length > 0 && attributes[0] is GuidAttribute guidAttribute)
             {
