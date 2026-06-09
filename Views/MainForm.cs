@@ -2,6 +2,8 @@
 
 using DicomModifier.Controllers;
 using DicomModifier.Models;
+using DicomModifier.Services;
+using DicomModifier.Views;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -24,8 +26,7 @@ namespace DicomModifier
 
         public event EventHandler? OnUpdatePatientID;
 
-        public TableManager TableManager { get; private set; }
-        private readonly SettingsController _settingsController;
+        public DicomTableManager TableManager { get; private set; }
         private readonly UIController _uiController;
         private readonly ToolTip toolTip;
         private PACSSettings _settings;
@@ -34,8 +35,9 @@ namespace DicomModifier
 
         private bool confirmClose = false;
 
-        public MainForm()
+        public MainForm(PACSSettings settings)
         {
+            _settings = settings;
             _uiController = new UIController(this);
             InitializeComponent();
             _uiController.ApplyStyles();
@@ -51,11 +53,8 @@ namespace DicomModifier
 
             _uiController.UpdateControlStates();
 
-            TableManager = new TableManager(DataGridView1, _uiController);
+            TableManager = new DicomTableManager(DataGridView1, _uiController.UpdateControlStates);
 
-            // Inizializza le impostazioni
-            _settingsController = new SettingsController(this);
-            _settings = _settingsController.LoadSettings();
             ClearTempFolder();
         }
 
@@ -104,11 +103,13 @@ namespace DicomModifier
 
         private void SettingsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            using SettingsForm settingsForm = new(_settings, _settingsController, _uiController);
+            using SettingsForm settingsForm = new(_settings, _uiController);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
                 _settings = settingsForm.GetSettings();
-                _settingsController.SaveSettings(_settings);
+                SettingsService.SaveSettings(_settings);
+                if (Tag is Controllers.MainController mainController)
+                    mainController.UpdatePacsSettings(_settings);
             }
         }
 

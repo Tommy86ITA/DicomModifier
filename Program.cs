@@ -1,6 +1,7 @@
 // Import necessary namespaces for controllers, models, and views of the application.
 using DicomModifier.Controllers;
 using DicomModifier.Models;
+using DicomModifier.Services;
 using System.Reflection; // For working with assembly metadata.
 using System.Runtime.InteropServices; // For interoperability services.
 
@@ -42,17 +43,13 @@ namespace DicomModifier
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Create the main form and controllers.
-            MainForm mainForm = new();
-            UIController uiController = new(mainForm);
-            DicomFileHandler dicomManager = new(uiController);
+            // Load settings, then create services and the main form.
+            PACSSettings settings = SettingsService.LoadSettings();
+            DicomService dicomService = new();
+            PacsService pacsService = new(settings);
 
-            // Load PACS settings.
-            SettingsController settingsController = new(mainForm);
-            PACSSettings settings = settingsController.LoadSettings();
-
-            // Create the main controller and assign the main form.
-            MainController mainController = new(mainForm, dicomManager, settings);
+            MainForm mainForm = new(settings);
+            MainController mainController = new(mainForm, dicomService, pacsService, settings.AutoEjectOpticalMedia);
             mainForm.Tag = mainController;
 
             // Run the application with the main form.
