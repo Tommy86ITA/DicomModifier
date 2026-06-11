@@ -329,7 +329,8 @@ namespace DicomModifier
             toolStripProgressBar.Style = ProgressBarStyle.Continuous;
             // 
             // toolStripDropDownButton
-            //
+            // 
+            toolStripDropDownButton.Alignment = ToolStripItemAlignment.Right;
             toolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { esciToolStripMenuItem, helpToolStripMenuItem, aboutToolStripMenuItem, settingsToolStripMenuItem });
             toolStripDropDownButton.Image = Properties.Resources.settings_icon;
@@ -341,29 +342,29 @@ namespace DicomModifier
             // esciToolStripMenuItem
             // 
             esciToolStripMenuItem.Name = "esciToolStripMenuItem";
-            esciToolStripMenuItem.Size = new Size(233, 22);
+            esciToolStripMenuItem.Size = new Size(180, 22);
             esciToolStripMenuItem.Text = "Esci";
             esciToolStripMenuItem.ToolTipText = "Chiude l'applicazione";
             // 
             // helpToolStripMenuItem
             // 
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(233, 22);
+            helpToolStripMenuItem.Size = new Size(180, 22);
             helpToolStripMenuItem.Text = "Help";
             helpToolStripMenuItem.ToolTipText = "Apre il file PDF della guida";
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(233, 22);
+            aboutToolStripMenuItem.Size = new Size(180, 22);
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.ToolTipText = "Informazioni sul programma";
             // 
             // settingsToolStripMenuItem
-            //
+            // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(233, 22);
-            settingsToolStripMenuItem.Text = "Impostazioni di connessione...";
+            settingsToolStripMenuItem.Size = new Size(180, 22);
+            settingsToolStripMenuItem.Text = "Impostazioni...";
             settingsToolStripMenuItem.ToolTipText = "Apre la finestra delle impostazioni.";
             // 
             // buttonResetQueue
