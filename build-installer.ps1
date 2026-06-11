@@ -7,7 +7,7 @@
 #    .\build-installer.ps1 -InstallMissingTools
 #
 #  Prerequisiti:
-#    - .NET 8 SDK
+#    - .NET 10 SDK
 #    - Inno Setup 6
 # ============================================================
 
